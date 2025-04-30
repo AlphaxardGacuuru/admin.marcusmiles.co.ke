@@ -11,8 +11,8 @@ const LoginPopUp = (props) => {
 	const history = useHistory()
 	const location = useLocation()
 
-	const [email, setEmail] = useState("brian@marcusmiles.co.ke")
-	const [password, setPassword] = useState("brian@marcusmiles.co.ke")
+	const [email, setEmail] = useState("")
+	const [password, setPassword] = useState("")
 	const [loading, setLoading] = useState(false)
 
 	// Encrypt Token
@@ -104,12 +104,24 @@ const LoginPopUp = (props) => {
 								<input
 									id="email"
 									type="text"
+									placeholder="Email"
 									className="form-control"
 									name="email"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
 									required={true}
 									autoFocus
+								/>
+
+								<input
+									id="password"
+									type="password"
+									placeholder="Password"
+									className="form-control"
+									name="password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									required={true}
 								/>
 
 								<Btn
