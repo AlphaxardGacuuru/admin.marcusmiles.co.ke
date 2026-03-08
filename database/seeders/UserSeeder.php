@@ -14,30 +14,24 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
+        $alDoesntExist = User::where('email', 'alphaxardgacuuru47@gmail.com')
+            ->doesntExist();
+
         $brianDoesntExist = User::where('email', 'brian@marcusmiles.co.ke')
             ->doesntExist();
 
-        $gacuuruDoesntExist = User::where('email', 'gacuuruwakarenge@gmail.com')
-            ->doesntExist();
-
-        $cikuDoesntExist = User::where('email', 'cikumuhandi@gmail.com')
-            ->doesntExist();
+        if ($alDoesntExist) {
+            $user = User::factory()->al()->create();
+        }
 
         if ($brianDoesntExist) {
             User::factory()->brian()->create();
-        }
-
-        if ($gacuuruDoesntExist) {
-            User::factory()->gacuuru()->create();
-        }
-
-        if ($cikuDoesntExist) {
-            User::factory()->ciku()->create();
         }
 
         User::factory()->count(10)->create();
         User::factory()->count(10)->create(["account_type" => "supplier"]);
         User::factory()->count(10)->create(["account_type" => "client"]);
         User::factory()->count(10)->create(["account_type" => "service provider"]);
+        User::factory()->count(10)->create(["account_type" => "staff"]);
     }
 }

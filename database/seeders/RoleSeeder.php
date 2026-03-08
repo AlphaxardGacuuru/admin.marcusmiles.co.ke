@@ -2,8 +2,8 @@
 
 namespace Database\Seeders;
 
-use App\Models\Role;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
 
 class RoleSeeder extends Seeder
 {
@@ -14,6 +14,25 @@ class RoleSeeder extends Seeder
      */
     public function run()
     {
-        Role::factory()->create();
+        $roles = collect([
+            "Super Admin",
+            "Admin",
+            "Clients Manager",
+            "Goods Manager",
+            "Service Providers Manager",
+            "Projects Manager",
+            "Suppliers Manager",
+            "Invoices Manager",
+            "Payments Manager",
+            "Credit Notes Manager",
+            "Deductions Manager",
+        ]);
+
+        $roles->each(function ($role) {
+            Role::firstOrCreate(
+                ["name" => $role],
+                ["guard_name" => "web"]
+            );
+        });
     }
 }

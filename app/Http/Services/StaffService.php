@@ -36,7 +36,7 @@ class StaffService extends Service
             ->orderBy("id", "DESC")
             ->paginate(20);
 
-        return StaffResource::collection($staff);
+        return [true, $staff->count() . "Staff Retrieved Successfully", $staff];
     }
 
     /*
@@ -44,10 +44,9 @@ class StaffService extends Service
      */
     public function show($id)
     {
-        $staff = UserProperty::where("user_id", $id)
-            ->firstOrFail();
+        $staff = User::findOrFail($id);
 
-        return new StaffResource($staff);
+        return [true, $staff->name . " Retrieved Successfully", $staff];
     }
 
     /*
@@ -55,52 +54,23 @@ class StaffService extends Service
      */
     public function store($request)
     {
-        $staffQuery = User::where("email", $request->email);
-
-        // Check if User exists
-        $doesntExist = $staffQuery->doesntExist();
-
-        if ($doesntExist) {
-            $staff = new User;
-            $staff->name = $request->input("name");
-            $staff->email = $request->input("email");
-            $staff->phone = $request->input("phone");
-            $staff->gender = $request->input("gender");
-            $staff->password = Hash::make($request->input("email"));
-        } else {
-            $staff = $staffQuery->first();
-
-            // Check if staff already exists
-            $staffExists = UserProperty::where("user_id", $staff->id)
-                ->where("property_id", $request->propertyId)
-                ->exists();
-
-            if ($staffExists) {
-                return [false, "Staff already exists", "", 422];
-            }
-        }
+        $staff = new User;
+        $staff->name = $request->input("name");
+        $staff->email = $request->input("email");
+        $staff->phone = $request->input("phone");
+        $staff->gender = $request->input("gender");
+        $staff->password = Hash::make($request->input("email"));
+        $staff->account_type = "staff";
 
         $saved = DB::transaction(function () use ($request, $staff) {
             $saved = $staff->save();
 
-            $userProperty = new UserProperty;
-            $userProperty->user_id = $staff->id;
-            $userProperty->property_id = $request->propertyId;
-            $userProperty->save();
-
-            foreach ($request->userRoles as $roleId) {
-                $userRole = new UserRole();
-                $userRole->user_id = $staff->id;
-                $userRole->role_id = $roleId;
-                $userRole->save();
-            }
+            $staff->syncRoles($request->userRoles);
 
             return $saved;
         });
 
-        $message = $staff->name . " added successfully";
-
-        return [$saved, $message, $staff, 200];
+        return [$saved, $staff->name . " Added Successfully", $staff, 200];
     }
 
     /*
@@ -127,39 +97,16 @@ class StaffService extends Service
         }
 
         if ($request->filled("password")) {
-            $staff->password = Hash::make($request->input("email"));
+            $staff->password = Hash::make($request->input("password"));
         }
 
         if ($request->filled("userRoles")) {
-            if (count($request->input("userRoles")) > 0) {
-                foreach ($request->input("userRoles") as $roleId) {
-                    // Check if role already exists
-                    $userRoleDoesntExist = UserRole::where("user_id", $staff->id)
-                        ->where("role_id", $roleId)
-                        ->doesntExist();
-
-                    if ($userRoleDoesntExist) {
-                        $userRole = new UserRole();
-                        $userRole->user_id = $staff->id;
-                        $userRole->role_id = $roleId;
-                        $userRole->save();
-                    } else {
-                        // Remove roles not included
-                        UserRole::where("user_id", $staff->id)
-                            ->whereNotIn("role_id", $request->userRoles)
-                            ->delete();
-                    }
-                }
-            } else {
-                // Remove roles not included
-                UserRole::where("user_id", $staff->id)
-                    ->delete();
-            }
+            $staff->syncRoles($request->userRoles);
         }
 
         $saved = $staff->save();
 
-        $message = $staff->name . " updated successfully";
+        $message = $staff->name . " Updated Successfully";
 
         return [$saved, $message, $staff];
     }
@@ -167,28 +114,13 @@ class StaffService extends Service
     /*
      * Soft Delete Service
      */
-    public function destroy($request, $id)
+    public function destroy($id)
     {
-        $staff = UserProperty::where("user_id", $id)
-            ->where("property_id", $request->input("propertyId"))
-            ->firstOrFail();
+        $staff = User::findOrFail($id);
 
         $deleted = $staff->delete();
 
-        return [$deleted, $staff->user->name . " deleted successfully", $staff];
-    }
-
-    /*
-     * Get Staff by Property ID
-     */
-    public function byPropertyId($id)
-    {
-        $ids = explode(",", $id);
-
-        $staff = UserProperty::whereIn("property_id", $ids)
-            ->paginate(20);
-
-        return StaffResource::collection($staff);
+        return [$deleted, $staff->name . " Deleted Successfully", $staff];
     }
 
     /*
@@ -199,6 +131,26 @@ class StaffService extends Service
         if ($request->filled("name")) {
             $query = $query
                 ->where("name", "LIKE", "%" . $request->name . "%");
+        }
+
+        if ($request->filled("email")) {
+            $query = $query
+                ->where("email", "LIKE", "%" . $request->email . "%");
+        }
+
+        if ($request->filled("phone")) {
+            $query = $query
+                ->where("phone", "LIKE", "%" . $request->phone . "%");
+        }
+
+        if ($request->filled("gender")) {
+            $query = $query->where("gender", $request->gender);
+        }
+
+        if ($request->filled("role")) {
+            $query = $query->whereHas("roles", function ($q) use ($request) {
+                $q->where("name", "LIKE", "%" . $request->role . "%");
+            });
         }
 
         return $query;

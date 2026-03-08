@@ -303,6 +303,61 @@ const AdminNavLinks = (props) => {
 				{/* Collapse End */}
 			</li>
 			{/* Documents Links End */}
+			{/* CRM Links */}
+			<li className="nav-item">
+				<a
+					href="#"
+					className={`nav-link accordion-button w-75 my-1 ${active(
+						"/admin/crm/"
+					)}`}
+					data-bs-toggle="collapse"
+					data-bs-target="#collapseCRM"
+					aria-expanded="false"
+					aria-controls="collapseCRM">
+					<div className="nav-link-icon">
+						<StaffSVG />
+					</div>
+					<div className="nav-link-text">CRM</div>
+				</a>
+
+				{/* Collapse */}
+				<div
+					className={!location.pathname.match("/crm/") ? "collapse" : ""}
+					id="collapseCRM">
+					<ol className="ms-4">
+						{/* Staff Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/staff`}
+								className={`nav-link ${active(
+									"/admin/crm/staff"
+								)}`}>
+								<div className="nav-link-icon">
+									<StaffSVG />
+								</div>
+								<div className="nav-link-text">Staff</div>
+							</Link>
+						</li>
+						{/* Staff End */}
+						{/* Roles Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/roles`}
+								className={`nav-link ${active(
+									"/admin/crm/roles"
+								)}`}>
+								<div className="nav-link-icon">
+									<PersonGearSVG />
+								</div>
+								<div className="nav-link-text">Roles</div>
+							</Link>
+						</li>
+						{/* Roles End */}
+					</ol>
+				</div>
+				{/* Collapse End */}
+			</li>
+			{/* CRM Links End */}
 			{/* Configurations Link */}
 			<li className="nav-item">
 				<Link

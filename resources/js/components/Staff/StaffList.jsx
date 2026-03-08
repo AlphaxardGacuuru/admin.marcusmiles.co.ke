@@ -22,15 +22,15 @@ const StaffList = (props) => {
 	/*
 	 * Delete Staff
 	 */
-	const onDeleteStaff = (staff) => {
-		Axios.delete(`/api/staff/${staff.id}?propertyId=${props.propertyId}`)
+	const onDeleteStaff = (id) => {
+		Axios.delete(`/api/staff/${id}`)
 			.then((res) => {
 				props.setMessages([res.data.message])
 				// Remove row
 				props.setStaff({
 					meta: props.staff.meta,
 					links: props.staff.links,
-					data: props.staff.data.filter((item) => item.id != staff.id),
+					data: props.staff.data.filter((item) => item.id != id),
 				})
 			})
 			.catch((err) => props.getErrors(err))
@@ -63,25 +63,70 @@ const StaffList = (props) => {
 				<div className="d-flex flex-wrap">
 					{/* Name */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="name">Name</label>
 						<input
 							id=""
 							type="text"
 							name="name"
 							placeholder="Search by Name"
-							className="form-control"
-							onChange={(e) => setNameQuery(e.target.value)}
+							className="form-control me-2"
+							onChange={(e) => props.setNameQuery(e.target.value)}
 						/>
 					</div>
 					{/* Name End */}
-					{/* Role */}
+					{/* Email */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="email">Email</label>
+						<input
+							id=""
+							type="text"
+							name="email"
+							placeholder="Search by Email"
+							className="form-control me-2"
+							onChange={(e) => props.setEmailQuery(e.target.value)}
+						/>
+					</div>
+					{/* Email End */}
+					{/* Phone */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="phone">Phone</label>
+						<input
+							id=""
+							type="text"
+							name="phone"
+							placeholder="Search by Phone"
+							className="form-control me-2"
+							onChange={(e) => props.setPhoneQuery(e.target.value)}
+						/>
+					</div>
+					{/* Phone End */}
+					{/* Gender */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="gender">Gender</label>
 						<select
 							id=""
 							type="text"
-							name="name"
+							name="gender"
+							placeholder="Search by Gender"
+							className="form-control me-2"
+							onChange={(e) => props.setGenderQuery(e.target.value)}
+						>
+							<option value="">All</option>
+							<option value="male">Male</option>
+							<option value="female">Female</option>
+						</select>
+					</div>
+					{/* Gender End */}
+					{/* Role */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="role">Role</label>
+						<select
+							id=""
+							type="text"
+							name="role"
 							placeholder="Search by Role"
 							className="form-control me-2"
-							onChange={(e) => setRoleQuery(e.target.value)}>
+							onChange={(e) => props.setRoleQuery(e.target.value)}>
 							<option value="">All</option>
 							{props.roles.map((role, key) => (
 								<option
@@ -103,10 +148,10 @@ const StaffList = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="6"></th>
+							<th colSpan="8"></th>
 							<th className="text-end">
 								<MyLink
-									linkTo={`/staff/${props.propertyId}/create`}
+									linkTo={`/crm/staff/create`}
 									icon={<PlusSVG />}
 									text="add staff"
 								/>
@@ -116,106 +161,85 @@ const StaffList = (props) => {
 							<th>#</th>
 							<th></th>
 							<th>Name</th>
+							<th>Email</th>
 							<th>Phone</th>
+							<th>Gender</th>
 							<th>Role</th>
 							<th>Date Joined</th>
 							<th className="text-center">Action</th>
 						</tr>
 					</thead>
-					<tbody>
-						{props.staff.data?.map((staff, key) => (
-							<tr key={key}>
-								<td>{props.iterator(key, props.staff)}</td>
-								<td>
-									<Img
-										src={staff.avatar}
-										className="rounded-circle"
-										width="25px"
-										height="25px"
-										alt="Avatar"
-									/>
-								</td>
-								<td>{staff.name}</td>
-								<td>{staff.phone}</td>
-								<td>
-									{staff.roleNames?.map((role, key) => (
-										<span key={key}>
-											{key != 0 && <span className="mx-1">|</span>}
-											{role}
-										</span>
-									))}
-								</td>
-								<td>{staff.createdAt}</td>
-								<td>
-									<div className="d-flex justify-content-center">
-										<React.Fragment>
-											<MyLink
-												linkTo={`/staff/${staff.id}/edit`}
-												icon={<EditSVG />}
-												className="btn-sm"
-											/>
+					{props.staff.data?.length > 0 ? (
+						<tbody>
+							{props.staff.data?.map((staff, key) => (
+								<tr key={key}>
+									<td>{props.iterator(key, props.staff)}</td>
+									<td>
+										<Img
+											src={staff.avatar}
+											className="rounded-circle"
+											width="25px"
+											height="25px"
+											alt="Avatar"
+										/>
+									</td>
+									<td>{staff.name}</td>
+									<td>{staff.email}</td>
+									<td>{staff.phone}</td>
+									<td className="text-capitalize">{staff.gender}</td>
+									<td>
+										{/* Role Names Start */}
+										{staff.roleNames?.map((roleName, key) => (
+											<h6
+												key={key}
+												className="fs-6 d-inline text-wrap me-1">
+												{roleName}
+												{key < staff.roleNames.length - 1 && ","}
+											</h6>
+										))}
+										{/* Role Names End */}
+									</td>
+									<td>{staff.createdAt}</td>
+									<td>
+										<div className="d-flex justify-content-center">
+											<React.Fragment>
+												<MyLink
+													linkTo={`/crm/staff/${staff.id}/edit`}
+													icon={<EditSVG />}
+													className="btn-sm"
+												/>
 
-											<div className="mx-1">
-												{/* Confirm Delete Modal End */}
-												<div
-													className="modal fade"
-													id={`deleteModalStaff${staff.id}`}
-													tabIndex="-1"
-													aria-labelledby="deleteModalLabel"
-													aria-hidden="true">
-													<div className="modal-dialog">
-														<div className="modal-content rounded-4">
-															<div className="modal-header">
-																<h1
-																	id="deleteModalLabel"
-																	className="modal-title fs-5">
-																	Delete {staff.name}
-																</h1>
-																<button
-																	type="button"
-																	className="btn-close"
-																	data-bs-dismiss="modal"
-																	aria-label="Close"></button>
-															</div>
-															<div className="modal-body text-start text-wrap">
-																Are you sure you want to delete {staff.name}.
-															</div>
-															<div className="modal-footer justify-content-between">
-																<button
-																	type="button"
-																	className="mysonar-btn btn-2"
-																	data-bs-dismiss="modal">
-																	Close
-																</button>
-																<button
-																	type="button"
-																	className="btn btn-danger rounded-4"
-																	data-bs-dismiss="modal"
-																	onClick={() => onDeleteStaff(staff)}>
-																	<span className="me-1">{<DeleteSVG />}</span>
-																	Delete
-																</button>
-															</div>
-														</div>
-													</div>
+												<div className="mx-1">
+													<DeleteModal
+														index={`staff${key}`}
+														model={staff}
+														modelName="Staff"
+														onDelete={onDeleteStaff}
+													/>
 												</div>
-												{/* Confirm Delete Modal End */}
-
-												{/* Button trigger modal */}
-												<button
-													type="button"
-													className="mysonar-btn btn-2"
-													data-bs-toggle="modal"
-													data-bs-target={`#deleteModalStaff${staff.id}`}>
-													<DeleteSVG />
-												</button>
-											</div>
-										</React.Fragment>
+											</React.Fragment>
+										</div>
+									</td>
+								</tr>
+							))}
+						</tbody>
+					) : (
+						<tbody>
+							<tr>
+								<td
+									colSpan="10"
+									className="p-0">
+									<div className="bg-white text-center w-100 py-5">
+										<img
+											src="/img/no-data-found.jpg"
+											alt="No entries found"
+											style={{ width: "30%", height: "auto" }}
+										/>
 									</div>
 								</td>
 							</tr>
-						))}
-					</tbody>
+						</tbody>
+					)}
 				</table>
 				{/* Pagination Links */}
 				<PaginationLinks

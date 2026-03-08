@@ -52,6 +52,25 @@ class UserFactory extends Factory
     }
 
     /**
+     * Add Al Account
+     *
+     * @return static
+     */
+    public function al()
+    {
+        return $this->state(fn(array $attributes) => [
+            'name' => 'Alphaxard Gacuuru',
+            'email' => 'alphaxardgacuuru47@gmail.com',
+            'email_verified_at' => now(),
+            'avatar' => 'avatars/male-avatar.png',
+            'phone' => '0700364446',
+            'password' => Hash::make('alphaxardgacuuru47@gmail.com'),
+            'remember_token' => Str::random(10),
+            'gender' => 'male',
+        ]);
+    }
+
+    /**
      * Add Brian Account
      *
      * @return static

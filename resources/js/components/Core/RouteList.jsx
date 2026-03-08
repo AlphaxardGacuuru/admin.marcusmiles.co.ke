@@ -385,24 +385,24 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			component: <AdminCreditNoteEdit {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/staff",
+			path: "/admin/crm/staff",
 			component: <AdminStaff {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/staff/:id/create",
+			path: "/admin/crm/staff/create",
 			component: <AdminStaffCreate {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/staff/:id/edit",
+			path: "/admin/crm/staff/:id/edit",
 			component: <AdminStaffEdit {...GLOBAL_STATE} />,
 		},
-		{ path: "/admin/roles", component: <AdminRoleIndex {...GLOBAL_STATE} /> },
+		{ path: "/admin/crm/roles", component: <AdminRoleIndex {...GLOBAL_STATE} /> },
 		{
-			path: "/admin/roles/create",
+			path: "/admin/crm/roles/create",
 			component: <AdminRoleCreate {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/roles/:id/edit",
+			path: "/admin/crm/roles/:id/edit",
 			component: <AdminRoleEdit {...GLOBAL_STATE} />,
 		},
 		{

@@ -4,43 +4,102 @@ import { Link, useHistory } from "react-router-dom"
 import Btn from "@/components/Core/Btn"
 import MyLink from "@/components/Core/MyLink"
 
+import BackSVG from "@/svgs/BackSVG"
+import PlusSVG from "@/svgs/PlusSVG"
+
 const create = (props) => {
 	const router = useHistory()
 
 	// Declare states
-	const [name, setName] = useState("")
-	const [description, setDescription] = useState("")
+	const [name, setName] = useState()
+	const [permissionIds, setPermissionIds] = useState([])
 	const [permissions, setPermissions] = useState([])
 	const [loading, setLoading] = useState()
-
-	var entities = [
-		"finance",
-		"instructors",
-		"students",
-		"faculties",
-		"courses",
-		"sessions",
-		"chat",
-		"staff",
-		"roles",
-	]
-
-	var CRUD = ["read", "create", "update", "delete"]
 
 	useEffect(() => {
 		// Set page
 		props.setPage({ name: "Create Role", path: ["roles", "create"] })
+
+		// Fetch Permissions
+		props.get("permissions", setPermissions)
 	}, [])
 
 	// Handle Permission checkboxes
-	const handleSetPermissions = (permission) => {
-		var exists = permissions.includes(permission)
+	const handleSetPermissions = (permissionId) => {
+		var exists = permissionIds.includes(permissionId)
 
-		var newPermissions = exists
-			? permissions.filter((item) => item != permission)
-			: [...permissions, permission]
+		var newPermissionIds = exists
+			? permissionIds.filter((item) => item != permissionId)
+			: [...permissionIds, permissionId]
 
-		setPermissions(newPermissions)
+		setPermissionIds(newPermissionIds)
+	}
+
+	// Group permissions by entity (model name)
+	const getGroupedPermissions = () => {
+		const grouped = {}
+
+		permissions.forEach((permission) => {
+			const parts = permission.name.split(" ")
+			const action = parts[0] // view, create, update, delete
+			const entity = parts.slice(1).join(" ") // rest is the entity name
+
+			if (!grouped[entity]) {
+				grouped[entity] = []
+			}
+
+			grouped[entity].push({
+				id: permission.id,
+				name: permission.name,
+				action: action,
+			})
+		})
+
+		return grouped
+	}
+
+	// Handle Select All per Entity/Model
+	const handleSelectAllForEntity = (isChecked, entityName) => {
+		const groupedPermissions = getGroupedPermissions()
+		const entityPermissions = groupedPermissions[entityName] || []
+
+		if (isChecked) {
+			// Add all entity permissions to permissionIds
+			const entityPermissionIds = entityPermissions.map((p) => p.id)
+			const newPermissionIds = [
+				...new Set([...permissionIds, ...entityPermissionIds]),
+			]
+			setPermissionIds(newPermissionIds)
+		} else {
+			// Remove all entity permissions from permissionIds
+			const entityPermissionIds = entityPermissions.map((p) => p.id)
+			const newPermissionIds = permissionIds.filter(
+				(id) => !entityPermissionIds.includes(id)
+			)
+			setPermissionIds(newPermissionIds)
+		}
+	}
+
+	// Handle Master Select All
+	const handleMasterSelectAll = (isChecked) => {
+		if (isChecked) {
+			// Select all permissions
+			const allPermissionIds = permissions.map((p) => p.id)
+			setPermissionIds(allPermissionIds)
+		} else {
+			// Deselect all permissions
+			setPermissionIds([])
+		}
+	}
+
+	// Check if all permissions for an entity are selected
+	const isEntityFullySelected = (entityName) => {
+		const groupedPermissions = getGroupedPermissions()
+		const entityPermissions = groupedPermissions[entityName] || []
+		return (
+			entityPermissions.length > 0 &&
+			entityPermissions.every((p) => permissionIds.includes(p.id))
+		)
 	}
 
 	const onSubmit = (e) => {
@@ -52,15 +111,14 @@ const create = (props) => {
 		// Send data to UsersController
 		Axios.post(`/api/roles`, {
 			name: name,
-			description: description,
-			permissions: permissions,
+			permissionIds: permissionIds,
 		})
 			.then((res) => {
 				// Remove loader for button
 				setLoading(false)
 				props.setMessages([res.data.message])
 				// Redirect
-				setTimeout(() => router.push("/admin/roles"), 500)
+				setTimeout(() => router.push("/super/roles"), 500)
 			})
 			.catch((err) => {
 				// Remove loader for button
@@ -71,8 +129,8 @@ const create = (props) => {
 
 	return (
 		<div className="row">
-			<div className="col-sm-4"></div>
-			<div className="col-sm-4">
+			<div className="col-sm-2"></div>
+			<div className="col-sm-8">
 				<form onSubmit={onSubmit}>
 					<input
 						type="text"
@@ -83,56 +141,92 @@ const create = (props) => {
 						required={true}
 					/>
 
-					<input
-						type="text"
-						name="description"
-						placeholder="Description"
-						className="form-control mb-2 me-2"
-						onChange={(e) => setDescription(e.target.value)}
-						required={true}
-					/>
-
 					{/* Permissions */}
-					<div className="form-group">
+					<div className="form-group mt-4">
 						<label
 							htmlFor=""
-							className="float-start ms-1">
+							className="float-start fw-bold ms-1">
 							Permissions
 						</label>
 						<div className="table-responsive hidden-scroll">
 							<table className="table">
 								<thead>
 									<tr>
+										<th>
+											<label className="form-check">
+												<input
+													type="checkbox"
+													name="masterSelectAll"
+													className="form-check-input"
+													checked={
+														permissions.length > 0 &&
+														permissionIds.length === permissions.length
+													}
+													onChange={(e) =>
+														handleMasterSelectAll(e.target.checked)
+													}
+												/>
+											</label>
+										</th>
 										<th>Entity</th>
-										<th>Read</th>
-										<th>Create</th>
-										<th>Update</th>
-										<th>Delete</th>
+										<th
+											colspan="4"
+											className="text-center">
+											Actions
+										</th>
 									</tr>
 								</thead>
 								<tbody>
-									{entities.map((entity, key) => (
-										<tr key={key}>
-											{/* Entity Title */}
-											<td className="text-capitalize">
-												<b>{entity.replace("_", " ")}</b>
-											</td>
-											{/* Entity Title End */}
-											{CRUD.map((item, key) => (
-												<td key={key}>
-													<label className="px-3">
+									{Object.entries(getGroupedPermissions()).map(
+										([entityName, entityPermissions], key) => (
+											<tr key={key}>
+												<td>
+													<label className="form-check">
 														<input
 															type="checkbox"
-															name="entities"
-															onClick={(e) =>
-																handleSetPermissions(`${entity}.${item}`)
+															name="selectAllForEntity"
+															className="form-check-input"
+															checked={isEntityFullySelected(entityName)}
+															onChange={(e) =>
+																handleSelectAllForEntity(
+																	e.target.checked,
+																	entityName
+																)
 															}
 														/>
 													</label>
 												</td>
-											))}
-										</tr>
-									))}
+												{/* Entity Title */}
+												<td>
+													<div className="text-capitalize fw-bold">
+														{entityName.replace(/_/g, " ")}
+													</div>
+												</td>
+												{/* Entity Title End */}
+												{entityPermissions.map((permission) => (
+													<td>
+														<label
+															key={permission.id}
+															className="form-check form-check-inline">
+															<input
+																type="checkbox"
+																name="permissions"
+																value={permission.id}
+																checked={permissionIds.includes(permission.id)}
+																onChange={(e) =>
+																	handleSetPermissions(parseInt(e.target.value))
+																}
+																className="form-check-input me-1"
+															/>
+															<span className="form-check-label text-capitalize">
+																{permission.action}
+															</span>
+														</label>
+													</td>
+												))}
+											</tr>
+										)
+									)}
 								</tbody>
 							</table>
 						</div>
@@ -141,6 +235,7 @@ const create = (props) => {
 
 					<div className="d-flex justify-content-end">
 						<Btn
+							icon={<PlusSVG />}
 							text="add role"
 							loading={loading}
 						/>
@@ -149,12 +244,14 @@ const create = (props) => {
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
 							linkTo="/roles"
-							text="back to role"
+							icon={<BackSVG />}
+							text="back to roles"
 						/>
 					</div>
 					<div className="col-sm-4"></div>
 				</form>
 			</div>
+			<div className="col-sm-2"></div>
 		</div>
 	)
 }

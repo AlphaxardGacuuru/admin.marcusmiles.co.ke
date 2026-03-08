@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\StaffResource;
 use App\Http\Services\StaffService;
 use Illuminate\Http\Request;
 
@@ -19,7 +20,13 @@ class StaffController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->service->index($request);
+        [$status, $message, $staff] = $this->service->index($request);
+
+        return StaffResource::collection($staff)
+            ->additional([
+                "status" => $status,
+                "message" => $message,
+            ]);
     }
 
     /**
@@ -39,14 +46,11 @@ class StaffController extends Controller
 
         [$saved, $message, $staff, $code] = $this->service->store($request);
 
-        $title = $saved ? "message" : "errors";
-        $message = $saved ? $message : [$message];
-
-        return response([
-            "status" => $saved,
-            $title => $message,
-            "data" => $staff,
-        ], $code);
+        return (new StaffResource($staff))
+            ->additional([
+                "status" => $saved,
+                "message" => $message,
+            ]);
     }
 
     /**
@@ -57,7 +61,13 @@ class StaffController extends Controller
      */
     public function show($id)
     {
-        return $this->service->show($id);
+        [$status, $message, $staff] = $this->service->show($id);
+
+        return (new StaffResource($staff))
+            ->additional([
+                "status" => $status,
+                "message" => $message,
+            ]);
     }
 
     /**
@@ -78,11 +88,11 @@ class StaffController extends Controller
 
         [$saved, $message, $staff] = $this->service->update($request, $id);
 
-        return response([
-            "status" => $saved,
-            "message" => $message,
-            "data" => $staff,
-        ], 200);
+        return (new StaffResource($staff))
+            ->additional([
+                "status" => $saved,
+                "message" => $message,
+            ]);
     }
 
     /**
@@ -91,22 +101,14 @@ class StaffController extends Controller
      * @param  \App\Models\Staff  $staff
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
-        [$deleted, $message, $staff] = $this->service->destroy($request, $id);
+        [$deleted, $message, $staff] = $this->service->destroy($id);
 
-        return response([
-            "status" => $deleted,
-            "message" => $message,
-            "data" => $staff,
-        ], 200);
-    }
-
-    /*
-     * Get Units by Property ID
-     */
-    public function byPropertyId($id)
-    {
-        return $this->service->byPropertyId($id);
+        return (new StaffResource($staff))
+            ->additional([
+                "status" => $deleted,
+                "message" => $message,
+            ]);
     }
 }

@@ -1,6 +1,5 @@
 <?php
 
-use App\Http\Controllers\CardTransactionController;
 use App\Http\Controllers\ClientController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\CreditNoteController;
@@ -14,15 +13,12 @@ use App\Http\Controllers\IssueCommentController;
 use App\Http\Controllers\IssueCommentLikeController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\IssueStageController;
-use App\Http\Controllers\KopokopoRecipientController;
-use App\Http\Controllers\KopokopoTransferController;
-use App\Http\Controllers\MPESATransactionController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PracticalCompletionCertificateController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectServiceProviderController;
-use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\RequisitionController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\ServiceProviderController;
@@ -32,8 +28,6 @@ use App\Http\Controllers\StageController;
 use App\Http\Controllers\StatusReportController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\SupplierGoodController;
-use App\Http\Controllers\TenantController;
-use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WageSheetController;
 use App\Http\Controllers\WaterReadingController;
@@ -82,20 +76,14 @@ Route::apiResources([
 	"site-visit-reports" => SiteVisitReportController::class,
 	"requisitions" => RequisitionController::class,
 
-    "properties" => PropertyController::class,
-    "units" => UnitController::class,
-    "tenants" => TenantController::class,
     "invoices" => InvoiceController::class,
     "water-readings" => WaterReadingController::class,
-    "card-transactions" => CardTransactionController::class,
-    "mpesa-transactions" => MPESATransactionController::class,
     "payments" => PaymentController::class,
     "credit-notes" => CreditNoteController::class,
-    "kopokopo-recipients" => KopokopoRecipientController::class,
-    "kopokopo-transfers" => KopokopoTransferController::class,
     "users" => UserController::class,
     "staff" => StaffController::class,
     "roles" => RoleController::class,
+    "permissions" => PermissionController::class,
     "configurations" => ConfigurationController::class,
     'notifications' => NotificationController::class,
 ]);
@@ -115,10 +103,6 @@ Route::get("work-plans/chart/{id}", [WorkPlanController::class, "chart"]);
 * Issues
 */ 
 Route::put("issues/reorder/{id}", [IssueController::class, "reorder"]);
-
-// Kopokopo STK Push
-Route::post("stk-push", [MPESATransactionController::class, 'stkPush']);
-Route::post("kopokopo-initiate-transfer", [KopokopoTransferController::class, 'initiateTransfer']);
 
 /*
  * Filepond Controller

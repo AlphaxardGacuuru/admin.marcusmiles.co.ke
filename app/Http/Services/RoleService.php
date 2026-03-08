@@ -3,7 +3,8 @@
 namespace App\Http\Services;
 
 use App\Http\Resources\RoleResource;
-use App\Models\Role;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class RoleService extends Service
 {
@@ -17,14 +18,19 @@ class RoleService extends Service
                 ->orderBy("id", "DESC")
                 ->get();
 
-            return response([
-                "data" => $roles,
-            ], 200);
+            return $roles;
         }
 
-        $getRoles = Role::orderby("id", "DESC")->paginate(20);
+        $query = new Role;
 
-        return RoleResource::collection($getRoles);
+        $query = $this->search($query, $request);
+
+        $roles = $query
+            ->orderBy("id", "ASC")
+            ->paginate(20)
+            ->appends($request->all());
+
+        return $roles;
     }
 
     /*
@@ -44,12 +50,12 @@ class RoleService extends Service
     {
         $role = new Role;
         $role->name = $request->input("name");
-        $role->description = $request->input("description");
-        $role->permissions = $request->input("permissions");
-        $role->created_by = $this->id;
+        $role->guard_name = "web"; // Use 'web' guard to match auth configuration
         $saved = $role->save();
 
-        $message = $role->name . ' created successfully!';
+        $role->syncPermissions($request->input("permissionIds"));
+
+        $message = $role->name . ' Created Successfully!';
 
         return [$saved, $message, $role];
     }
@@ -59,24 +65,20 @@ class RoleService extends Service
      */
     public function update($request, $id)
     {
-
         $role = Role::find($id);
 
         if ($request->filled("name")) {
             $role->name = $request->input("name");
         }
 
-        if ($request->filled("description")) {
-            $role->description = $request->input("description");
-        }
+        // Ensure guard_name is set to 'web' to match auth configuration
+        $role->guard_name = "web";
 
-        if ($request->filled("permissions")) {
-            $role->permissions = $request->input("permissions");
-        }
+        $role->syncPermissions($request->input("permissionIds"));
 
         $saved = $role->save();
 
-        $message = $role->name . " updated";
+        $message = $role->name . " Updated";
 
         return [$saved, $message, $role];
     }
@@ -93,5 +95,19 @@ class RoleService extends Service
         $message = $role->name . " deleted";
 
         return [$deleted, $message, $role];
+    }
+
+    /*
+     * Handle Search
+     */
+    public function search($query, $request)
+    {
+        $name = $request->input("name");
+
+        if ($request->filled("name")) {
+            $query = $query->where("name", "LIKE", "%" . $name . "%");
+        }
+
+        return $query;
     }
 }

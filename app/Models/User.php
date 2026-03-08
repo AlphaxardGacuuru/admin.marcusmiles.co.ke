@@ -11,10 +11,11 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes, HasRoles;
 
     /**
      * The attributes that are mass assignable.
@@ -87,36 +88,6 @@ class User extends Authenticatable
      * Relationships
      */
 
-    public function properties()
-    {
-        return $this->hasMany(Property::class);
-    }
-
-    public function property()
-    {
-        return $this->belongsToMany(Property::class, "user_properties");
-    }
-
-    public function units()
-    {
-        return $this->belongsToMany(Unit::class, 'user_units');
-    }
-
-    public function roles()
-    {
-        return $this->belongsToMany(Role::class, 'user_roles');
-    }
-
-    public function userUnits()
-    {
-        return $this->hasMany(UserUnit::class);
-    }
-
-    public function userRoles()
-    {
-        return $this->hasMany(UserRole::class);
-    }
-
     public function goods()
     {
         return $this->belongsToMany(Good::class, 'supplier_goods', 'supplier_id', 'good_id');
@@ -135,30 +106,4 @@ class User extends Authenticatable
     /*
      * Custom functions
      */
-
-    public function currentUnit()
-    {
-        return $this->userUnits()
-            ->whereNull("vacated_at")
-            ->orderBy("id", "DESC")
-            ->first()
-        ?->unit;
-    }
-
-    // Returns an array of permissions
-    public function permissions()
-    {
-        $permissions = [];
-
-        foreach ($this->userRoles as $userRole) {
-            $roleEntities = $userRole->role->permissions;
-
-            array_push($permissions, $roleEntities);
-        }
-
-        // Combine array and get unique
-        return collect($permissions)
-            ->collapse()
-            ->unique();
-    }
 }

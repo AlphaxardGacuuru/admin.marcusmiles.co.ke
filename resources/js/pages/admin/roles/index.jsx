@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react"
+import { useLocation } from "react-router-dom/cjs/react-router-dom.min"
 
 import MyLink from "@/components/Core/MyLink"
 import DeleteModal from "@/components/Core/DeleteModal"
@@ -12,12 +13,14 @@ import ViewSVG from "@/svgs/ViewSVG"
 import EditSVG from "@/svgs/EditSVG"
 
 const index = (props) => {
+	const location = useLocation()
+
 	// Get Role
 	const [roles, setRoles] = useState([])
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Roles", path: ["role"] })
+		props.setPage({ name: "Roles", path: ["roles"] })
 		props.getPaginated("roles", setRoles)
 	}, [])
 
@@ -35,6 +38,7 @@ const index = (props) => {
 			})
 		})
 	}
+
 	return (
 		<div className="row">
 			<div className="col-sm-12">
@@ -62,10 +66,10 @@ const index = (props) => {
 					<table className="table table-hover">
 						<thead>
 							<tr>
-								<th colSpan="4"></th>
+								<th colSpan="3"></th>
 								<th className="text-end">
 									<MyLink
-										linkTo={`/roles/create`}
+										linkTo={`/crm/roles/create`}
 										icon={<PlusSVG />}
 										text="add role"
 									/>
@@ -74,9 +78,8 @@ const index = (props) => {
 							<tr>
 								<th>#</th>
 								<th>Name</th>
-								<th>Description</th>
 								<th>Permissions</th>
-								<th className="text-center">Action</th>
+								<th>Action</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -84,29 +87,22 @@ const index = (props) => {
 								<tr key={key}>
 									<td>{key + 1}</td>
 									<td>{role.name}</td>
-									<td>{role.description}</td>
 									<td>
 										<div className="d-flex flex-wrap">
 											{role.permissions.map((permission, key) => (
 												<div
 													key={key}
 													className="text-secondary p-1">
-													| {permission}
+													| {permission.name}
 												</div>
 											))}
 										</div>
 									</td>
 									<td>
-										<div className="d-flex justify-content-center">
+										<div className="d-flex justify-content-end">
 											<React.Fragment>
 												<MyLink
-													linkTo={`/roles/${role.id}/show`}
-													icon={<ViewSVG />}
-													className="btn-sm me-1"
-												/>
-
-												<MyLink
-													linkTo={`/roles/${role.id}/edit`}
+													linkTo={`/crm/roles/${role.id}/edit`}
 													icon={<EditSVG />}
 													className="btn-sm"
 												/>

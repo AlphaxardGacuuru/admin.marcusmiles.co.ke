@@ -20,7 +20,7 @@ const edit = (props) => {
 	// Get Faculties and Departments
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Edit Staff", path: ["staff", "edit"] })
+		props.setPage({ name: "Edit Staff", path: ["crm/staff", "edit"] })
 		// Fetch Staff
 		Axios.get(`api/staff/${id}`)
 			.then((res) => {
@@ -163,8 +163,8 @@ const edit = (props) => {
 
 					<center className="mb-5">
 						<MyLink
-							linkTo={`/properties/${staff.propertyId}/show`}
-							text="back to property"
+							linkTo={`/crm/staff`}
+							text="back to staff"
 						/>
 					</center>
 

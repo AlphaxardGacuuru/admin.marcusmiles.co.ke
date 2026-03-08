@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\RoleResource;
 use App\Http\Services\RoleService;
 use App\Models\Role;
 use Illuminate\Http\Request;
@@ -13,6 +14,7 @@ class RoleController extends Controller
     {
         //
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -20,7 +22,9 @@ class RoleController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->service->index($request);
+        $roles = $this->service->index($request);
+
+        return RoleResource::collection($roles);
     }
 
     /**
@@ -34,7 +38,8 @@ class RoleController extends Controller
         $this->validate($request, [
             "name" => "required|string|unique:roles",
             "description" => "string",
-            "permissions" => "required",
+            "permissionIds" => "required|array",
+            "permissionIds.*" => "exists:permissions,id",
         ]);
 
         [$saved, $message, $role] = $this->service->store($request);

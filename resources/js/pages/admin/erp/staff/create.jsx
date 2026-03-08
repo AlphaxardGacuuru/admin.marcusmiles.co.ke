@@ -22,7 +22,7 @@ const create = (props) => {
 	// Get Faculties and Departments
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Add Staff", path: ["staff", "create"] })
+		props.setPage({ name: "Add Staff", path: ["crm/staff", "create"] })
 		props.get("roles", setRoles)
 	}, [])
 
@@ -57,7 +57,7 @@ const create = (props) => {
 				// Show messages
 				props.setMessages([res.data.message])
 				// Redirect to Staff
-				setTimeout(() => history.push(`/admin/properties/${id}/show`), 500)
+				setTimeout(() => history.push(`/admin/crm/staff`), 500)
 			})
 			.catch((err) => {
 				setLoading(false)
@@ -141,7 +141,7 @@ const create = (props) => {
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo={`/properties/${id}/show`}
+							linkTo={`/crm/staff`}
 							text="back to staff"
 						/>
 					</div>
