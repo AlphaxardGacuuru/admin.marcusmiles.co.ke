@@ -105,7 +105,7 @@ const LoginPopUp = (props) => {
 									id="email"
 									type="text"
 									placeholder="Email"
-									className="form-control"
+									className="form-control mb-2"
 									name="email"
 									value={email}
 									onChange={(e) => setEmail(e.target.value)}
@@ -117,7 +117,7 @@ const LoginPopUp = (props) => {
 									id="password"
 									type="password"
 									placeholder="Password"
-									className="form-control"
+									className="form-control mb-2"
 									name="password"
 									value={password}
 									onChange={(e) => setPassword(e.target.value)}
@@ -126,7 +126,7 @@ const LoginPopUp = (props) => {
 
 								<Btn
 									type="submit"
-									className="mt-2 w-75"
+									className="w-75"
 									text="Login"
 									loading={loading}
 								/>
@@ -134,7 +134,7 @@ const LoginPopUp = (props) => {
 
 							<Link
 								to="/"
-								className="btn mysonar-btn mx-auto mt-1 w-50">
+								className="btn mysonar-btn mx-auto mt-2 w-50">
 								<BackSVG />
 								<span className="me-">back to home</span>
 							</Link>

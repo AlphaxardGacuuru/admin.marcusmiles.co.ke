@@ -20,8 +20,4 @@ const MyLink = ({ linkTo, text, icon, className }) => {
 	)
 }
 
-MyLink.defaultProps = {
-	linkTo: "/",
-}
-
 export default MyLink

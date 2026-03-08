@@ -8,7 +8,7 @@ const Btn = ({
 	icon,
 	text,
 	onClick,
-	loading,
+	loading = false,
 	dataBsToggle,
 	dataBsTarget,
 	tooltipText, // Add tooltipText prop
@@ -50,11 +50,6 @@ const Btn = ({
 			)}
 		</button>
 	)
-}
-
-Btn.defaultProps = {
-	loading: false,
-	disabled: false,
 }
 
 export default Btn

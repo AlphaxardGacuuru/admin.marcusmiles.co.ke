@@ -37,18 +37,14 @@
 		  type="application/manifest+json"
 		  href="manifest.webmanifest">
 
-	<!-- Stylesheets -->
+    <!-- Stylesheets -->
+    @viteReactRefresh
+    @vite(['resources/sass/app.scss', 'resources/js/app.js'])
 
-	<link href="{{ asset('css/app.css') }}"
-		  rel="stylesheet">
-	<link rel="stylesheet"
-		  href="{{ asset('css/bootstrap.min.css') }}" />
-	<link rel="stylesheet"
-		  href="{{ asset('css/font-awesome.min.css') }}" />
-	<link rel="stylesheet"
-		  href="{{ asset('css/owl.carousel.css') }}" />
-	<link rel="stylesheet"
-		  href="{{ asset('css/style.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/font-awesome.min.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/owl.carousel.css') }}" />
+    <link rel="stylesheet" href="{{ asset('css/style.css') }}" />
 
 	<!-- Google Fonts -->
 	<link href="https://fonts.googleapis.com/css?family=Raleway:400,400i,500,500i,600,600i,700,700i,800,800i"
@@ -81,19 +77,16 @@
 	<div id="app"></div>
 
 	<!-- Scripts -->
-	<script src="{{ asset('js/app.js') }}"
-			defer></script>
-
 	{{-- Chart.js --}}
 	<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 	<!--====== Javascripts & Jquery ======-->
-	<script src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
-	<script src="{{ asset('js/bootstrap.min.js') }}"></script>
-	<script src="{{ asset('js/mixitup.min.js') }}"></script>
-	<script src="{{ asset('js/circle-progress.min.js') }}"></script>
-	<script src="{{ asset('js/owl.carousel.min.js') }}"></script>
-	<script src="{{ asset('js/main.js') }}"></script>
+    <script src="{{ asset('js/jquery-3.2.1.min.js') }}"></script>
+    <script src="{{ asset('js/bootstrap.min.js') }}"></script>
+    <script src="{{ asset('js/mixitup.min.js') }}"></script>
+    <script src="{{ asset('js/circle-progress.min.js') }}"></script>
+    <script src="{{ asset('js/owl.carousel.min.js') }}"></script>
+    <script src="{{ asset('js/main.js') }}"></script>
 
 </body>
 

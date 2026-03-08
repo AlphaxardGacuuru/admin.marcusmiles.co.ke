@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from "react"
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min"
 
-import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd"
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd"
 
 import Btn from "@/components/Core/Btn"
 

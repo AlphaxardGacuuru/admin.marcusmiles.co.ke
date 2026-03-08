@@ -1,4 +1,10 @@
-window._ = require("lodash")
+import _ from "lodash"
+import $ from "jquery"
+import "bootstrap/dist/js/bootstrap.bundle"
+import CryptoJS from "crypto-js"
+import axios from "axios"
+
+window._ = _
 
 /**
  * We'll load jQuery and the Bootstrap jQuery plugin which provides support
@@ -7,10 +13,7 @@ window._ = require("lodash")
  */
 
 try {
-	window.Popper = require("popper.js").default
-	window.$ = window.jQuery = require("jquery")
-
-	require("bootstrap")
+	window.$ = window.jQuery = $
 } catch (e) {}
 
 /**
@@ -30,8 +33,6 @@ const getLocalStorage = (state) => {
 
 // Decrypt Sanctum Token
 const decryptedToken = () => {
-	var CryptoJS = require("crypto-js")
-
 	const secretKey = "MarcusMilesAuthorizationToken"
 
 	// Decrypt
@@ -40,9 +41,9 @@ const decryptedToken = () => {
 	return bytes.toString(CryptoJS.enc.Utf8)
 }
 
-window.Axios = require("axios")
+window.Axios = axios
 
-// window.Axios.defaults.baseURL = process.env.MIX_APP_URL
+// window.Axios.defaults.baseURL = import.meta.env.VITE_APP_URL
 
 window.Axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest"
 
@@ -64,8 +65,8 @@ Axios.defaults.withCredentials = true
 
 // window.Echo = new Echo({
 // 	broadcaster: "pusher",
-// 	key: process.env.MIX_PUSHER_APP_KEY,
-// 	cluster: process.env.MIX_PUSHER_APP_CLUSTER,
+// 	key: import.meta.env.VITE_PUSHER_APP_KEY,
+// 	cluster: import.meta.env.VITE_PUSHER_APP_CLUSTER,
 // 	wsHost: window.location.hostname,
 // 	wsPort: 6004,
 // 	forceTLS: false,

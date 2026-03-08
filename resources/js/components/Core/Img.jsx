@@ -14,9 +14,4 @@ const Img = ({ src, width, height, className, style, alt }) => {
 	)
 }
 
-Img.defaultProps = {
-	src: "/storage/img/party-people.png",
-	alt: "image",
-}
-
 export default Img
