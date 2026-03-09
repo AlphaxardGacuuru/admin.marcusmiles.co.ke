@@ -23,7 +23,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Add Good",
-			path: [`goods`, "create"],
+			path: [`erp/goods`, "create"],
 		})
 	}, [])
 

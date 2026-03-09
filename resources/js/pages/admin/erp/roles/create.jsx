@@ -1,43 +1,27 @@
 import React, { useEffect, useState } from "react"
-import { Link, useHistory, useParams } from "react-router-dom"
+import { Link, useHistory } from "react-router-dom"
 
 import Btn from "@/components/Core/Btn"
 import MyLink from "@/components/Core/MyLink"
 
 import BackSVG from "@/svgs/BackSVG"
+import PlusSVG from "@/svgs/PlusSVG"
 
-const edit = (props) => {
-	const { id } = useParams()
+const create = (props) => {
+	const router = useHistory()
 
 	// Declare states
-	const [role, setRole] = useState({})
-	const [name, setName] = useState("")
+	const [name, setName] = useState()
 	const [permissionIds, setPermissionIds] = useState([])
 	const [permissions, setPermissions] = useState([])
 	const [loading, setLoading] = useState()
 
-	const getRole = () => {
-		Axios.get(`api/roles/${id}`)
-			.then((res) => {
-				const roleData = res.data.data
-				setRole(roleData)
-
-				// Set the role's existing permission IDs
-				const existingPermissionIds = roleData.permissions.map((p) => p.id)
-				setPermissionIds(existingPermissionIds)
-			})
-			.catch((err) => props.getErrors(err))
-	}
-
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Edit Role", path: ["roles", "edit"] })
+		props.setPage({ name: "Create Role", path: ["crm/roles", "create"] })
 
-		// Fetch All Available Permissions
+		// Fetch Permissions
 		props.get("permissions", setPermissions)
-
-		// Fetch Role Data (this will set the existing permissions)
-		getRole()
 	}, [])
 
 	// Handle Permission checkboxes
@@ -125,7 +109,7 @@ const edit = (props) => {
 		setLoading(true)
 
 		// Send data to UsersController
-		Axios.put(`api/roles/${id}`, {
+		Axios.post(`/api/roles`, {
 			name: name,
 			permissionIds: permissionIds,
 		})
@@ -133,8 +117,8 @@ const edit = (props) => {
 				// Remove loader for button
 				setLoading(false)
 				props.setMessages([res.data.message])
-				// Fetch Data
-				getRole()
+				// Redirect
+				setTimeout(() => router.push("/super/roles"), 500)
 			})
 			.catch((err) => {
 				// Remove loader for button
@@ -152,7 +136,6 @@ const edit = (props) => {
 						type="text"
 						name="name"
 						placeholder="Name"
-						defaultValue={role.name}
 						className="form-control mb-2 me-2"
 						onChange={(e) => setName(e.target.value)}
 						required={true}
@@ -252,14 +235,15 @@ const edit = (props) => {
 
 					<div className="d-flex justify-content-end">
 						<Btn
-							text="edit role"
+							icon={<PlusSVG />}
+							text="add role"
 							loading={loading}
 						/>
 					</div>
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo="/roles"
+							linkTo="/crm/roles"
 							icon={<BackSVG />}
 							text="back to roles"
 						/>
@@ -272,4 +256,4 @@ const edit = (props) => {
 	)
 }
 
-export default edit
+export default create

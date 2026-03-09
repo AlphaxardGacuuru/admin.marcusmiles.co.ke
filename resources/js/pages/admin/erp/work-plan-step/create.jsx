@@ -23,7 +23,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Add Work Plan Step Item",
-			path: ["projects"],
+			path: ["erp/projects"],
 		})
 
 		// Fetch Work Plan
@@ -33,7 +33,7 @@ const create = (props) => {
 				// Set page
 				props.setPage({
 					name: "Add Work Plan Step Item",
-					path: ["projects", `projects/${res.data.data.projectId}/view`, "create"],
+					path: ["erp/projects", `erp/projects/${res.data.data.projectId}/view`, "create"],
 				})
 			})
 			.catch((err) => props.getErrors(err))

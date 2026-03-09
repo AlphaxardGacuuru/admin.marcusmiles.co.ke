@@ -17,7 +17,7 @@ const edit = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Edit Client", path: ["clients", "edit"] })
+		props.setPage({ name: "Edit Client", path: ["crm/clients", "edit"] })
 		// Fetch Client
 		props.get(`clients/${id}`, setClient)
 	}, [])
@@ -100,7 +100,7 @@ const edit = (props) => {
 
 					<center className="mb-5">
 						<MyLink
-							linkTo={`/erp/clients`}
+							linkTo={`/crm/clients`}
 							text="back to clients"
 						/>
 					</center>

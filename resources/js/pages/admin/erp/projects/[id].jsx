@@ -21,7 +21,7 @@ const show = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "View Project", path: ["projects", "view"] })
+		props.setPage({ name: "View Project", path: ["erp/projects", "view"] })
 		props.get(`projects/${id}`, setProject)
 		props.get(`work-plans/chart/${id}`, setWorkPlanChart)
 		props.getPaginated(`work-plans?projectId=${id}`, setWorkPlans)

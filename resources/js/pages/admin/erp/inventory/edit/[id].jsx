@@ -22,7 +22,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Inventory",
-			path: ["projects", "edit"],
+			path: ["erp/inventories", "edit"],
 		})
 
 		// Fetch Inventory
@@ -30,7 +30,7 @@ const edit = (props) => {
 			// Set page
 			props.setPage({
 				name: "Edit Inventory",
-				path: ["projects", `projects/${res.data.data.projectId}/show`, "edit"],
+				path: ["erp/projects", `erp/projects/${res.data.data.projectId}/view`, "edit"],
 			})
 
 			setInventory(res.data.data)

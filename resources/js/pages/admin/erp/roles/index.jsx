@@ -20,7 +20,7 @@ const index = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Roles", path: ["roles"] })
+		props.setPage({ name: "Roles", path: ["crm/roles"] })
 		props.getPaginated("roles", setRoles)
 	}, [])
 
@@ -99,7 +99,7 @@ const index = (props) => {
 										</div>
 									</td>
 									<td>
-										<div className="d-flex justify-content-end">
+										<div className="d-flex justify-content-center">
 											<React.Fragment>
 												<MyLink
 													linkTo={`/crm/roles/${role.id}/edit`}

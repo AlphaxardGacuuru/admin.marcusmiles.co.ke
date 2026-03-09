@@ -24,7 +24,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Add Work Plan Item",
-			path: ["projects", `projects/${id}/view`, "create"],
+			path: ["erp/projects", `erp/projects/${id}/view`, "create"],
 		})
 	}, [])
 

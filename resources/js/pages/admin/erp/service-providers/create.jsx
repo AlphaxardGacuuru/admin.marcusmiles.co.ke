@@ -26,7 +26,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Add Service Provider",
-			path: ["service-providers", "create"],
+			path: ["erp/service-providers", "create"],
 		})
 	}, [])
 

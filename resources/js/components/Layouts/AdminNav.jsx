@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect, useState, useRef } from "react"
 import { Link, useLocation, useHistory, withRouter } from "react-router-dom"
 import CryptoJS from "crypto-js"
 
@@ -24,6 +24,26 @@ const AdminMenu = (props) => {
 
 	const [bottomMenu, setBottomMenu] = useState()
 	const [avatarVisibility, setAvatarVisibility] = useState("")
+
+	const [notificationDropdown, setNotificationDropdown] = useState(false)
+	const [avatarDropdown, setAvatarDropdown] = useState(false)
+	const notificationRef = useRef()
+	const avatarRef = useRef()
+
+	useEffect(() => {
+		const handleClickOutside = (event) => {
+			if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+				setNotificationDropdown(false)
+			}
+			if (avatarRef.current && !avatarRef.current.contains(event.target)) {
+				setAvatarDropdown(false)
+			}
+		}
+		document.addEventListener("mousedown", handleClickOutside)
+		return () => {
+			document.removeEventListener("mousedown", handleClickOutside)
+		}
+	}, [])
 
 	useEffect(() => {
 		var isInAdminPage =
@@ -57,6 +77,7 @@ const AdminMenu = (props) => {
 	const onDeleteNotifications = (id) => {
 		// Clear the notifications array
 		setNotifications([])
+		setNotificationDropdown(false)
 
 		Axios.delete(`/api/notifications/${id}`).then((res) => {
 			// Update Notifications
@@ -158,21 +179,25 @@ const AdminMenu = (props) => {
 										<div className="header-social-area d-flex align-items-center">
 											<>
 												{/* Notification Dropdown */}
-												<div className="dropdown-center">
+												<div className="dropdown-center" ref={notificationRef}>
 													<Link
 														to="#"
 														role="button"
 														id="dropdownMenua"
-														className="text-white"
-														data-bs-toggle="dropdown"
+														className={`text-white ${notificationDropdown ? "show" : ""}`}
 														aria-haspopup="true"
-														aria-expanded="false"
+														aria-expanded={notificationDropdown ? "true" : "false"}
 														style={{
 															textAlign: "center",
 															fontWeight: "100",
 															position: "relative",
 														}}
-														onClick={onNotification}>
+														onClick={(e) => {
+															e.preventDefault();
+															setNotificationDropdown(!notificationDropdown);
+															setAvatarDropdown(false);
+															onNotification();
+														}}>
 														<BellSVG />
 														<span
 															className="position-absolute start-200 translate-middle badge rounded-circle bg-danger fw-lighter py-1"
@@ -191,7 +216,7 @@ const AdminMenu = (props) => {
 															minWidth: "20em",
 															maxWidth: "40em",
 														}}
-														className="dropdown-menu m-0 p-0"
+														className={`dropdown-menu m-0 p-0 ${notificationDropdown ? "show" : ""}`}
 														aria-labelledby="dropdownMenuButton">
 														<div className="dropdown-header border border-secondary-subtle border-start-0 border-end-0">
 															Notifications
@@ -226,14 +251,18 @@ const AdminMenu = (props) => {
 												</div>
 												{/* Notification Dropdown End */}
 												{/* Avatar Dropdown */}
-												<div className="dropdown-center">
+												<div className="dropdown-center" ref={avatarRef}>
 													{/* Avatar */}
 													<a
 														href="#"
 														role="button"
-														className="hidden"
-														data-bs-toggle="dropdown"
-														aria-expanded="false">
+														className={`hidden ${avatarDropdown ? "show" : ""}`}
+														onClick={(e) => {
+															e.preventDefault();
+															setAvatarDropdown(!avatarDropdown);
+															setNotificationDropdown(false);
+														}}
+														aria-expanded={avatarDropdown ? "true" : "false"}>
 														<Img
 															src={props.auth?.avatar}
 															className="rounded-circle bg-light p-1"
@@ -258,10 +287,11 @@ const AdminMenu = (props) => {
 														/>
 													</span>
 													{/* Avatar End */}
-													<div className="dropdown-menu rounded-4 m-0 p-0 bg-white">
+													<div className={`dropdown-menu rounded-4 m-0 p-0 bg-white ${avatarDropdown ? "show" : ""}`}>
 														<Link
 															to={`/admin/staff/edit/${props.auth.id}`}
-															className="p-1 px-2 pt-3 dropdown-item">
+															className="p-1 px-2 pt-3 dropdown-item"
+															onClick={() => setAvatarDropdown(false)}>
 															<div className="d-flex">
 																<div className="align-items-center">
 																	<Img
@@ -284,7 +314,8 @@ const AdminMenu = (props) => {
 															className="p-1 px-2 dropdown-item"
 															style={{
 																display: props.downloadLink ? "block" : "none",
-															}}>
+															}}
+															onClick={() => setAvatarDropdown(false)}>
 															<h6>
 																<span className="me-2">
 																	<DownloadSVG />
@@ -295,7 +326,7 @@ const AdminMenu = (props) => {
 														<Link
 															to="#"
 															className="p-2 px-3 dropdown-item"
-															onClick={(e) => logout(e)}>
+															onClick={(e) => { setAvatarDropdown(false); logout(e); }}>
 															<h6 className="fs-6">
 																<span className="me-2">
 																	<LogoutSVG />

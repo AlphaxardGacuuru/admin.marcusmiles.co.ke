@@ -15,7 +15,7 @@ const show = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "View Client", path: ["clients", "view"] })
+		props.setPage({ name: "View Client", path: ["crm/clients", "view"] })
 		props.get(`clients/${id}`, setClient)
 		props.getPaginated(`projects?clientId=${id}`, setProjects)
 	}, [id])

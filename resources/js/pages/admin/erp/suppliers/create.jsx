@@ -25,7 +25,7 @@ const create = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Add Supplier", path: ["suppliers", "create"] })
+		props.setPage({ name: "Add Supplier", path: ["erp/suppliers", "create"] })
 		// Fetch Goods
 		props.get("goods?idAndName=true", setGoods)
 	}, [])

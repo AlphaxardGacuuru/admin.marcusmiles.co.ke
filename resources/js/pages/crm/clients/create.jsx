@@ -19,7 +19,7 @@ const create = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Add Client", path: ["clients", "create"] })
+		props.setPage({ name: "Add Client", path: ["crm/clients", "create"] })
 	}, [])
 
 	/*
@@ -40,7 +40,7 @@ const create = (props) => {
 				// Show messages
 				props.setMessages([res.data.message])
 				// Redirect to Client
-				setTimeout(() => history.push(`/admin/erp/clients`), 500)
+				setTimeout(() => history.push(`/admin/crm/clients`), 500)
 			})
 			.catch((err) => {
 				setLoading(false)
@@ -107,7 +107,7 @@ const create = (props) => {
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo={`/erp/clients`}
+							linkTo={`/crm/clients`}
 							text="back to clients"
 						/>
 					</div>

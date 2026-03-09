@@ -30,8 +30,8 @@ const edit = (props) => {
 				props.setPage({
 					name: "Edit Staff",
 					path: [
-						"properties",
-						`properties/${res.data.data.propertyId}/show`,
+						"erp/properties",
+						`erp/properties/${res.data.data.propertyId}/show`,
 						"edit",
 					],
 				})

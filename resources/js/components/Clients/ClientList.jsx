@@ -105,7 +105,7 @@ const ClientList = (props) => {
 							</th>
 							<th className="text-end">
 								<MyLink
-									linkTo={`/erp/clients/create`}
+									linkTo={`/crm/clients/create`}
 									icon={<PlusSVG />}
 									text="add client"
 								/>
@@ -141,13 +141,13 @@ const ClientList = (props) => {
 								<td>
 									<div className="d-flex justify-content-center">
 										<MyLink
-											linkTo={`/erp/clients/${client.id}/view`}
+											linkTo={`/crm/clients/${client.id}/view`}
 											className="me-1"
 											icon={<ViewSVG />}
 										/>
 
 										<MyLink
-											linkTo={`/erp/clients/${client.id}/edit`}
+											linkTo={`/crm/clients/${client.id}/edit`}
 											icon={<EditSVG />}
 											className="btn-sm"
 										/>

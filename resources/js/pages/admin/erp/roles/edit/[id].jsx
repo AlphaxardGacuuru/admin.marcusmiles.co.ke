@@ -1,27 +1,43 @@
 import React, { useEffect, useState } from "react"
-import { Link, useHistory } from "react-router-dom"
+import { Link, useHistory, useParams } from "react-router-dom"
 
 import Btn from "@/components/Core/Btn"
 import MyLink from "@/components/Core/MyLink"
 
 import BackSVG from "@/svgs/BackSVG"
-import PlusSVG from "@/svgs/PlusSVG"
 
-const create = (props) => {
-	const router = useHistory()
+const edit = (props) => {
+	const { id } = useParams()
 
 	// Declare states
-	const [name, setName] = useState()
+	const [role, setRole] = useState({})
+	const [name, setName] = useState("")
 	const [permissionIds, setPermissionIds] = useState([])
 	const [permissions, setPermissions] = useState([])
 	const [loading, setLoading] = useState()
 
+	const getRole = () => {
+		Axios.get(`api/roles/${id}`)
+			.then((res) => {
+				const roleData = res.data.data
+				setRole(roleData)
+
+				// Set the role's existing permission IDs
+				const existingPermissionIds = roleData.permissions.map((p) => p.id)
+				setPermissionIds(existingPermissionIds)
+			})
+			.catch((err) => props.getErrors(err))
+	}
+
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Create Role", path: ["roles", "create"] })
+		props.setPage({ name: "Edit Role", path: ["crm/roles", "edit"] })
 
-		// Fetch Permissions
+		// Fetch All Available Permissions
 		props.get("permissions", setPermissions)
+
+		// Fetch Role Data (this will set the existing permissions)
+		getRole()
 	}, [])
 
 	// Handle Permission checkboxes
@@ -109,7 +125,7 @@ const create = (props) => {
 		setLoading(true)
 
 		// Send data to UsersController
-		Axios.post(`/api/roles`, {
+		Axios.put(`api/roles/${id}`, {
 			name: name,
 			permissionIds: permissionIds,
 		})
@@ -117,8 +133,8 @@ const create = (props) => {
 				// Remove loader for button
 				setLoading(false)
 				props.setMessages([res.data.message])
-				// Redirect
-				setTimeout(() => router.push("/super/roles"), 500)
+				// Fetch Data
+				getRole()
 			})
 			.catch((err) => {
 				// Remove loader for button
@@ -136,6 +152,7 @@ const create = (props) => {
 						type="text"
 						name="name"
 						placeholder="Name"
+						defaultValue={role.name}
 						className="form-control mb-2 me-2"
 						onChange={(e) => setName(e.target.value)}
 						required={true}
@@ -235,15 +252,14 @@ const create = (props) => {
 
 					<div className="d-flex justify-content-end">
 						<Btn
-							icon={<PlusSVG />}
-							text="add role"
+							text="update role"
 							loading={loading}
 						/>
 					</div>
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo="/roles"
+							linkTo="/crm/roles"
 							icon={<BackSVG />}
 							text="back to roles"
 						/>
@@ -256,4 +272,4 @@ const create = (props) => {
 	)
 }
 
-export default create
+export default edit

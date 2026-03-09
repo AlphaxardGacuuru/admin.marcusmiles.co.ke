@@ -19,7 +19,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Work Plan",
-			path: ["projects", "edit"],
+			path: ["erp/projects", "edit"],
 		})
 
 		// Fetch Work Plan
@@ -28,8 +28,8 @@ const edit = (props) => {
 			props.setPage({
 				name: "Edit Work Plan",
 				path: [
-					"projects",
-					`projects/${res.data.data.projectId}/show`,
+					"erp/projects",
+					`erp/projects/${res.data.data.projectId}/view`,
 					"edit",
 				],
 			})

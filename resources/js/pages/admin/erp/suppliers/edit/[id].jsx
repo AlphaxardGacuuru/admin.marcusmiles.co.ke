@@ -23,7 +23,7 @@ const edit = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Edit Supplier", path: ["suppliers", "edit"] })
+		props.setPage({ name: "Edit Supplier", path: ["erp/suppliers", "edit"] })
 		// Fetch Supplier
 		Axios.get(`api/suppliers/${id}`)
 			.then((res) => {

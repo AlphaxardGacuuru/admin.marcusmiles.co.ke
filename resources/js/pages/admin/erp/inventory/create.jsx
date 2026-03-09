@@ -28,7 +28,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Add Inventory",
-			path: [`properties`, `properties/${id}/view`, "create"],
+			path: [`erp/properties`, `erp/properties/${id}/view`, "create"],
 		})
 		// Fetch Suppliers
 		props.get("suppliers?idAndName=true", setSuppliers)

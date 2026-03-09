@@ -26,6 +26,11 @@ import ServiceProviderSVG from "@/svgs/ServiceProviderSVG"
 import SettingsSVG from "@/svgs/SettingsSVG"
 import DocumentsSVG from "@/svgs/DocumentsSVG"
 import PaperSVG from "@/svgs/PaperSVG"
+import CustomerSVG from "@/svgs/CustomerSVG"
+import QuotationSVG from "@/svgs/QuotationSVG"
+import OrderSVG from "@/svgs/OrderSVG"
+import ProductSVG from "@/svgs/ProductSVG"
+import ClientTrackingSVG from "@/svgs/ClientTrackingSVG"
 
 const AdminNavLinks = (props) => {
 	const location = useLocation()
@@ -95,18 +100,6 @@ const AdminNavLinks = (props) => {
 							</Link>
 						</li>
 						{/* Dashboard End */}
-						{/* Clients Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/clients`}
-								className={`nav-link ${active("/admin/erp/clients")}`}>
-								<div className="nav-link-icon">
-									<PersonSVG />
-								</div>
-								<div className="nav-link-text">Clients</div>
-							</Link>
-						</li>
-						{/* Clients End */}
 						{/* Goods Start */}
 						<li className="nav-item">
 							<Link
@@ -137,11 +130,10 @@ const AdminNavLinks = (props) => {
 						<li className="nav-item">
 							<Link
 								to={`/admin/erp/projects`}
-								className={`nav-link ${
-									active("/admin/erp/projects") ||
+								className={`nav-link ${active("/admin/erp/projects") ||
 									active("/admin/erp/work-plan") ||
 									active("/admin/erp/inventory")
-								}`}>
+									}`}>
 								<div className="nav-link-icon">
 									<ProjectSVG />
 								</div>
@@ -325,6 +317,128 @@ const AdminNavLinks = (props) => {
 					className={!location.pathname.match("/crm/") ? "collapse" : ""}
 					id="collapseCRM">
 					<ol className="ms-4">
+						{/* Clients Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/clients`}
+								className={`nav-link ${active("/admin/crm/clients")}`}>
+								<div className="nav-link-icon">
+									<PersonSVG />
+								</div>
+								<div className="nav-link-text">Clients</div>
+							</Link>
+						</li>
+						{/* Clients End */}
+						{/* Client Tracking Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/client-tracking`}
+								className={`nav-link ${active("/admin/crm/client-tracking")}`}>
+								<div className="nav-link-icon">
+									<ClientTrackingSVG />
+								</div>
+								<div className="nav-link-text">Client Tracking</div>
+							</Link>
+						</li>
+						{/* Client Tracking End */}
+						{/* Quotations Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/quotations`}
+								className={`nav-link ${active(
+									"/admin/crm/quotations"
+								)}`}>
+								<div className="nav-link-icon">
+									<QuotationSVG />
+								</div>
+								<div className="nav-link-text">Quotations</div>
+							</Link>
+						</li>
+						{/* Quotations End */}
+						{/* Products Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/products`}
+								className={`nav-link ${active(
+									"/admin/crm/products"
+								)}`}>
+								<div className="nav-link-icon">
+									<ProductSVG />
+								</div>
+								<div className="nav-link-text">Products</div>
+							</Link>
+						</li>
+						{/* Products End */}
+						{/* Orders Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/orders`}
+								className={`nav-link ${active(
+									"/admin/crm/orders"
+								)}`}>
+								<div className="nav-link-icon">
+									<OrderSVG />
+								</div>
+								<div className="nav-link-text">Orders</div>
+							</Link>
+						</li>
+						{/* Orders End */}
+						{/* Invoices Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/invoices`}
+								className={`nav-link ${active(
+									"/admin/crm/invoices"
+								)}`}>
+								<div className="nav-link-icon">
+									<InvoiceSVG />
+								</div>
+								<div className="nav-link-text">Invoices</div>
+							</Link>
+						</li>
+						{/* Invoices End */}
+						{/* Payments Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/payments`}
+								className={`nav-link ${active(
+									"/admin/crm/payments"
+								)}`}>
+								<div className="nav-link-icon">
+									<PaymentSVG />
+								</div>
+								<div className="nav-link-text">Payments</div>
+							</Link>
+						</li>
+						{/* Payments End */}
+						{/* Credit Notes Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/credit-notes`}
+								className={`nav-link ${active(
+									"/admin/crm/credit-notes"
+								)}`}>
+								<div className="nav-link-icon">
+									<CreditNoteSVG />
+								</div>
+								<div className="nav-link-text">Credit Notes</div>
+							</Link>
+						</li>
+						{/* Credit Notes End */}
+						{/* Customer Tracking Start */}
+						<li className="nav-item">
+							<Link
+								to={`/admin/crm/customer-tracking`}
+								className={`nav-link ${active(
+									"/admin/crm/customer-tracking"
+								)}`}>
+								<div className="nav-link-icon">
+									<PersonGearSVG />
+								</div>
+								<div className="nav-link-text">Customer Tracking</div>
+							</Link>
+						</li>
+						{/* Customer Tracking End */}
 						{/* Staff Start */}
 						<li className="nav-item">
 							<Link

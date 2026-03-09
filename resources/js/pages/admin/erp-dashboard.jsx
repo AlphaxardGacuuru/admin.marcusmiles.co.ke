@@ -27,7 +27,7 @@ const index = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Dashboard", path: ["/dashboard"] })
+		props.setPage({ name: "Dashboard", path: ["dashboard"] })
 
 		// Fetch Dashboard
 		Axios.get(`api/dashboard/1,2,3,4,5`)

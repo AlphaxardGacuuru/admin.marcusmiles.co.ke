@@ -21,7 +21,7 @@ const show = (props) => {
 		// Set page
 		props.setPage({
 			name: "View Service Provider",
-			path: ["service-providers", "view"],
+			path: ["erp/service-providers", "view"],
 		})
 		props.get(`service-providers/${id}`, setServiceProvider)
 	}, [id])

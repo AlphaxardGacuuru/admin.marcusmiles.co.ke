@@ -10,10 +10,10 @@ import AdminNav from "@/components/Layouts/AdminNav"
 import AdminDashboard from "@/pages/admin/index"
 import AdminProjectDashboard from "@/pages/admin/erp-dashboard"
 
-import AdminClients from "@/pages/admin/erp/clients/index"
-import AdminClientCreate from "@/pages/admin/erp/clients/create"
-import AdminClientView from "@/pages/admin/erp/clients/[id]"
-import AdminClientEdit from "@/pages/admin/erp/clients/edit/[id]"
+import AdminClients from "@/pages/crm/clients/index"
+import AdminClientCreate from "@/pages/crm/clients/create"
+import AdminClientView from "@/pages/crm/clients/[id]"
+import AdminClientEdit from "@/pages/crm/clients/edit/[id]"
 
 import AdminGoods from "@/pages/admin/erp/goods/index"
 import AdminGoodCreate from "@/pages/admin/erp/goods/create"
@@ -81,26 +81,26 @@ import AdminRequisitionCreate from "@/pages/admin/documents/requisitions/create"
 import AdminRequisitionView from "@/pages/admin/documents/requisitions/[id]"
 import AdminRequisitionEdit from "@/pages/admin/documents/requisitions/edit/[id]"
 
-import AdminInvoices from "@/pages/admin/invoices/index"
-import AdminInvoiceCreate from "@/pages/admin/invoices/create"
-import AdminInvoiceView from "@/pages/admin/invoices/[id]"
-import AdminInvoiceEdit from "@/pages/admin/invoices/edit/[id]"
+import AdminInvoices from "@/pages/crm/invoices/index"
+import AdminInvoiceCreate from "@/pages/crm/invoices/create"
+import AdminInvoiceView from "@/pages/crm/invoices/[id]"
+import AdminInvoiceEdit from "@/pages/crm/invoices/edit/[id]"
 
-import AdminPayments from "@/pages/admin/payments/index"
-import AdminPaymentCreate from "@/pages/admin/payments/create"
-import AdminPaymentEdit from "@/pages/admin/payments/edit/[id]"
+import AdminPayments from "@/pages/crm/payments/index"
+import AdminPaymentCreate from "@/pages/crm/payments/create"
+import AdminPaymentEdit from "@/pages/crm/payments/edit/[id]"
 
-import AdminCreditNotes from "@/pages/admin/credit-notes/index"
-import AdminCreditNoteCreate from "@/pages/admin/credit-notes/create"
-import AdminCreditNoteEdit from "@/pages/admin/credit-notes/edit/[id]"
+import AdminCreditNotes from "@/pages/crm/credit-notes/index"
+import AdminCreditNoteCreate from "@/pages/crm/credit-notes/create"
+import AdminCreditNoteEdit from "@/pages/crm/credit-notes/edit/[id]"
 
 import AdminStaff from "@/pages/admin/erp/staff/index"
 import AdminStaffCreate from "@/pages/admin/erp/staff/create"
 import AdminStaffEdit from "@/pages/admin/erp/staff/edit/[id]"
 
-import AdminRoleIndex from "@/pages/admin/roles"
-import AdminRoleCreate from "@/pages/admin/roles/create"
-import AdminRoleEdit from "@/pages/admin/roles/edit/[id]"
+import AdminRoleIndex from "@/pages/admin/erp/roles"
+import AdminRoleCreate from "@/pages/admin/erp/roles/create"
+import AdminRoleEdit from "@/pages/admin/erp/roles/edit/[id]"
 
 import AdminConfigurations from "@/pages/admin/configurations"
 
@@ -125,22 +125,6 @@ const RouteList = ({ GLOBAL_STATE }) => {
 		{
 			path: "/admin/erp/dashboard",
 			component: <AdminProjectDashboard {...GLOBAL_STATE} />,
-		},
-		{
-			path: "/admin/erp/clients",
-			component: <AdminClients {...GLOBAL_STATE} />,
-		},
-		{
-			path: "/admin/erp/clients/create",
-			component: <AdminClientCreate {...GLOBAL_STATE} />,
-		},
-		{
-			path: "/admin/erp/clients/:id/view",
-			component: <AdminClientView {...GLOBAL_STATE} />,
-		},
-		{
-			path: "/admin/erp/clients/:id/edit",
-			component: <AdminClientEdit {...GLOBAL_STATE} />,
 		},
 		{
 			path: "/admin/erp/goods",
@@ -250,6 +234,9 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			path: "/admin/erp/issues",
 			component: <AdminIssues {...GLOBAL_STATE} />,
 		},
+		/*
+		* Documents
+		*/
 		{
 			path: "/admin/documents/delivery-notes",
 			component: <AdminDeliveryNotes {...GLOBAL_STATE} />,
@@ -344,44 +331,63 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			path: "/admin/documents/requisitions/:id/edit",
 			component: <AdminRequisitionEdit {...GLOBAL_STATE} />,
 		},
+		/*
+		* CRM
+		*/
 		{
-			path: "/admin/invoices",
+			path: "/admin/crm/clients",
+			component: <AdminClients {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/clients/create",
+			component: <AdminClientCreate {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/clients/:id/view",
+			component: <AdminClientView {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/clients/:id/edit",
+			component: <AdminClientEdit {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/invoices",
 			component: <AdminInvoices {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/invoices/create",
+			path: "/admin/crm/invoices/create",
 			component: <AdminInvoiceCreate {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/invoices/:id/view",
+			path: "/admin/crm/invoices/:id/view",
 			component: <AdminInvoiceView {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/invoices/:id/edit",
+			path: "/admin/crm/invoices/:id/edit",
 			component: <AdminInvoiceEdit {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/payments",
+			path: "/admin/crm/payments",
 			component: <AdminPayments {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/payments/:id/create",
+			path: "/admin/crm/payments/:id/create",
 			component: <AdminPaymentCreate {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/payments/:id/edit",
+			path: "/admin/crm/payments/:id/edit",
 			component: <AdminPaymentEdit {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/credit-notes",
+			path: "/admin/crm/credit-notes",
 			component: <AdminCreditNotes {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/credit-notes/:id/create",
+			path: "/admin/crm/credit-notes/:id/create",
 			component: <AdminCreditNoteCreate {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/credit-notes/:id/edit",
+			path: "/admin/crm/credit-notes/:id/edit",
 			component: <AdminCreditNoteEdit {...GLOBAL_STATE} />,
 		},
 		{
