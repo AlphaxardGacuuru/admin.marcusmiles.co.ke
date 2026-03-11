@@ -179,7 +179,7 @@ const AdminMenu = (props) => {
 										<div className="header-social-area d-flex align-items-center">
 											<>
 												{/* Notification Dropdown */}
-												<div className="dropdown-center" ref={notificationRef}>
+												<div className="dropdown" ref={notificationRef}>
 													<Link
 														to="#"
 														role="button"
@@ -215,8 +215,11 @@ const AdminMenu = (props) => {
 															borderRadius: "0",
 															minWidth: "20em",
 															maxWidth: "40em",
+															position: "absolute",
+															right: 0,
+															left: "auto",
 														}}
-														className={`dropdown-menu m-0 p-0 ${notificationDropdown ? "show" : ""}`}
+														className={`dropdown-menu dropdown-menu-end m-0 p-0 ${notificationDropdown ? "show" : ""}`}
 														aria-labelledby="dropdownMenuButton">
 														<div className="dropdown-header border border-secondary-subtle border-start-0 border-end-0">
 															Notifications
@@ -251,7 +254,7 @@ const AdminMenu = (props) => {
 												</div>
 												{/* Notification Dropdown End */}
 												{/* Avatar Dropdown */}
-												<div className="dropdown-center" ref={avatarRef}>
+												<div className="dropdown" ref={avatarRef}>
 													{/* Avatar */}
 													<a
 														href="#"
@@ -287,7 +290,13 @@ const AdminMenu = (props) => {
 														/>
 													</span>
 													{/* Avatar End */}
-													<div className={`dropdown-menu rounded-4 m-0 p-0 bg-white ${avatarDropdown ? "show" : ""}`}>
+													<div 
+														className={`dropdown-menu rounded-4 m-0 p-0 bg-white dropdown-menu-end ${avatarDropdown ? "show" : ""}`}
+														style={{
+															position: "absolute",
+															right: 0,
+															left: "auto",
+														}}>
 														<Link
 															to={`/admin/staff/edit/${props.auth.id}`}
 															className="p-1 px-2 pt-3 dropdown-item"
@@ -303,7 +312,7 @@ const AdminMenu = (props) => {
 																	/>
 																</div>
 																<div className="ps-2">
-																	<h6 className="text-wrap fs-6">
+																	<h6 className="text-nowrap fs-6">
 																		{props.auth?.name}
 																	</h6>
 																</div>

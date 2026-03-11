@@ -20,34 +20,23 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate("cascade")
                 ->onDelete("cascade");
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('approved_by');
-            $table->unsignedBigInteger('checked_by');
-            $table->unsignedBigInteger('paid_by');
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('approved_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('checked_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('paid_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('approved_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('checked_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('paid_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
         });
     }
 

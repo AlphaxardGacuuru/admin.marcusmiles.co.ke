@@ -28,7 +28,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Create Invoice",
-			path: ["invoices", "create"],
+			path: ["crm/invoices", "create"],
 		})
 
 		// Fetch Properties
@@ -310,7 +310,7 @@ const create = (props) => {
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo={`/invoices`}
+							linkTo={`/crm/invoices`}
 							icon={<BackSVG />}
 							text="back to invoices"
 						/>

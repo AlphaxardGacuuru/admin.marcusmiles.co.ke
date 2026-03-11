@@ -19,14 +19,11 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->unsignedBigInteger('created_by');
-            $table->timestamps();
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
+            $table->foreignId('created_by')
+                ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->timestamps();
 
             $table->unique(['issue_comment_id', 'created_by']);
         });

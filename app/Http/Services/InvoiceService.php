@@ -2,11 +2,14 @@
 
 namespace App\Http\Services;
 
-use App\Http\Resources\InvoiceResource;
 use App\Models\Invoice;
-use App\Models\UserUnit;
-use App\Models\WaterReading;
-use Illuminate\Validation\ValidationException;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
+use App\Models\InvoiceItem;
+use App\Models\User;
+use App\Notifications\InvoiceNotification;
+use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class InvoiceService extends Service
 {
@@ -15,16 +18,20 @@ class InvoiceService extends Service
      */
     public function index($request)
     {
-        $invoicesQuery = new Invoice;
+        $invoiceQuery = new Invoice;
 
-        $invoicesQuery = $this->search($invoicesQuery, $request);
+        $invoiceQuery = $this->search($invoiceQuery, $request);
 
-        $invoices = $invoicesQuery
-            ->orderBy("month", "ASC")
-            ->orderBy("year", "DESC")
-            ->paginate(20);
+        $invoices = $invoiceQuery
+            ->orderBy("id", "DESC")
+            ->paginate($request->per_page ?? 20);
 
-        return InvoiceResource::collection($invoices);
+        $sum = $invoiceQuery->sum("total");
+        $balance = $invoiceQuery->sum("balance");
+        $paid = $invoiceQuery->sum("paid");
+        $statuses = ["not_paid", "paid", "partially_paid", "overdue"];
+
+        return [$invoices, $sum, $balance, $paid, $statuses];
     }
 
     /*
@@ -32,9 +39,7 @@ class InvoiceService extends Service
      */
     public function show($id)
     {
-        $invoice = Invoice::find($id);
-
-        return new InvoiceResource($invoice);
+        return Invoice::find($id);
     }
 
     /*
@@ -42,42 +47,76 @@ class InvoiceService extends Service
      */
     public function store($request)
     {
-        $saved = 0;
+        $invoice = new Invoice;
+        $invoice->user_id = $request->clientId;
+        $invoice->issue_date = $request->issueDate;
+        $invoice->due_date = $request->dueDate;
+        $invoice->total = $request->total;
+        $invoice->balance = $request->total;
+        $invoice->notes = $request->notes;
+        $invoice->terms = $request->terms;
+        $invoice->status = $request->status;
 
-        foreach ($request->userUnitIds as $userUnitId) {
-            // Check if invoice exists for User, Unit and Month
-            $invoiceDoesntExist = Invoice::where("user_unit_id", $userUnitId)
-                ->where("type", $request->type)
-                ->where("month", $request->month)
-                ->where("year", $request->year)
-                ->doesntExist();
+        $saved = DB::transaction(function () use ($invoice, $request) {
+            $saved = $invoice->save();
 
-            $amount = $this->getAmount($request, $userUnitId);
-
-            if ($invoiceDoesntExist) {
-                $invoice = new Invoice;
-                $invoice->user_unit_id = $userUnitId;
-                $invoice->type = $request->type;
-                $invoice->amount = $amount;
-                $invoice->balance = $amount;
-                $invoice->month = $request->month;
-                $invoice->year = $request->year;
-                $invoice->created_by = $this->id;
-                $saved = $invoice->save();
+            // Invoice Items
+            foreach ($request->invoiceItems as $item) {
+                $invoiceItem = new InvoiceItem;
+                $invoiceItem->invoice_id = $invoice->id;
+                $invoiceItem->description = $item['description'];
+                $invoiceItem->quantity = $item['quantity'];
+                $invoiceItem->rate = $item['rate'];
+                $invoiceItem->amount = $item['amount'];
+                Log::info("Invoice Request: ", $invoiceItem->toArray());
+                $saved = $invoiceItem->save();
             }
-        }
 
-        if ($saved) {
-            $message = count($request->userUnitIds) > 1 ?
-            "Invoices created successfully" :
-            "Invoice created successfully";
-        } else {
-            $message = count($request->userUnitIds) > 1 ?
-            "Invoices already exist" :
-            "Invoice already exists";
-        }
+            $this->updateInvoiceStatus($invoice->id);
 
-        return [$saved, $message, ""];
+            return $saved;
+        });
+
+        return [$saved, "Invoice Created Successfully", $invoice];
+    }
+
+    /*
+	* Update Invoice
+	*/
+    public function update($request, $id)
+    {
+        $invoice = Invoice::find($id);
+        $invoice->user_id = $request->input("clientId", $invoice->user_id);
+        $invoice->issue_date = $request->input("issueDate", $invoice->issue_date);
+        $invoice->due_date = $request->input("dueDate", $invoice->due_date);
+        $invoice->total = $request->input("total", $invoice->total);
+        $invoice->notes = $request->input("notes", $invoice->notes);
+        $invoice->terms = $request->input("terms", $invoice->terms);
+        $invoice->status = $request->input("status", $invoice->status);
+
+        $saved = DB::transaction(function () use ($invoice, $request) {
+            $saved = $invoice->save();
+
+            // Delete existing items
+            InvoiceItem::where("invoice_id", $invoice->id)->delete();
+
+            // Invoice Items
+            foreach ($request->invoiceItems as $item) {
+                $invoiceItem = new InvoiceItem;
+                $invoiceItem->invoice_id = $invoice->id;
+                $invoiceItem->description = $item['description'];
+                $invoiceItem->quantity = $item['quantity'];
+                $invoiceItem->rate = $item['rate'];
+                $invoiceItem->amount = $item['amount'];
+                $saved = $invoiceItem->save();
+            }
+
+            $this->updateInvoiceStatus($invoice->id);
+
+            return $saved;
+        });
+
+        return [$saved, "Invoice Updated Successfully", $invoice];
     }
 
     /*
@@ -87,43 +126,19 @@ class InvoiceService extends Service
     {
         $ids = explode(",", $id);
 
-        $deleted = Invoice::whereIn("id", $ids)->delete();
+        $deleted = DB::transaction(function () use ($ids) {
+            $deleted = Invoice::whereIn("id", $ids)->delete();
 
-        $message = count($ids) > 1 ?
-        "Invoices deleted successfully" :
-        "Invoice deleted successfully";
+            $this->updateInvoiceStatus($ids[0]);
 
-        return [$deleted, $message, ""];
-    }
-
-    /*
-     * Get Invoices by Property ID
-     */
-    public function byPropertyId($request, $id)
-    {
-        $ids = explode(",", $id);
-
-        $invoicesQuery = Invoice::whereHas("userUnit.unit.property", function ($query) use ($ids) {
-            $query->whereIn("id", $ids);
+            return $deleted;
         });
 
-        $invoicesQuery = $this->search($invoicesQuery, $request);
+        $message = count($ids) > 1 ?
+            "Invoices Deleted Successfully" :
+            "Invoice Deleted Successfully";
 
-        $due = $invoicesQuery->sum("amount");
-        $paid = $invoicesQuery->sum("paid");
-        $balance = $invoicesQuery->sum("balance");
-
-        $invoices = $invoicesQuery
-            ->orderBy("month", "DESC")
-            ->orderBy("year", "DESC")
-            ->paginate(20);
-
-        return InvoiceResource::collection($invoices)
-            ->additional([
-                "due" => number_format($due),
-                "paid" => number_format($paid),
-                "balance" => number_format($balance),
-            ]);
+        return [$deleted, $message, ""];
     }
 
     /*
@@ -131,42 +146,26 @@ class InvoiceService extends Service
      */
     public function search($query, $request)
     {
-        $tenant = $request->input("tenant");
+        $number = $request->input("number");
 
-        if ($request->filled("tenant")) {
-            $query = $query
-                ->whereHas("userUnit.user", function ($query) use ($tenant) {
-                    $query->where("name", "LIKE", "%" . $tenant . "%");
-                });
+        if ($request->filled("number")) {
+            $query = $query->where("id", "LIKE", "%" . $number . "%");
         }
 
-        $unit = $request->input("unit");
+        $clientId = $request->input("clientId");
 
-        if ($request->filled("unit")) {
-            $query = $query
-                ->whereHas("userUnit.unit", function ($query) use ($unit) {
-                    $query->where("name", "LIKE", "%" . $unit . "%");
-                });
-        }
-
-        $type = $request->input("type");
-
-        if ($request->filled("type")) {
-            $query = $query->where("type", $type);
+        if ($request->filled("clientId")) {
+            $query = $query->whereHas("user", function ($query) use ($clientId) {
+                $query->where("id", $clientId);
+            });
         }
 
         $status = $request->input("status");
 
         if ($request->filled("status")) {
-            $query = $query->where("status", $status);
-        }
+            $statuses = explode(",", $status);
 
-        $propertyId = $request->input("propertyId");
-
-        if ($request->filled("propertyId")) {
-            $query = $query->whereHas("userUnit.unit.property", function ($query) use ($propertyId) {
-                $query->where("id", $propertyId);
-            });
+            $query = $query->whereIn("status", $statuses);
         }
 
         $startMonth = $request->input("startMonth");
@@ -174,65 +173,49 @@ class InvoiceService extends Service
         $startYear = $request->input("startYear");
         $endYear = $request->input("endYear");
 
-        if ($request->filled("startMonth")) {
-            $query = $query->where("month", ">=", $startMonth);
+        // Build start date filter
+        if ($request->filled("startMonth") || $request->filled("startYear")) {
+            $year = $startYear ?? date('Y');
+            $month = $startMonth ?? 1;
+            $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+            $query = $query->where("created_at", ">=", $startDate);
         }
 
-        if ($request->filled("endMonth")) {
-            $query = $query->where("month", "<=", $endMonth);
-        }
-
-        if ($request->filled("startYear")) {
-            $query = $query->where("year", ">=", $startYear);
-        }
-
-        if ($request->filled("endYear")) {
-            $query = $query->where("year", "<=", $endYear);
+        // Build end date filter
+        if ($request->filled("endMonth") || $request->filled("endYear")) {
+            $year = $endYear ?? date('Y');
+            $month = $endMonth ?? 12;
+            $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+            $query = $query->where("created_at", "<=", $endDate);
         }
 
         return $query;
     }
 
     /*
-     * Get Amount
-     */
-    public function getAmount($request, $userUnitId)
+	 * Generate Invoice PDF
+	 */
+    public function generatePdf($id)
     {
-        $userUnit = UserUnit::find($userUnitId);
+        $invoice = Invoice::findOrFail($id);
 
-        // Get amount depending on the type of invoice
-        switch ($request->type) {
-            case "rent":
-                return $userUnit->unit->rent;
-                break;
+        // This looks for resources/views/invoices/pdf.blade.php
+        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
 
-            case "service_charge":
-                return $userUnit->unit->property->service_charge;
-                break;
-
-            default:
-                return $this->getWaterBill($request, $userUnitId);
-                break;
-        }
+        return $pdf;
     }
 
-    /*
-     * Get Water Bill
-     */
-    public function getWaterBill($request, $userUnitId)
+    public function sendInvoiceEmail($id)
     {
-        // Get Water Bill
-        $waterReadingQuery = WaterReading::where("user_unit_id", $userUnitId)
-            ->where("month", $request->month)
-            ->where("year", $request->year);
+        $invoice = Invoice::findOrFail($id);
 
-        if ($waterReadingQuery->doesntExist()) {
-            return throw ValidationException::withMessages([
-                "Water Reading" => ["Water Reading doesn't exist"],
-            ]);
-        } else {
-            return $waterReadingQuery->first()->bill;
-        }
+        $generatedPdf = $this->generatePdf($id);
 
+        $pdf = $generatedPdf->output();
+
+        $al = User::where("email", "alphaxardgacuuru47@gmail.com")->first();
+
+        // $al->notify(new InvoiceNotification($invoice, $pdf));
+        $invoice->user->notify(new InvoiceNotification($invoice, $pdf));
     }
 }

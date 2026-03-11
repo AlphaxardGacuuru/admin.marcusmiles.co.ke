@@ -23,9 +23,7 @@ class StaffService extends Service
                 ->orderBy("id", "DESC")
                 ->get();
 
-            return response([
-                "data" => $staff,
-            ], 200);
+            return [true, $staff->count() . " Staff Fetched Successfully", $staff];
         }
 
         $staffQuery = User::where("account_type", "staff");

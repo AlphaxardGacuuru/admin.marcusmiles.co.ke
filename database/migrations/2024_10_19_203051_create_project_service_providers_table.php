@@ -19,7 +19,10 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->unsignedBigInteger('service_provider_id');
+            $table->foreignId('service_provider_id')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->integer('labour_rate')->nullable();
             $table->integer('quantity_of_work')->nullable();
             $table->integer('total_amount')->nullable();
@@ -27,20 +30,11 @@ return new class extends Migration
             $table->string('status')->nullable();
             $table->timestamp('start_date')->nullable();
             $table->timestamp('end_date')->nullable();
-            $table->unsignedBigInteger('created_by');
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('service_provider_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
         });
     }
 

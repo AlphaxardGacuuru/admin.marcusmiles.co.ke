@@ -2,92 +2,115 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Services\InvoiceService;
 use App\Models\Invoice;
+use App\Http\Resources\InvoiceResource;
+use App\Http\Services\InvoiceService;
 use Illuminate\Http\Request;
 
 class InvoiceController extends Controller
 {
-    public function __construct(protected InvoiceService $service)
+    public function __construct(protected InvoiceService $service) {}
+
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        [$invoices, $sum, $balance, $paid, $statuses] = $this->service->index($request);
+
+        return InvoiceResource::collection($invoices)
+            ->additional([
+                "sum" => number_format($sum),
+                "balance" => number_format($balance),
+                "paid" => number_format($paid),
+                "statuses" => $statuses,
+            ]);
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
         //
     }
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index(Request $request)
-    {
-        return $this->service->index($request);
-    }
-
-    /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            "userUnitIds" => "required|array",
-            "type" => "required|string",
-            "month" => "required|integer|min:1",
-            "year" => "required|integer",
+        $request->validate([
+            'clientId' => 'required|integer|exists:users,id',
+            'issueDate' => 'required|date',
+            'dueDate' => 'required|date|after_or_equal:issueDate',
+            'invoiceItems' => 'required|array|min:1',
+            'invoiceItems.*.description' => 'required|string|max:500',
+            'invoiceItems.*.quantity' => 'required|numeric|min:0.01',
+            'invoiceItems.*.rate' => 'required|numeric|min:0',
+            'invoiceItems.*.amount' => 'required|numeric|min:0',
+            'total' => 'required|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
+            'terms' => 'nullable|string|max:1000',
+            'status' => 'required|in:not_paid,partially_paid,paid,over_paid',
         ]);
 
-        [$saved, $message, $invoices] = $this->service->store($request);
+        [$saved, $message, $invoice] = $this->service->store($request);
 
-        return response([
-            "status" => $saved,
-            "message" => $message,
-            "data" => $invoices,
-        ], 200);
+        return (new InvoiceResource($invoice))->additional([
+            'saved' => $saved,
+            'message' => $message,
+        ]);
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Invoice  $invoice
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        return $this->service->show($id);
+        $invoice = $this->service->show($id);
+
+        return new InvoiceResource($invoice);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(Invoice $invoice)
+    {
+        //
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Invoice  $invoice
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            "userUnitIds" => "nullable|array",
-            "type" => "nullable|string",
-            "month" => "nullable|integer",
-            "year" => "nullable|integer",
+        $request->validate([
+            'clientId' => 'sometimes|required|integer|exists:users,id',
+            'issueDate' => 'sometimes|required|date',
+            'dueDate' => 'sometimes|required|date|after_or_equal:issueDate',
+            'invoiceItems' => 'sometimes|required|array|min:1',
+            'invoiceItems.*.description' => 'required_with:invoiceItems|string|max:500',
+            'invoiceItems.*.quantity' => 'required_with:invoiceItems|numeric|min:0.01',
+            'invoiceItems.*.rate' => 'required_with:invoiceItems|numeric|min:0',
+            'invoiceItems.*.amount' => 'required_with:invoiceItems|numeric|min:0',
+            'total' => 'sometimes|required|numeric|min:0',
+            'notes' => 'nullable|string|max:1000',
+            'terms' => 'nullable|string|max:1000',
+            'status' => 'sometimes|required|in:not_paid,partially_paid,paid,over_paid',
         ]);
 
-        [$saved, $message, $invoices] = $this->service->update($request, $id);
+        [$updated, $message, $invoice] = $this->service->update($request, $id);
 
-        return response([
-            "status" => $saved,
-            "message" => $message,
-            "data" => $invoices,
-        ], 200);
+        return (new InvoiceResource($invoice))->additional([
+            'updated' => $updated,
+            'message' => $message,
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Invoice  $invoice
-     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
@@ -100,11 +123,20 @@ class InvoiceController extends Controller
         ], 200);
     }
 
-    /*
-     * Get Invoices by Property ID
-     */
-    public function byPropertyId(Request $request, $id)
+    public function previewPdf($id)
     {
-        return $this->service->byPropertyId($request, $id);
+        $pdf = $this->service->generatePdf($id);
+
+        return $pdf->stream("invoice-{$id}-preview.pdf");
+    }
+
+    /**
+     * Send invoice email with PDF attachment
+     */
+    public function sendInvoiceEmail($id)
+    {
+        $this->service->sendInvoiceEmail($id);
+
+        return response()->json(['message' => 'Invoice Email Sent.']);
     }
 }

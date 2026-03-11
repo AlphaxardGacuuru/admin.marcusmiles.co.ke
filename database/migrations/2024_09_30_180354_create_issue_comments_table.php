@@ -21,14 +21,11 @@ return new class extends Migration
                 ->onDelete('cascade');
             $table->longText("text");
             $table->integer("total_likes")->default(0);
-            $table->unsignedBigInteger('created_by');
-            $table->timestamps();
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
+            $table->foreignId('created_by')
+                ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

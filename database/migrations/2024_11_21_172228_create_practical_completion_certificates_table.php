@@ -25,13 +25,11 @@ return new class extends Migration
             $table->string('brief')->nullable();
             $table->string('project_manager')->nullable();
             $table->timestamp('contract_dates')->nullable();
-            $table->unsignedBigInteger('created_by');
-            $table->timestamps();
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
+            $table->foreignId('created_by')
+                ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

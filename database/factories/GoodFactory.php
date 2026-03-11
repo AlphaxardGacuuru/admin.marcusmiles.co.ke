@@ -17,6 +17,8 @@ class GoodFactory extends Factory
      */
     public function definition()
     {
+        static $number = 1;
+        
         $goods = [
             "Concrete",
             "Steel",
@@ -39,8 +41,8 @@ class GoodFactory extends Factory
         ];
 
         return [
-            "code" => $goods[rand(0, 10)],
-            "name" => $goods[rand(0, 10)],
+            "code" => 'G' . str_pad($number++, 3, '0', STR_PAD_LEFT),
+            "name" => $this->faker->randomElement($goods) . ' ' . $number, // append string to ensure diversity in name visually, though not required unique
             "markup" => rand(20, 30),
             "notification_quantity" => 1,
             "created_by" => User::where("account_type", "staff")

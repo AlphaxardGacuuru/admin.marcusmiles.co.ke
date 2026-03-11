@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ProjectResource;
 use App\Http\Services\ProjectService;
 use App\Models\Project;
 use Illuminate\Http\Request;
@@ -20,7 +21,13 @@ class ProjectController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->service->index($request);
+        [$status, $message, $projects] = $this->service->index($request);
+
+        return ProjectResource::collection($projects)
+            ->additional([
+                "status" => $status,
+                "message" => $message,
+            ]);
     }
 
     /**

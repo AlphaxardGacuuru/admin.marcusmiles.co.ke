@@ -15,18 +15,15 @@ return new class extends Migration
     {
         Schema::create('goods', function (Blueprint $table) {
             $table->id();
-			$table->string('code');
-			$table->string('name');
-			$table->integer('notification_quantity')->default(1);
-			$table->float('markup')->default(0);
-			$table->unsignedBigInteger('created_by');
-            $table->timestamps();
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
+            $table->string('code')->unique();
+            $table->string('name');
+            $table->integer('notification_quantity')->default(1);
+            $table->float('markup')->default(0);
+            $table->foreignId('created_by')
+                ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ClientController;
+use App\Http\Controllers\QuotationController;
 use App\Http\Controllers\ConfigurationController;
 use App\Http\Controllers\CreditNoteController;
 use App\Http\Controllers\DashboardController;
@@ -54,27 +55,28 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('auth', [UserController::class, 'auth']);
 
 Route::apiResources([
-	"clients" => ClientController::class,
-	"goods" => GoodController::class,
-	"service-providers" => ServiceProviderController::class,
-	"projects" => ProjectController::class,
-	"work-plans" => WorkPlanController::class,
-	"work-plan-steps" => WorkPlanStepController::class,
-	"inventories" => InventoryController::class,
-	"project-service-providers" => ProjectServiceProviderController::class,
-	"suppliers" => SupplierController::class,
-	"supplier-goods" => SupplierGoodController::class,
-	"stages" => StageController::class,
-	"issues" => IssueController::class,
-	"issue-comments" => IssueCommentController::class,
-	"issue-comment-likes" => IssueCommentLikeController::class,
-	"issue-stages" => IssueStageController::class,
-	"delivery-notes" => DeliveryNoteController::class,
-	"wage-sheets" => WageSheetController::class,
-	"status-reports" => StatusReportController::class,
-	"practical-completion-certificates" => PracticalCompletionCertificateController::class,
-	"site-visit-reports" => SiteVisitReportController::class,
-	"requisitions" => RequisitionController::class,
+    "clients" => ClientController::class,
+    "quotations" => QuotationController::class,
+    "goods" => GoodController::class,
+    "service-providers" => ServiceProviderController::class,
+    "projects" => ProjectController::class,
+    "work-plans" => WorkPlanController::class,
+    "work-plan-steps" => WorkPlanStepController::class,
+    "inventories" => InventoryController::class,
+    "project-service-providers" => ProjectServiceProviderController::class,
+    "suppliers" => SupplierController::class,
+    "supplier-goods" => SupplierGoodController::class,
+    "stages" => StageController::class,
+    "issues" => IssueController::class,
+    "issue-comments" => IssueCommentController::class,
+    "issue-comment-likes" => IssueCommentLikeController::class,
+    "issue-stages" => IssueStageController::class,
+    "delivery-notes" => DeliveryNoteController::class,
+    "wage-sheets" => WageSheetController::class,
+    "status-reports" => StatusReportController::class,
+    "practical-completion-certificates" => PracticalCompletionCertificateController::class,
+    "site-visit-reports" => SiteVisitReportController::class,
+    "requisitions" => RequisitionController::class,
 
     "invoices" => InvoiceController::class,
     "water-readings" => WaterReadingController::class,
@@ -96,12 +98,12 @@ Route::get("dashboard/properties/{id}", [DashboardController::class, "properties
 
 /*
 * Work Plan
-*/ 
+*/
 Route::get("work-plans/chart/{id}", [WorkPlanController::class, "chart"]);
 
 /*
 * Issues
-*/ 
+*/
 Route::put("issues/reorder/{id}", [IssueController::class, "reorder"]);
 
 /*

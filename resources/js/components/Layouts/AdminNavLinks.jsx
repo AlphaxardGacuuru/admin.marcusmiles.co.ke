@@ -425,20 +425,6 @@ const AdminNavLinks = (props) => {
 							</Link>
 						</li>
 						{/* Credit Notes End */}
-						{/* Customer Tracking Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/customer-tracking`}
-								className={`nav-link ${active(
-									"/admin/crm/customer-tracking"
-								)}`}>
-								<div className="nav-link-icon">
-									<PersonGearSVG />
-								</div>
-								<div className="nav-link-text">Customer Tracking</div>
-							</Link>
-						</li>
-						{/* Customer Tracking End */}
 						{/* Staff Start */}
 						<li className="nav-item">
 							<Link

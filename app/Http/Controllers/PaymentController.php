@@ -2,112 +2,106 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Services\PaymentService;
 use App\Models\Payment;
+use App\Http\Resources\PaymentResource;
+use App\Http\Services\PaymentService;
 use Illuminate\Http\Request;
 
 class PaymentController extends Controller
 {
-    public function __construct(protected PaymentService $service)
-    {
-        //
-    }
+    public function __construct(protected PaymentService $service) {}
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        [$payments, $sum] = $this->service->index($request);
+
+        return PaymentResource::collection($payments)
+            ->additional([
+                "sum" => number_format($sum, 2),
+            ]);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            "invoiceId" => "required|string",
-            "userId" => "nullable|integer",
-            "channel" => "nullable|string",
-            "amount" => "required|string|min:1",
-            "transactionReference" => "nullable|string",
-            "paidOn" => "required|string",
+        $request->validate([
+            'invoiceId' => 'required|integer|exists:invoices,id',
+            'amount' => 'required|numeric|min:0.01',
+            'paymentDate' => 'required|date',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         [$saved, $message, $payment] = $this->service->store($request);
 
-        return response([
-            "status" => $saved,
-            "message" => $message,
-            "data" => $payment,
-        ], 200);
+        return (new PaymentResource($payment))->additional([
+            'saved' => $saved,
+            'message' => $message,
+        ]);
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        return $this->service->show($id);
+        $payment = $this->service->show($id);
+
+        return new PaymentResource($payment);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            "userId" => "nullable|integer",
-            "channel" => "nullable|string",
-            "amount" => "nullable|string|min:1",
-            "transactionReference" => "nullable|string",
-            "paidOn" => "nullable|string",
+        $request->validate([
+            'invoiceId' => 'sometimes|required|integer|exists:invoices,id',
+            'amount' => 'sometimes|required|numeric|min:0.01',
+            'paymentDate' => 'sometimes|required|date',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
-        [$saved, $message, $payment] = $this->service->update($request, $id);
+        [$updated, $message, $payment] = $this->service->update($request, $id);
 
-        return response([
-            "status" => $saved,
-            "message" => $message,
-            "data" => $payment,
-        ], 200);
+        return (new PaymentResource($payment))->additional([
+            'updated' => $updated,
+            'message' => $message,
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Payment  $payment
-     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
         [$deleted, $message, $payment] = $this->service->destroy($id);
 
-		return response([
-			"status" => $deleted,
-			"message" => $message,
-			"data" => $payment,
-		], 200);
+        return response([
+            "status" => $deleted,
+            "message" => $message,
+            "data" => $payment,
+        ], 200);
     }
 
-    /*
-     * Get Water Readings by Property ID
-     */
-    public function byPropertyId(Request $request, $id)
+    public function previewPdf($id)
     {
-        return $this->service->byPropertyId($request, $id);
+        $pdf = $this->service->generatePdf($id);
+
+        return $pdf->stream("payment-{$id}-preview.pdf");
+    }
+
+    /**
+     * Send receipt email with PDF attachment
+     */
+    public function sendReceiptEmail($id)
+    {
+        $this->service->sendReceiptEmail($id);
+
+        return response()->json(['message' => 'Receipt Email Sent.']);
     }
 }

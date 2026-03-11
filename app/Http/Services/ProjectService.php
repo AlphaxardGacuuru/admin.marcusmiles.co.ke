@@ -16,14 +16,23 @@ class ProjectService extends Service
      */
     public function index($request)
     {
-        $projectsQuery = new Project;
+        if ($request->filled("idAndName")) {
+            $projects = Project::select("id", "name")
+                ->orderBy("id", "DESC")
+                ->get();
 
-        $projectsQuery = $this->search($projectsQuery, $request);
+            return [true, $projects->count() . " Retrieved Successfully", $projects];
+        }
 
-        $projects = $projectsQuery
+        $query = Project::query();
+
+        $query = $this->search($query, $request);
+
+        $projects = $query
+            ->orderBy("id", "DESC")
             ->paginate(20);
 
-        return ProjectResource::collection($projects);
+        return [true, $projects->count() . "Projects Retrieved Successfully", $projects];
     }
 
     /*
@@ -41,12 +50,8 @@ class ProjectService extends Service
      */
     public function store($request)
     {
-        $currentYear = Carbon::now()->format('y');
-        $newProjectNumber = Project::count() + 1;
-        $code = str_pad($newProjectNumber, 3, '0', STR_PAD_LEFT);
-
         $project = new Project;
-        $project->code = $currentYear . $code;
+        $project->code = $this->generateUniqueCode(Project::class);
         $project->name = $request->name;
         $project->type = $request->type;
         $project->description = $request->description;
@@ -131,25 +136,25 @@ class ProjectService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
+            $query
                 ->where("name", "LIKE", "%" . $request->name . "%")
                 ->orWhere("code", "LIKE", "%" . $request->name . "%");
         }
 
         if ($request->filled("type")) {
-            $query = $query
+            $query
                 ->where("type", $request->type);
         }
 
         if ($request->filled("location")) {
-            $query = $query
+            $query
                 ->where("location", "LIKE", "%" . $request->location . "%");
         }
 
         $clientId = $request->clientId;
 
         if ($request->filled("clientId")) {
-            $query = $query->whereHas("client", function ($query) use ($clientId) {
+            $query->whereHas("client", function ($query) use ($clientId) {
                 $query->where("id", $clientId);
             });
         }
@@ -168,17 +173,17 @@ class ProjectService extends Service
             ->toDateTimeString(); // Output: 2024-01-01 00:00:00 (or current year)
 
         if ($request->filled("startMonth") || $request->filled("startYear")) {
-            $query = $query->whereDate("created_at", ">=", $start);
+            $query->whereDate("created_at", ">=", $start);
         }
 
         if ($request->filled("endMonth") || $request->filled("endYear")) {
-            $query = $query->whereDate("created_at", "<=", $end);
+            $query->whereDate("created_at", "<=", $end);
         }
 
         $serviceProviderId = $request->serviceProviderId;
 
         if ($request->filled("serviceProviderId")) {
-            $query = $query->whereHas("serviceProviders", function ($query) use ($serviceProviderId) {
+            $query->whereHas("serviceProviders", function ($query) use ($serviceProviderId) {
                 $query->where("service_provider_id", $serviceProviderId);
             });
         }

@@ -15,33 +15,27 @@ return new class extends Migration
     {
         Schema::create('issues', function (Blueprint $table) {
             $table->id();
-            $table->string('code');
+            $table->string('code')->unique();
             $table->string('title');
             $table->longText('description');
-            $table->unsignedBigInteger('assigned_to');
+            $table->foreignId('assigned_to')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamp('planned_start_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('planned_end_date')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->string('priority')->default('low');
             $table->foreignId('project_id')
-			->constrained()
-			->onUpdate('cascade')
-			->onDelete('cascade');
-			$table->integer('position')->default(0);
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->integer('position')->default(0);
             $table->integer('total_comments')->default(0);
-            $table->unsignedBigInteger('created_by');
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('assigned_to')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
         });
     }
 

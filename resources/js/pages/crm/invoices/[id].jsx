@@ -15,7 +15,7 @@ const show = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "View Invoice", path: ["invoices", "view"] })
+		props.setPage({ name: "View Invoice", path: ["crm/invoices", "view"] })
 		props.get(`invoices/${id}`, setInvoice)
 	}, [])
 

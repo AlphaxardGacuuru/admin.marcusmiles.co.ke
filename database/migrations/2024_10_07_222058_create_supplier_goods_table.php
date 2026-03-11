@@ -19,21 +19,15 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-			$table->unsignedBigInteger('supplier_id');
-			$table->unsignedBigInteger('created_by');
+            $table->foreignId('supplier_id')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('supplier_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
         });
     }
 

@@ -15,17 +15,14 @@ return new class extends Migration
     {
         Schema::create('stages', function (Blueprint $table) {
             $table->id();
-			$table->string('name');
-			$table->string('type')->default("issue");
-			$table->integer('position')->default(0);
-			$table->unsignedBigInteger('created_by');
-            $table->timestamps();
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
+            $table->string('name');
+            $table->string('type')->default("issue");
+            $table->integer('position')->default(0);
+            $table->foreignId('created_by')
+                ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->timestamps();
         });
     }
 

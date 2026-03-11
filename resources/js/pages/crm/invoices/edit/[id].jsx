@@ -28,7 +28,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Invoice",
-			path: ["invoices", "edit"],
+			path: ["crm/invoices", "edit"],
 		})
 
 		// Fetch Invoice
@@ -202,7 +202,7 @@ const edit = (props) => {
 
 					<div className="d-flex justify-content-center">
 						<MyLink
-							linkTo={`/invoices`}
+							linkTo={`/crm/invoices`}
 							icon={<BackSVG />}
 							text="back to invoices"
 						/>

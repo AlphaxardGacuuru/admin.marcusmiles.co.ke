@@ -15,26 +15,20 @@ return new class extends Migration
     {
         Schema::create('projects', function (Blueprint $table) {
             $table->id();
-            $table->string('code');
+            $table->string('code')->unique();
             $table->string('name');
             $table->string('type');
             $table->longText('description')->nullable();
             $table->string('location')->nullable();
-            $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('created_by');
+            $table->foreignId('client_id')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('client_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
         });
     }
 

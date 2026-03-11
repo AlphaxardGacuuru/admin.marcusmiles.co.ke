@@ -81,6 +81,11 @@ import AdminRequisitionCreate from "@/pages/admin/documents/requisitions/create"
 import AdminRequisitionView from "@/pages/admin/documents/requisitions/[id]"
 import AdminRequisitionEdit from "@/pages/admin/documents/requisitions/edit/[id]"
 
+import AdminQuotations from "@/pages/crm/quotations/index"
+import AdminQuotationCreate from "@/pages/crm/quotations/create"
+import AdminQuotationView from "@/pages/crm/quotations/[id]"
+import AdminQuotationEdit from "@/pages/crm/quotations/edit/[id]"
+
 import AdminInvoices from "@/pages/crm/invoices/index"
 import AdminInvoiceCreate from "@/pages/crm/invoices/create"
 import AdminInvoiceView from "@/pages/crm/invoices/[id]"
@@ -349,6 +354,22 @@ const RouteList = ({ GLOBAL_STATE }) => {
 		{
 			path: "/admin/crm/clients/:id/edit",
 			component: <AdminClientEdit {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/quotations",
+			component: <AdminQuotations {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/quotations/create",
+			component: <AdminQuotationCreate {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/quotations/:id/view",
+			component: <AdminQuotationView {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/quotations/:id/edit",
+			component: <AdminQuotationEdit {...GLOBAL_STATE} />,
 		},
 		{
 			path: "/admin/crm/invoices",

@@ -20,21 +20,15 @@ return new class extends Migration
                 ->onUpdate("cascade")
                 ->onDelete("cascade");
             $table->jsonb("days");
-            $table->unsignedBigInteger("project_service_provider_id");
-            $table->unsignedBigInteger('created_by');
+            $table->foreignId('project_service_provider_id')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamps();
-
-            $table->foreign('project_service_provider_id')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
 
             // $table->unique(['wage_sheet_id', 'project_service_provider_id'], 'wage_sheet_project_provider_unique');
         });

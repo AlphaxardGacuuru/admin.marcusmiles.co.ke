@@ -2,88 +2,80 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CreditNote;
+use App\Http\Resources\CreditNoteResource;
 use App\Http\Services\CreditNoteService;
 use Illuminate\Http\Request;
 
 class CreditNoteController extends Controller
 {
-    public function __construct(protected CreditNoteService $service)
-    {
-        //
-    }
+    public function __construct(protected CreditNoteService $service) {}
 
     /**
      * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
      */
     public function index(Request $request)
     {
-        return $this->service->index($request);
+        [$creditNotes, $sum] = $this->service->index($request);
+
+        return CreditNoteResource::collection($creditNotes)
+            ->additional([
+                "sum" => number_format($sum, 2),
+            ]);
     }
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
     {
-        $this->validate($request, [
-            "invoiceId" => "required|integer",
-            "description" => "required|string",
-            "amount" => "required|integer",
+        $request->validate([
+            'invoiceId' => 'required|integer|exists:invoices,id',
+            'amount' => 'required|numeric|min:0.01',
+            'issueDate' => 'required|date',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
-        [$saved, $message, $creditNotes] = $this->service->store($request);
+        [$saved, $message, $creditNote] = $this->service->store($request);
 
-        return response([
-            "status" => $saved,
-            "message" => $message,
-            "data" => $creditNotes,
-        ], 200);
+        return (new CreditNoteResource($creditNote))->additional([
+            'saved' => $saved,
+            'message' => $message,
+        ]);
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param  \App\Models\CreditNote  $creditNote
-     * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        return $this->service->show($id);
+        $creditNote = $this->service->show($id);
+
+        return new CreditNoteResource($creditNote);
     }
 
     /**
      * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\CreditNote  $creditNote
-     * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
     {
-        $this->validate($request, [
-            "description" => "nullable|string",
-            "amount" => "nullable|integer",
+        $request->validate([
+            'invoiceId' => 'sometimes|required|integer|exists:invoices,id',
+            'amount' => 'sometimes|required|numeric|min:0.01',
+            'issueDate' => 'sometimes|required|date',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
-        [$saved, $message, $creditNotes] = $this->service->update($request, $id);
+        [$updated, $message, $creditNote] = $this->service->update($request, $id);
 
-        return response([
-            "status" => $saved,
-            "message" => $message,
-            "data" => $creditNotes,
-        ], 200);
+        return (new CreditNoteResource($creditNote))->additional([
+            'updated' => $updated,
+            'message' => $message,
+        ]);
     }
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\CreditNote  $creditNote
-     * @return \Illuminate\Http\Response
      */
     public function destroy($id)
     {
@@ -94,13 +86,5 @@ class CreditNoteController extends Controller
             "message" => $message,
             "data" => $creditNote,
         ], 200);
-    }
-
-    /*
-     * Get CreditNotes by Property ID
-     */
-    public function byPropertyId(Request $request, $id)
-    {
-        return $this->service->byPropertyId($request, $id);
     }
 }

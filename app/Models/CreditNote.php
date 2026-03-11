@@ -9,8 +9,12 @@ use Illuminate\Database\Eloquent\Model;
 
 class CreditNote extends Model
 {
+    /** @use HasFactory<\Database\Factories\CreditNoteFactory> */
     use HasFactory;
 
+    /**
+     * Accessors.
+     */
     protected function updatedAt(): Attribute
     {
         return Attribute::make(
@@ -25,9 +29,13 @@ class CreditNote extends Model
         );
     }
 
-    /*
+    /**
      * Relationships
      */
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function invoice()
     {

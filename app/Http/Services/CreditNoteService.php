@@ -2,10 +2,10 @@
 
 namespace App\Http\Services;
 
-use App\Http\Resources\CreditNoteResource;
 use App\Models\CreditNote;
 use App\Models\Invoice;
-use App\Models\Payment;
+use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CreditNoteService extends Service
@@ -15,15 +15,19 @@ class CreditNoteService extends Service
      */
     public function index($request)
     {
-        $creditNotesQuery = new CreditNote;
+        $query = new CreditNote;
 
-        $creditNotesQuery = $this->search($creditNotesQuery, $request);
+        $query = $this->search($query, $request);
 
-        $creditNotes = $creditNotesQuery
+        $creditNotes = $query
+            ->with(['user', 'invoice.user'])
             ->orderBy("id", "DESC")
-            ->paginate(20);
+            ->paginate($request->per_page ?? 20)
+            ->appends($request->all());
 
-        return CreditNoteResource::collection($creditNotes);
+        $sum = $query->sum("amount");
+
+        return [$creditNotes, $sum];
     }
 
     /*
@@ -31,9 +35,7 @@ class CreditNoteService extends Service
      */
     public function show($id)
     {
-        $creditNote = CreditNote::find($id);
-
-        return new CreditNoteResource($creditNote);
+        return CreditNote::with(['user', 'invoice.user'])->find($id);
     }
 
     /*
@@ -41,21 +43,24 @@ class CreditNoteService extends Service
      */
     public function store($request)
     {
-        $creditNote = new CreditNote();
+        $invoice = Invoice::find($request->invoiceId);
+
+        $creditNote = new CreditNote;
+        $creditNote->user_id = $invoice->user_id;
         $creditNote->invoice_id = $request->invoiceId;
-        $creditNote->description = $request->description;
         $creditNote->amount = $request->amount;
-        $creditNote->created_by = $this->id;
+        $creditNote->issue_date = $request->issueDate;
+        $creditNote->notes = $request->notes;
 
         $saved = DB::transaction(function () use ($creditNote) {
             $saved = $creditNote->save();
 
-            $this->updateInvoice($creditNote->invoice_id);
+            $this->updateInvoiceStatus($creditNote->invoice_id);
 
             return $saved;
         });
 
-        return [$saved, "Credit Note created successfully", $creditNote];
+        return [$saved, "Credit Note Created Successfully", $creditNote];
     }
 
     /*
@@ -64,24 +69,19 @@ class CreditNoteService extends Service
     public function update($request, $id)
     {
         $creditNote = CreditNote::find($id);
-
-        if ($request->filled("amount")) {
-            $creditNote->amount = $request->amount;
-        }
-
-        if ($request->filled("description")) {
-            $creditNote->description = $request->description;
-        }
+        $creditNote->amount = $request->input("amount", $creditNote->amount);
+        $creditNote->issue_date = $request->input("issueDate", $creditNote->issue_date);
+        $creditNote->notes = $request->input("notes", $creditNote->notes);
 
         $saved = DB::transaction(function () use ($creditNote) {
             $saved = $creditNote->save();
 
-            $this->updateInvoice($creditNote->invoice_id);
+            $this->updateInvoiceStatus($creditNote->invoice_id);
 
             return $saved;
         });
 
-        return [$saved, "Credit Note updated", $creditNote];
+        return [$saved, "Credit Note Updated Successfully", $creditNote];
     }
 
     /*
@@ -89,42 +89,23 @@ class CreditNoteService extends Service
      */
     public function destroy($id)
     {
-        $creditNote = CreditNote::findOrFail($id);
+        $ids = explode(",", $id);
 
-        $deleted = DB::transaction(function () use ($creditNote) {
-            $deleted = $creditNote->delete();
+        $deleted = DB::transaction(function () use ($ids) {
+            $query = CreditNote::whereIn("id", $ids);
 
-            $this->updateInvoice($creditNote->invoice_id);
+            $deleted = $query->delete();
+
+            $this->updateInvoiceStatus($query->first()->invoice_id);
 
             return $deleted;
         });
 
-        return [$deleted, "Credit Note deleted successfully", $creditNote];
-    }
+        $message = count($ids) > 1 ?
+            "Credit Notes Deleted Successfully" :
+            "Credit Note Deleted Successfully";
 
-    /*
-     * Get Credit Notes by Property ID
-     */
-    public function byPropertyId($request, $id)
-    {
-        $ids = explode(",", $id);
-
-        $creditNotesQuery = CreditNote::whereHas("invoice.userUnit.unit.property", function ($query) use ($ids) {
-            $query->whereIn("id", $ids);
-        });
-
-        $creditNotesQuery = $this->search($creditNotesQuery, $request);
-
-        $sum = $creditNotesQuery->sum("amount");
-
-        $creditNotes = $creditNotesQuery
-            ->orderBy("id", "DESC")
-            ->paginate(20);
-
-        return CreditNoteResource::collection($creditNotes)
-            ->additional([
-                "sum" => number_format($sum),
-            ]);
+        return [$deleted, $message, ""];
     }
 
     /*
@@ -132,94 +113,38 @@ class CreditNoteService extends Service
      */
     public function search($query, $request)
     {
-        $tenant = $request->input("tenant");
-
-        if ($request->filled("tenant")) {
-            $query = $query
-                ->whereHas("userUnit.user", function ($query) use ($tenant) {
-                    $query->where("name", "LIKE", "%" . $tenant . "%");
-                });
+        if ($request->filled("number")) {
+            $query = $query->where("id", "LIKE", "%" . $request->number . "%");
         }
 
-        $unit = $request->input("unit");
-
-        if ($request->filled("unit")) {
-            $query = $query
-                ->whereHas("userUnit.unit", function ($query) use ($unit) {
-                    $query->where("name", "LIKE", "%" . $unit . "%");
-                });
+        if ($request->filled("invoiceId")) {
+            $query = $query->where("invoice_id", $request->invoiceId);
         }
 
-        $type = $request->input("type");
+        $clientId = $request->input("clientId");
 
-        if ($request->filled("type")) {
-            $query = $query->where("type", $type);
-        }
-
-        $propertyId = $request->input("propertyId");
-
-        if ($request->filled("propertyId")) {
-            $query = $query->whereHas("userUnit.unit.property", function ($query) use ($propertyId) {
-                $query->where("id", $propertyId);
+        if ($request->filled("clientId")) {
+            $query = $query->whereHas("user", function ($query) use ($clientId) {
+                $query->where("id", $clientId);
             });
         }
 
-        $startMonth = $request->input("startMonth");
-        $endMonth = $request->input("endMonth");
-        $startYear = $request->input("startYear");
-        $endYear = $request->input("endYear");
-
-        if ($request->filled("startMonth")) {
-            $query = $query->where("month", ">=", $startMonth);
+        if ($request->filled("startDate")) {
+            $query = $query->whereDate("issue_date", ">=", $request->startDate);
         }
 
-        if ($request->filled("endMonth")) {
-            $query = $query->where("month", "<=", $endMonth);
+        if ($request->filled("endDate")) {
+            $query = $query->whereDate("issue_date", "<=", $request->endDate);
         }
 
-        if ($request->filled("startYear")) {
-            $query = $query->where("year", ">=", $startYear);
+        if ($request->filled("minAmount")) {
+            $query = $query->where("amount", ">=", $request->minAmount);
         }
 
-        if ($request->filled("endYear")) {
-            $query = $query->where("year", "<=", $endYear);
+        if ($request->filled("maxAmount")) {
+            $query = $query->where("amount", "<=", $request->maxAmount);
         }
 
         return $query;
-    }
-
-    /*
-     * Handle Invoice Update
-     */
-    public function updateInvoice($invoiceId)
-    {
-        $paid = Payment::where("invoice_id", $invoiceId)
-            ->sum("amount");
-
-        $credit = CreditNote::where("invoice_id", $invoiceId)
-            ->sum("amount");
-
-        $paid = $paid + $credit;
-
-        $invoice = Invoice::find($invoiceId);
-
-        $balance = $invoice->amount - $paid;
-
-        // Check if paid is enough
-        if ($paid == 0) {
-            $status = "not_paid";
-        } else if ($paid < $invoice->amount) {
-            $status = "partially_paid";
-        } else if ($paid == $invoice->amount) {
-            $status = "paid";
-        } else {
-            $status = "over_paid";
-        }
-
-        $invoice->paid = $paid;
-        $invoice->balance = $balance;
-        $invoice->status = $status;
-
-        return $invoice->save();
     }
 }

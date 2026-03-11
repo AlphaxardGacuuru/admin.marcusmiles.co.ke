@@ -19,8 +19,9 @@ class ProjectFactory extends Factory
      */
     public function definition()
     {
+        static $number = 1;
         $currentYear = Carbon::now()->format('y');
-        $newProjectNumber = Project::count() + 1;
+        $newProjectNumber = Project::count() + $number++;
         $code = str_pad($newProjectNumber, 3, '0', STR_PAD_LEFT);
 
         // Project Types

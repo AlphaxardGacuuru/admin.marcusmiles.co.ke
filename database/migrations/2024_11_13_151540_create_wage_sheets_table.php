@@ -15,34 +15,26 @@ return new class extends Migration
     {
         Schema::create('wage_sheets', function (Blueprint $table) {
             $table->id();
-            $table->string("code");
+            $table->string("code")->unique();
             $table->foreignId("project_id")
                 ->constrained()
                 ->onUpdate("cascade")
                 ->onDelete("cascade");
-            $table->unsignedBigInteger('created_by');
-            $table->unsignedBigInteger('paid_by');
-            $table->unsignedBigInteger('approved_by');
+            $table->foreignId('created_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('paid_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
+            $table->foreignId('approved_by')
+                ->constrained('users')
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->timestamp('starts_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamp('ends_at')->default(DB::raw('CURRENT_TIMESTAMP'));
             $table->timestamps();
-            $table->foreign('created_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('paid_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
-
-            $table->foreign('approved_by')
-                ->references('id')
-                ->on('users')
-                ->onUpdate('cascade')
-                ->onDelete('cascade');
         });
     }
 
