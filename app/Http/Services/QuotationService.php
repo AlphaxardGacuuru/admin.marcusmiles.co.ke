@@ -132,14 +132,51 @@ class QuotationService extends Service
 
 	public function search($request, $query)
 	{
-		if ($request->filled('search')) {
-			$searchTerm = $request->input('search');
-			$query->where(function ($q) use ($searchTerm) {
-				$q->where('title', 'like', '%' . $searchTerm . '%')
-					->orWhere('notes', 'like', '%' . $searchTerm . '%')
-					->orWhere('terms', 'like', '%' . $searchTerm . '%')
-					->orWhere('status', 'like', '%' . $searchTerm . '%');
-			});
+        if ($request->filled("code")) {
+            $query = $query->where("code", "LIKE", "%" . $request->code . "%");
+        }
+
+        if ($request->filled("invoiceId")) {
+            $query = $query->where("invoice_id", $request->invoiceId);
+        }
+
+        if ($request->filled("projectId")) {
+            $query = $query->where("project_id", $request->projectId);
+        }
+
+        if ($request->filled("clientId")) {
+            $query = $query->whereHas("project.client", function($query) use($request) {
+                $query->where("id", $request->clientId);
+            });
+        }
+
+		$status = $request->input("status");
+
+		if ($request->filled("status")) {
+			$statuses = explode(",", $status);
+
+			$query = $query->whereIn("status", $statuses);
+		}
+
+		$startMonth = $request->input("startMonth");
+		$endMonth = $request->input("endMonth");
+		$startYear = $request->input("startYear");
+		$endYear = $request->input("endYear");
+
+		// Build start date filter
+		if ($request->filled("startMonth") || $request->filled("startYear")) {
+			$year = $startYear ?? date('Y');
+			$month = $startMonth ?? 1;
+			$startDate = Carbon::create($year, $month, 1)->startOfMonth();
+			$query = $query->where("created_at", ">=", $startDate);
+		}
+
+		// Build end date filter
+		if ($request->filled("endMonth") || $request->filled("endYear")) {
+			$year = $endYear ?? date('Y');
+			$month = $endMonth ?? 12;
+			$endDate = Carbon::create($year, $month, 1)->endOfMonth();
+			$query = $query->where("created_at", "<=", $endDate);
 		}
 
 		return $query;

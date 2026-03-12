@@ -120,19 +120,21 @@ class CreditNoteService extends Service
      */
     public function search($query, $request)
     {
-        if ($request->filled("number")) {
-            $query = $query->where("id", "LIKE", "%" . $request->number . "%");
+        if ($request->filled("code")) {
+            $query = $query->where("code", "LIKE", "%" . $request->code . "%");
         }
 
         if ($request->filled("invoiceId")) {
             $query = $query->where("invoice_id", $request->invoiceId);
         }
 
-        $clientId = $request->input("clientId");
+        if ($request->filled("projectId")) {
+            $query = $query->where("project_id", $request->projectId);
+        }
 
         if ($request->filled("clientId")) {
-            $query = $query->whereHas("user", function ($query) use ($clientId) {
-                $query->where("id", $clientId);
+            $query = $query->whereHas("project.client", function($query) use($request) {
+                $query->where("id", $request->clientId);
             });
         }
 

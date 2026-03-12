@@ -8,9 +8,9 @@ const index = (props) => {
 		props.getLocalStorage("quotations")
 	)
 
-	const [search, setSearch] = useState("")
-	const [clientQuery, setClientQuery] = useState("")
-	const [projectQuery, setProjectQuery] = useState("")
+	const [codeQuery, setCodeQuery] = useState("")
+	const [clientIdQuery, setClientIdQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
 	const [statusQuery, setStatusQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [endMonth, setEndMonth] = useState("")
@@ -25,9 +25,9 @@ const index = (props) => {
 	useEffect(() => {
 		props.getPaginated(
 			`quotations?
-			name=${search}&
-			client=${clientQuery}&
-			project=${projectQuery}&
+			code=${codeQuery}&
+			clientId=${clientIdQuery}&
+			projectId=${projectIdQuery}&
 			status=${statusQuery}&
 			startMonth=${startMonth}&
 			endMonth=${endMonth}&
@@ -37,8 +37,9 @@ const index = (props) => {
 			"quotations"
 		)
 	}, [
-		search,
-		projectQuery,
+		codeQuery,
+		clientIdQuery,
+		projectIdQuery,
 		statusQuery,
 		startMonth,
 		endMonth,
@@ -54,8 +55,9 @@ const index = (props) => {
 					{...props}
 					quotations={quotations}
 					setQuotations={setQuotations}
-					setSearch={setSearch}
-					setProjectQuery={setProjectQuery}
+					setCodeQuery={setCodeQuery}
+					setClientIdQuery={setClientIdQuery}
+					setProjectIdQuery={setProjectIdQuery}
 					setStatusQuery={setStatusQuery}
 					setStartMonth={setStartMonth}
 					setEndMonth={setEndMonth}

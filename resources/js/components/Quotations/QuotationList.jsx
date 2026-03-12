@@ -17,7 +17,17 @@ import DeleteSVG from "@/svgs/DeleteSVG"
 import QuotationSVG from "@/svgs/QuotationSVG"
 
 const QuotationList = (props) => {
-	const [projects, setProjects] = useState([])
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientsShortList")
+	)
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
+
+	useEffect(() => {
+		props.get("clients?idAndName=true", setClients, "clientsShortList")
+		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+	}, [])
 
 	/*
 	 * Delete Quotation
@@ -63,23 +73,45 @@ const QuotationList = (props) => {
 				<div className="d-flex flex-wrap">
 					{/* Code */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Code</label>
 						<input
 							type="text"
 							placeholder="Search by Code"
 							className="form-control"
-							onChange={(e) => setCodeQuery(e.target.value)}
+							onChange={(e) => props.setCodeQuery(e.target.value)}
 						/>
 					</div>
 					{/* Code End */}
-					{/* Project */}
+					{/* Client */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Client</label>
 						<select
 							type="text"
 							name="type"
 							className="form-control text-capitalize"
-							onChange={(e) => setProjectQuery(e.target.value)}
+							onChange={(e) => props.setClientIdQuery(e.target.value)}
 							required={true}>
-							<option value="">Filter by Project</option>
+							<option value="">All</option>
+							{clients.map((client, key) => (
+								<option
+									key={key}
+									value={client.id}>
+									{client.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Client End */}
+					{/* Project ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Project</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => props.setProjectIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
 							{projects.map((project, key) => (
 								<option
 									key={key}
@@ -89,16 +121,17 @@ const QuotationList = (props) => {
 							))}
 						</select>
 					</div>
-					{/* Project End */}
+					{/* Project ID End */}
 					{/* Status */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Status</label>
 						<select
 							type="text"
 							name="status"
 							className="form-control text-capitalize"
-							onChange={(e) => setStatus(e.target.value)}
+							onChange={(e) => props.setStatus(e.target.value)}
 							required={true}>
-							<option value="">Filter by Status</option>
+							<option value="">All</option>
 							{props.quotations.statuses?.map((status, key) => (
 								<option
 									key={key}
@@ -114,6 +147,94 @@ const QuotationList = (props) => {
 					{/* Status End */}
 				</div>
 			</div>
+
+			<div className="card shadow-sm py-2 px-4">
+				<div className="d-flex justify-content-end flex-wrap">
+					<div className="d-flex flex-grow-1">
+						{/* Start Date */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label htmlFor="">Start At</label>
+							{/* Start Month */}
+							<select
+								className="form-control"
+								onChange={(e) => props.setStartMonth(e.target.value)}>
+								{props.months.map((month, key) => (
+									<option
+										key={key}
+										value={key}>
+										{month}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* Start Month End */}
+						{/* Start Year */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label
+								htmlFor=""
+								className="invisible">
+								Start At
+							</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setStartYear(e.target.value)}>
+								<option value="">Select Year</option>
+								{props.years.map((year, key) => (
+									<option
+										key={key}
+										value={year}>
+										{year}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* Start Year End */}
+					</div>
+					{/* Start Date End */}
+					{/* End Date */}
+					<div className="d-flex flex-grow-1">
+						{/* End Month */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label htmlFor="">End At</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setEndMonth(e.target.value)}>
+								{props.months.map((month, key) => (
+									<option
+										key={key}
+										value={key}>
+										{month}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* End Month End */}
+						{/* End Year */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label
+								htmlFor=""
+								className="invisible">
+								End At
+							</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setStartYear(e.target.value)}>
+								<option value="">Select Year</option>
+								{props.years.map((year, key) => (
+									<option
+										key={key}
+										value={year}>
+										{year}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* End Year End */}
+					</div>
+					{/* End Date End */}
+				</div>
+			</div>
+			{/* Filters End */}
 
 			<br />
 

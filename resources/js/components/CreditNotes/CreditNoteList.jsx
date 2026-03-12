@@ -17,15 +17,19 @@ import CreditNoteSVG from "@/svgs/CreditNoteSVG"
 import BalanceSVG from "@/svgs/BalanceSVG"
 
 const CreditNoteList = (props) => {
-	const [clients, setClients] = useState([])
-	const [projects, setProjects] = useState([])
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientsShortList")
+	)
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
-		props.get("clients?idAndName=true", setClients)
-		props.get("projects?idAndName=true", setProjects)
+		props.get("clients?idAndName=true", setClients, "clientsShortList")
+		props.get("projects?idAndName=true", setProjects, "projectsShortList")
 	}, [])
 
 	/*
@@ -33,7 +37,9 @@ const CreditNoteList = (props) => {
 	 */
 	const onDeleteCreditNote = (creditNoteId) => {
 		setLoading(true)
-		var creditNoteIds = Array.isArray(creditNoteId) ? creditNoteId.join(",") : creditNoteId
+		var creditNoteIds = Array.isArray(creditNoteId)
+			? creditNoteId.join(",")
+			: creditNoteId
 
 		Axios.delete(`/api/credit-notes/${creditNoteIds}`)
 			.then((res) => {
@@ -93,23 +99,25 @@ const CreditNoteList = (props) => {
 				<div className="d-flex flex-wrap">
 					{/* Code */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Code</label>
 						<input
 							type="text"
 							placeholder="Search by Code"
 							className="form-control"
-							onChange={(e) => setCodeQuery(e.target.value)}
+							onChange={(e) => props.setCodeQuery(e.target.value)}
 						/>
 					</div>
 					{/* Code End */}
-					{/* Client */}
+					{/* Client ID */}
 					<div className="flex-grow-1 me-2 mb-2">
+							<label htmlFor="">Client</label>
 						<select
 							type="text"
 							name="type"
 							className="form-control text-capitalize"
-							onChange={(e) => setClientQuery(e.target.value)}
+							onChange={(e) => props.setClientIdQuery(e.target.value)}
 							required={true}>
-							<option value="">Filter by Client</option>
+							<option value="">All</option>
 							{clients.map((client, key) => (
 								<option
 									key={key}
@@ -119,16 +127,17 @@ const CreditNoteList = (props) => {
 							))}
 						</select>
 					</div>
-					{/* Client End */}
-					{/* Project */}
+					{/* Client ID End */}
+					{/* Project ID */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Project</label>
 						<select
 							type="text"
 							name="type"
 							className="form-control text-capitalize"
-							onChange={(e) => setProjectQuery(e.target.value)}
+							onChange={(e) => props.setProjectIdQuery(e.target.value)}
 							required={true}>
-							<option value="">Filter by Project</option>
+							<option value="">All</option>
 							{projects.map((project, key) => (
 								<option
 									key={key}
@@ -138,7 +147,7 @@ const CreditNoteList = (props) => {
 							))}
 						</select>
 					</div>
-					{/* Project End */}
+					{/* Project ID End */}
 				</div>
 			</div>
 
@@ -151,7 +160,7 @@ const CreditNoteList = (props) => {
 							{/* Start Month */}
 							<select
 								className="form-control"
-								onChange={(e) => setStartMonth(e.target.value)}>
+								onChange={(e) => props.setStartMonth(e.target.value)}>
 								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
@@ -172,7 +181,7 @@ const CreditNoteList = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => props.setStartYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -193,7 +202,7 @@ const CreditNoteList = (props) => {
 							<label htmlFor="">End At</label>
 							<select
 								className="form-control"
-								onChange={(e) => setEndMonth(e.target.value)}>
+								onChange={(e) => props.setEndMonth(e.target.value)}>
 								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
@@ -214,7 +223,7 @@ const CreditNoteList = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => props.setStartYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option

@@ -373,7 +373,7 @@ const AdminMenu = (props) => {
 
 				{/* <!-- ***** Side Menu Area Start ***** --> */}
 				<div
-					className={`leftMenu d-flex align-items-center justify-content-start shadow-lg ${
+					className={`leftMenu d-flex align-items-center justify-content-start shadow-lg overflow-y-auto ${
 						location.pathname.match("/admin/")
 							? " bg-secondary"
 							: location.pathname.match("/instructor/")

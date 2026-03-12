@@ -5,7 +5,8 @@ import StaffList from "@/components/Staff/StaffList"
 const index = (props) => {
 	// Get Staff
 	const [staff, setStaff] = useState(props.getLocalStorage("staff"))
-	const [roles, setRoles] = useState([])
+	const [roles, setRoles] = useState(props.getLocalStorage("rolesShortList"))
+
 	const [nameQuery, setNameQuery] = useState("")
 	const [emailQuery, setEmailQuery] = useState("")
 	const [phoneQuery, setPhoneQuery] = useState("")
@@ -15,7 +16,7 @@ const index = (props) => {
 	useEffect(() => {
 		// Set page
 		props.setPage({ name: "Staff", path: ["crm/staff"] })
-		props.get("roles?idAndName=true", setRoles)
+		props.get("roles?idAndName=true", setRoles, "rolesShortList")
 	}, [])
 
 	useEffect(() => {

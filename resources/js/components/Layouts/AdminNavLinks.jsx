@@ -255,7 +255,7 @@ const AdminNavLinks = (props) => {
 							)}`}>
 							<Link
 								to={navLink.link}
-								className={`nav-link accordion-button my-1 ${navLink.links
+								className={`nav-link accordion-button w-75 my-1 ${navLink.links
 									.map((link) => active(link.link))
 									.join(" ")}`}
 								data-bs-toggle="collapse"
@@ -317,7 +317,7 @@ const AdminNavLinks = (props) => {
 							)}`}>
 							<Link
 								to={navLink.link}
-								className={`nav-link accordion-button my-1 ${navLink.links
+								className={`nav-link accordion-button w-75 my-1 ${navLink.links
 									.map((link) => active(link.link))
 									.join(" ")}`}
 								data-bs-toggle="collapse"

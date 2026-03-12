@@ -16,13 +16,17 @@ const index = (props) => {
 	const location = useLocation()
 
 	// Get Role
-	const [roles, setRoles] = useState([])
+	const [roles, setRoles] = useState(props.getLocalStorage("roles"))
+	const [nameQuery, setNameQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
 		props.setPage({ name: "Roles", path: ["crm/roles"] })
-		props.getPaginated("roles", setRoles)
 	}, [])
+
+	useEffect(() => {
+		props.getPaginated(`roles?name=${nameQuery}`, setRoles, "roles")
+	}, [nameQuery])
 
 	/*
 	 * Delete
@@ -61,6 +65,22 @@ const index = (props) => {
 				{/* Data End */}
 
 				<br />
+
+				{/* Filters */}
+				<div className="card shadow-sm px-4 pt-4 pb-3 mb-2">
+					<div className="d-flex flex-wrap">
+						{/* Name */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<input
+								type="text"
+								placeholder="Search by Name"
+								className="form-control"
+								onChange={(e) => setNameQuery(e.target.value)}
+							/>
+						</div>
+						{/* Name End */}
+					</div>
+				</div>
 
 				<div className="table-responsive">
 					<table className="table table-hover">

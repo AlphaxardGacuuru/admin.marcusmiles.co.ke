@@ -6,7 +6,8 @@ const index = (props) => {
 	const [creditNotes, setCreditNotes] = useState(props.getLocalStorage("creditNotes"))
 
 	const [codeQuery, setCodeQuery] = useState("")
-	const [projectQuery, setProjectQuery] = useState("")
+	const [clientIdQuery, setClientIdQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
 	const [statusQuery, setStatusQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [endMonth, setEndMonth] = useState("")
@@ -22,7 +23,8 @@ const index = (props) => {
 		props.getPaginated(
 			`credit-notes?
 			code=${codeQuery}&
-			project=${projectQuery}&
+			clientId=${clientIdQuery}&
+			projectId=${projectIdQuery}&
 			status=${statusQuery}&
 			start_month=${startMonth}&
 			end_month=${endMonth}&
@@ -33,7 +35,8 @@ const index = (props) => {
 		)
 	}, [
 		codeQuery,
-		projectQuery,
+		clientIdQuery,
+		projectIdQuery,
 		statusQuery,
 		startMonth,
 		endMonth,
@@ -50,7 +53,8 @@ const index = (props) => {
 					creditNotes={creditNotes}
 					setCreditNotes={setCreditNotes}
 					setCodeQuery={setCodeQuery}
-					setProjectQuery={setProjectQuery}
+					setClientIdQuery={setClientIdQuery}
+					setProjectIdQuery={setProjectIdQuery}
 					setStatusQuery={setStatusQuery}
 					setStartMonth={setStartMonth}
 					setEndMonth={setEndMonth}
