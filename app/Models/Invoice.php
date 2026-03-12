@@ -23,6 +23,20 @@ class Invoice extends Model
      * @return \Illuminate\Database\Eloquent\Casts\Attribute
      */
 
+    protected function issueDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => Carbon::parse($value)->format('d M Y'),
+        );
+    }
+
+    protected function dueDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => Carbon::parse($value)->format('d M Y'),
+        );
+    }
+
     protected function updatedAt(): Attribute
     {
         return Attribute::make(
@@ -41,9 +55,14 @@ class Invoice extends Model
     * Relationships
     */
 
-    public function user()
+    public function project()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Project::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 
     public function invoiceItems()
@@ -59,19 +78,5 @@ class Invoice extends Model
     public function creditNotes()
     {
         return $this->hasMany(CreditNote::class);
-    }
-
-    public function deductions()
-    {
-        return $this->hasMany(Deduction::class);
-    }
-
-    /*
-    * Custom Functions
-    */
-
-    public function getNumberAttribute()
-    {
-        return 'I-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
     }
 }

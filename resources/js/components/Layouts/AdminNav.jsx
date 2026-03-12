@@ -32,7 +32,10 @@ const AdminMenu = (props) => {
 
 	useEffect(() => {
 		const handleClickOutside = (event) => {
-			if (notificationRef.current && !notificationRef.current.contains(event.target)) {
+			if (
+				notificationRef.current &&
+				!notificationRef.current.contains(event.target)
+			) {
 				setNotificationDropdown(false)
 			}
 			if (avatarRef.current && !avatarRef.current.contains(event.target)) {
@@ -179,24 +182,28 @@ const AdminMenu = (props) => {
 										<div className="header-social-area d-flex align-items-center">
 											<>
 												{/* Notification Dropdown */}
-												<div className="dropdown" ref={notificationRef}>
+												<div
+													className="dropdown"
+													ref={notificationRef}>
 													<Link
 														to="#"
 														role="button"
 														id="dropdownMenua"
 														className={`text-white ${notificationDropdown ? "show" : ""}`}
 														aria-haspopup="true"
-														aria-expanded={notificationDropdown ? "true" : "false"}
+														aria-expanded={
+															notificationDropdown ? "true" : "false"
+														}
 														style={{
 															textAlign: "center",
 															fontWeight: "100",
 															position: "relative",
 														}}
 														onClick={(e) => {
-															e.preventDefault();
-															setNotificationDropdown(!notificationDropdown);
-															setAvatarDropdown(false);
-															onNotification();
+															e.preventDefault()
+															setNotificationDropdown(!notificationDropdown)
+															setAvatarDropdown(false)
+															onNotification()
 														}}>
 														<BellSVG />
 														<span
@@ -254,16 +261,18 @@ const AdminMenu = (props) => {
 												</div>
 												{/* Notification Dropdown End */}
 												{/* Avatar Dropdown */}
-												<div className="dropdown" ref={avatarRef}>
+												<div
+													className="dropdown"
+													ref={avatarRef}>
 													{/* Avatar */}
 													<a
 														href="#"
 														role="button"
 														className={`hidden ${avatarDropdown ? "show" : ""}`}
 														onClick={(e) => {
-															e.preventDefault();
-															setAvatarDropdown(!avatarDropdown);
-															setNotificationDropdown(false);
+															e.preventDefault()
+															setAvatarDropdown(!avatarDropdown)
+															setNotificationDropdown(false)
 														}}
 														aria-expanded={avatarDropdown ? "true" : "false"}>
 														<Img
@@ -290,8 +299,8 @@ const AdminMenu = (props) => {
 														/>
 													</span>
 													{/* Avatar End */}
-													<div 
-														className={`dropdown-menu rounded-4 m-0 p-0 bg-white dropdown-menu-end ${avatarDropdown ? "show" : ""}`}
+													<div
+														className={`dropdown-menu rounded-4 m-0 p-2 bg-white dropdown-menu-end ${avatarDropdown ? "show" : ""}`}
 														style={{
 															position: "absolute",
 															right: 0,
@@ -301,17 +310,19 @@ const AdminMenu = (props) => {
 															to={`/admin/staff/edit/${props.auth.id}`}
 															className="p-1 px-2 pt-3 dropdown-item"
 															onClick={() => setAvatarDropdown(false)}>
-															<div className="d-flex">
-																<div className="align-items-center">
+															<div className="d-flex border-bottom pb-2">
+																<div className="p-2">
 																	<Img
 																		src={props.auth?.avatar}
-																		className="rounded-circle"
-																		width="25px"
-																		height="25px"
+																		className={`avatar`}
+																		style={{
+																			minWidth: "1em",
+																			minHeight: "1em",
+																		}}
 																		alt="Avatar"
 																	/>
 																</div>
-																<div className="ps-2">
+																<div className="p-2">
 																	<h6 className="text-nowrap fs-6">
 																		{props.auth?.name}
 																	</h6>
@@ -335,7 +346,10 @@ const AdminMenu = (props) => {
 														<Link
 															to="#"
 															className="p-2 px-3 dropdown-item"
-															onClick={(e) => { setAvatarDropdown(false); logout(e); }}>
+															onClick={(e) => {
+																setAvatarDropdown(false)
+																logout(e)
+															}}>
 															<h6 className="fs-6">
 																<span className="me-2">
 																	<LogoutSVG />
@@ -363,8 +377,8 @@ const AdminMenu = (props) => {
 						location.pathname.match("/admin/")
 							? " bg-secondary"
 							: location.pathname.match("/instructor/")
-							? "bg-danger"
-							: "bg-success"
+								? "bg-danger"
+								: "bg-success"
 					}`}>
 					<div
 						className="sonarNav wow fadeInUp w-100 mt-4"
@@ -406,8 +420,8 @@ const AdminMenu = (props) => {
 											location.pathname.match("/admin/")
 												? "text-secondary"
 												: location.pathname.match("/instructor/")
-												? "text-danger"
-												: "text-success"
+													? "text-danger"
+													: "text-success"
 										} text-white`}>
 										<ChevronRightSVG />
 									</span>

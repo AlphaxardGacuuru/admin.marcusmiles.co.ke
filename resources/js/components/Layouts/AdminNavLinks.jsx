@@ -52,424 +52,310 @@ const AdminNavLinks = (props) => {
 		)
 	}
 
+	const navLinks = [
+		{
+			link: "/admin/dashboard",
+			icon: <HomeSVG />,
+			name: "Dashboard",
+		},
+		{
+			collapse: "ERP",
+			icon: <ERPSVG />,
+			links: [
+				{
+					link: "/admin/erp/dashboard",
+					icon: <HomeSVG />,
+					name: "Dashboard",
+				},
+				{
+					link: "/admin/erp/goods",
+					icon: <GoodSVG />,
+					name: "Goods",
+				},
+				{
+					link: "/admin/erp/service-providers",
+					icon: <ServiceProviderSVG />,
+					name: "Service Providers",
+				},
+				{
+					link: "/admin/erp/projects",
+					icon: <ProjectSVG />,
+					name: "Projects",
+				},
+				{
+					link: "/admin/erp/suppliers",
+					icon: <SupplierSVG />,
+					name: "Suppliers",
+				},
+				{
+					link: "/admin/erp/inventories",
+					icon: <InventorySVG />,
+					name: "Inventories",
+				},
+				{
+					link: "/admin/erp/issues",
+					icon: <IssueSVG />,
+					name: "Issues",
+				},
+			],
+		},
+		{
+			collapse: "Documents",
+			icon: <DocumentsSVG />,
+			links: [
+				{
+					link: "/admin/documents/delivery-notes",
+					icon: <PaperSVG />,
+					name: "Delivery Notes",
+				},
+				{
+					link: "/admin/documents/wage-sheets",
+					icon: <PaperSVG />,
+					name: "Wage Sheets",
+				},
+				{
+					link: "/admin/documents/status-reports",
+					icon: <PaperSVG />,
+					name: "Status Reports",
+				},
+				{
+					link: "/admin/documents/practical-completion-certificates",
+					icon: <PaperSVG />,
+					name: "Practical Completion Certificates",
+				},
+				{
+					link: "/admin/documents/site-visit-reports",
+					icon: <PaperSVG />,
+					name: "Site Visit Reports",
+				},
+				{
+					link: "/admin/documents/requisitions",
+					icon: <PaperSVG />,
+					name: "Requisitions",
+				},
+			],
+		},
+		{
+			collapse: "CRM",
+			icon: <StaffSVG />,
+			links: [
+				{
+					link: "/admin/crm/clients",
+					icon: <PersonSVG />,
+					name: "Clients",
+				},
+				{
+					link: "/admin/crm/client-tracking",
+					icon: <ClientTrackingSVG />,
+					name: "Client Tracking",
+				},
+				{
+					link: "/admin/crm/quotations",
+					icon: <QuotationSVG />,
+					name: "Quotations",
+				},
+				{
+					link: "/admin/crm/orders",
+					icon: <OrderSVG />,
+					name: "Orders",
+				},
+				{
+					link: "/admin/crm/products",
+					icon: <ProductSVG />,
+					name: "Products",
+				},
+				{
+					link: "/admin/crm/invoices",
+					icon: <InvoiceSVG />,
+					name: "Invoices",
+				},
+				{
+					link: "/admin/crm/payments",
+					icon: <PaymentSVG />,
+					name: "Payments",
+				},
+				{
+					link: "/admin/crm/credit-notes",
+					icon: <CreditNoteSVG />,
+					name: "Credit Notes",
+				},
+				{
+					link: "/admin/crm/staff",
+					icon: <StaffSVG />,
+					name: "Staff",
+				},
+				{
+					link: "/admin/crm/roles",
+					icon: <PersonGearSVG />,
+					name: "Roles",
+				},
+			],
+		},
+		{
+			link: "/admin/configurations",
+			icon: <SettingsSVG />,
+			name: "Configurations",
+		},
+	]
+
+	/*
+	 * Handle Permissions
+	 */
+	const can = (entity) => {
+		if (props.auth.roleNames?.some((roleName) => roleName === "Super Admin")) {
+			return
+		}
+
+		if (Array.isArray(entity)) {
+			var hasAtleastOnePersmission = entity.some((entityName) => {
+				if (["support"].includes(entityName)) {
+					return true
+				} else {
+					const permissions = props.auth.permissions
+
+					const hasPermission = permissions?.some((perm) => perm.match(entity))
+
+					return hasPermission
+				}
+			})
+
+			return hasAtleastOnePersmission ? "" : "d-none"
+		} else {
+			if (["dashboard", "support"].includes(entity)) {
+				return true
+			}
+
+			const permissions = props.auth.permissions
+
+			const hasPermission = permissions?.some((perm) => perm.match(entity))
+
+			return hasPermission ? "" : "d-none"
+		}
+	}
+
 	return (
 		<React.Fragment>
-			{/* Dashboard Link */}
-			<li className="nav-item">
-				<Link
-					to={`/admin/dashboard`}
-					className={`nav-link my-1 ${active("/admin/dashboard")}`}>
-					<div className="nav-link-icon">
-						<HomeSVG />
-					</div>
-					<div className="nav-link-text">Dashboard</div>
-				</Link>
-			</li>
-			{/* Dashboard Link End */}
-			{/* ERP Links */}
-			<li className="nav-item">
-				<a
-					href="#"
-					className={`nav-link accordion-button w-75 my-1 ${active(
-						"/admin/erp/"
-					)}`}
-					data-bs-toggle="collapse"
-					data-bs-target="#collapseERP"
-					aria-expanded="false"
-					aria-controls="collapseERP">
-					<div className="nav-link-icon">
-						<ERPSVG />
-					</div>
-					<div className="nav-link-text">ERP</div>
-				</a>
+			{navLinks.map((navLink, key) => (
+				<React.Fragment key={key}>
+					{!navLink.collapse ? (
+						<li
+							key={key}
+							className={`nav-item hidden ${can(navLink.name.toLowerCase())}`}>
+							<Link
+								to={navLink.link}
+								className={`nav-link ${active(navLink.link)}`}>
+								<div className="nav-link-icon">{navLink.icon}</div>
+								<div className="nav-link-text">{navLink.name}</div>
+							</Link>
+						</li>
+					) : (
+						<li
+							className={`nav-item hidden ${can(
+								navLink.links.map((link) => link.name.toLowerCase())
+							)}`}>
+							<Link
+								to={navLink.link}
+								className={`nav-link accordion-button my-1 ${navLink.links
+									.map((link) => active(link.link))
+									.join(" ")}`}
+								data-bs-toggle="collapse"
+								data-bs-target={`#collapse${key}`}
+								aria-expanded="false"
+								aria-controls={`collapse${key}`}>
+								<div className="nav-link-icon">{navLink.icon}</div>
+								<div className="nav-link-text">{navLink.collapse}</div>
+							</Link>
 
-				{/* Collapse */}
-				<div
-					className={!location.pathname.match("/erp/") ? "collapse" : ""}
-					id="collapseERP">
-					<ol className="ms-4">
-						{/* Dashboard */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/dashboard`}
-								className={`nav-link ${activeStrict("/admin/erp/dashboard")}`}>
-								<div className="nav-link-icon">
-									<HomeSVG />
-								</div>
-								<div className="nav-link-text">Dashboard</div>
-							</Link>
+							{/* Collapse */}
+							<div
+								className={"collapse"}
+								id={`collapse${key}`}>
+								<ol className="ms-4">
+									{/* Link Start */}
+									{navLink.links.map((link, index) => (
+										<li
+											className={`nav-item ${can(link.name.toLowerCase())}`}
+											key={index}>
+											<Link
+												to={link.link}
+												className={`nav-link ${activeStrict(link.link)}`}>
+												<div className="nav-link-icon">{link.icon}</div>
+												<div className="nav-link-text">{link.name}</div>
+											</Link>
+										</li>
+									))}
+									{/* Link End */}
+								</ol>
+							</div>
+							{/* Collapse End */}
 						</li>
-						{/* Dashboard End */}
-						{/* Goods Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/goods`}
-								className={`nav-link ${active("/admin/erp/goods")}`}>
-								<div className="nav-link-icon">
-									<GoodSVG />
-								</div>
-								<div className="nav-link-text">Goods</div>
-							</Link>
-						</li>
-						{/* Goods End */}
-						{/* Service Providers Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/service-providers`}
-								className={`nav-link ${active(
-									"/admin/erp/service-providers"
-								)}`}>
-								<div className="nav-link-icon">
-									<ServiceProviderSVG />
-								</div>
-								<div className="nav-link-text">Service Providers</div>
-							</Link>
-						</li>
-						{/* Service Providers End */}
-						{/* Projects Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/projects`}
-								className={`nav-link ${active("/admin/erp/projects") ||
-									active("/admin/erp/work-plan") ||
-									active("/admin/erp/inventory")
-									}`}>
-								<div className="nav-link-icon">
-									<ProjectSVG />
-								</div>
-								<div className="nav-link-text">Projects</div>
-							</Link>
-						</li>
-						{/* Projects End */}
-						{/* Suppliers Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/suppliers`}
-								className={`nav-link ${active("/admin/erp/suppliers")}`}>
-								<div className="nav-link-icon">
-									<SupplierSVG />
-								</div>
-								<div className="nav-link-text">Suppliers</div>
-							</Link>
-						</li>
-						{/* Suppliers End */}
-						{/* Inventory Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/inventories`}
-								className={`nav-link ${active("/admin/erp/inventories")}`}>
-								<div className="nav-link-icon">
-									<InventorySVG />
-								</div>
-								<div className="nav-link-text">Inventory</div>
-							</Link>
-						</li>
-						{/* Inventory End */}
-						{/* Issues Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/erp/issues`}
-								className={`nav-link ${active("/admin/erp/issues")}`}>
-								<div className="nav-link-icon">
-									<IssueSVG />
-								</div>
-								<div className="nav-link-text">Issues</div>
-							</Link>
-						</li>
-						{/* Issues End */}
-					</ol>
-				</div>
-				{/* Collapse End */}
-			</li>
-			{/* ERP Links End */}
-			{/* Documents Links */}
-			<li className="nav-item">
-				<a
-					href="#"
-					className={`nav-link accordion-button w-75 my-1 ${active(
-						"/admin/documents/"
-					)}`}
-					data-bs-toggle="collapse"
-					data-bs-target="#collapseDocuments"
-					aria-expanded="false"
-					aria-controls="collapseDocuments">
-					<div className="nav-link-icon">
-						<DocumentsSVG />
-					</div>
-					<div className="nav-link-text">Documents</div>
-				</a>
+					)}
+				</React.Fragment>
+			))}
 
-				{/* Collapse */}
-				<div
-					className={!location.pathname.match("/documents/") ? "collapse" : ""}
-					id="collapseDocuments">
-					<ol className="ms-4">
-						{/* Delivery Notes Start */}
-						<li className="nav-item">
+			{/* Mobile Start */}
+			{navLinks.map((navLink, key) => (
+				<React.Fragment key={key}>
+					{!navLink.collapse ? (
+						<li
+							key={key}
+							className={`nav-item anti-hidden ${can(
+								navLink.name.toLowerCase()
+							)}`}>
 							<Link
-								to={`/admin/documents/delivery-notes`}
-								className={`nav-link ${active(
-									"/admin/documents/delivery-notes"
-								)}`}>
-								<div className="nav-link-icon">
-									<PaperSVG />
-								</div>
-								<div className="nav-link-text">Delivery Notes</div>
+								to={navLink.link}
+								className={`nav-link ${active(navLink.link)}`}
+								onClick={() => props.setAdminMenu("")}>
+								<div className="nav-link-icon">{navLink.icon}</div>
+								<div className="nav-link-text">{navLink.name}</div>
 							</Link>
 						</li>
-						{/* Delivery Notes End */}
-						{/* Wage Sheets Start */}
-						<li className="nav-item">
+					) : (
+						<li
+							className={`nav-item anti-hidden ${can(
+								navLink.links.map((link) => link.name.toLowerCase())
+							)}`}>
 							<Link
-								to={`/admin/documents/wage-sheets`}
-								className={`nav-link ${active(
-									"/admin/documents/wage-sheets"
-								)}`}>
-								<div className="nav-link-icon">
-									<PaperSVG />
-								</div>
-								<div className="nav-link-text">Wage Sheets</div>
+								to={navLink.link}
+								className={`nav-link accordion-button my-1 ${navLink.links
+									.map((link) => active(link.link))
+									.join(" ")}`}
+								data-bs-toggle="collapse"
+								data-bs-target={`#collapse${key}`}
+								aria-expanded="false"
+								aria-controls={`collapse${key}`}>
+								<div className="nav-link-icon">{navLink.icon}</div>
+								<div className="nav-link-text">{navLink.collapse}</div>
 							</Link>
-						</li>
-						{/* Wage Sheets End */}
-						{/* Status Reports Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/documents/status-reports`}
-								className={`nav-link ${active(
-									"/admin/documents/status-reports"
-								)}`}>
-								<div className="nav-link-icon">
-									<PaperSVG />
-								</div>
-								<div className="nav-link-text">Status Reports</div>
-							</Link>
-						</li>
-						{/* Status Reports End */}
-						{/* Practical Completion Certificates Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/documents/practical-completion-certificates`}
-								className={`nav-link ${active(
-									"/admin/documents/practical-completion-certificates"
-								)}`}>
-								<div className="nav-link-icon">
-									<PaperSVG />
-								</div>
-								<div className="nav-link-text">
-									Practical Completion Certificates
-								</div>
-							</Link>
-						</li>
-						{/* Practical Completion Certificates End */}
-						{/* Site Visit Reports Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/documents/site-visit-reports`}
-								className={`nav-link ${active(
-									"/admin/documents/site-visit-reports"
-								)}`}>
-								<div className="nav-link-icon">
-									<PaperSVG />
-								</div>
-								<div className="nav-link-text">Site Visit Reports</div>
-							</Link>
-						</li>
-						{/* Site Visit Reports End */}
-						{/* Requisitions Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/documents/requisitions`}
-								className={`nav-link ${active(
-									"/admin/documents/requisitions"
-								)}`}>
-								<div className="nav-link-icon">
-									<PaperSVG />
-								</div>
-								<div className="nav-link-text">Requisitions</div>
-							</Link>
-						</li>
-						{/* Requisitions End */}
-					</ol>
-				</div>
-				{/* Collapse End */}
-			</li>
-			{/* Documents Links End */}
-			{/* CRM Links */}
-			<li className="nav-item">
-				<a
-					href="#"
-					className={`nav-link accordion-button w-75 my-1 ${active(
-						"/admin/crm/"
-					)}`}
-					data-bs-toggle="collapse"
-					data-bs-target="#collapseCRM"
-					aria-expanded="false"
-					aria-controls="collapseCRM">
-					<div className="nav-link-icon">
-						<StaffSVG />
-					</div>
-					<div className="nav-link-text">CRM</div>
-				</a>
 
-				{/* Collapse */}
-				<div
-					className={!location.pathname.match("/crm/") ? "collapse" : ""}
-					id="collapseCRM">
-					<ol className="ms-4">
-						{/* Clients Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/clients`}
-								className={`nav-link ${active("/admin/crm/clients")}`}>
-								<div className="nav-link-icon">
-									<PersonSVG />
-								</div>
-								<div className="nav-link-text">Clients</div>
-							</Link>
+							{/* Collapse */}
+							<div
+								className={"collapse"}
+								id={`collapse${key}`}>
+								<ol className="ms-4">
+									{/* Link Start */}
+									{navLink.links.map((link, index) => (
+										<li
+											className={`nav-item ${can(link.name.toLowerCase())}`}
+											key={index}>
+											<Link
+												to={link.link}
+												className={`nav-link ${activeStrict(link.link)}`}
+												onClick={() => props.setAdminMenu("")}>
+												<div className="nav-link-icon">{link.icon}</div>
+												<div className="nav-link-text">{link.name}</div>
+											</Link>
+										</li>
+									))}
+									{/* Link End */}
+								</ol>
+							</div>
+							{/* Collapse End */}
 						</li>
-						{/* Clients End */}
-						{/* Client Tracking Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/client-tracking`}
-								className={`nav-link ${active("/admin/crm/client-tracking")}`}>
-								<div className="nav-link-icon">
-									<ClientTrackingSVG />
-								</div>
-								<div className="nav-link-text">Client Tracking</div>
-							</Link>
-						</li>
-						{/* Client Tracking End */}
-						{/* Quotations Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/quotations`}
-								className={`nav-link ${active(
-									"/admin/crm/quotations"
-								)}`}>
-								<div className="nav-link-icon">
-									<QuotationSVG />
-								</div>
-								<div className="nav-link-text">Quotations</div>
-							</Link>
-						</li>
-						{/* Quotations End */}
-						{/* Products Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/products`}
-								className={`nav-link ${active(
-									"/admin/crm/products"
-								)}`}>
-								<div className="nav-link-icon">
-									<ProductSVG />
-								</div>
-								<div className="nav-link-text">Products</div>
-							</Link>
-						</li>
-						{/* Products End */}
-						{/* Orders Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/orders`}
-								className={`nav-link ${active(
-									"/admin/crm/orders"
-								)}`}>
-								<div className="nav-link-icon">
-									<OrderSVG />
-								</div>
-								<div className="nav-link-text">Orders</div>
-							</Link>
-						</li>
-						{/* Orders End */}
-						{/* Invoices Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/invoices`}
-								className={`nav-link ${active(
-									"/admin/crm/invoices"
-								)}`}>
-								<div className="nav-link-icon">
-									<InvoiceSVG />
-								</div>
-								<div className="nav-link-text">Invoices</div>
-							</Link>
-						</li>
-						{/* Invoices End */}
-						{/* Payments Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/payments`}
-								className={`nav-link ${active(
-									"/admin/crm/payments"
-								)}`}>
-								<div className="nav-link-icon">
-									<PaymentSVG />
-								</div>
-								<div className="nav-link-text">Payments</div>
-							</Link>
-						</li>
-						{/* Payments End */}
-						{/* Credit Notes Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/credit-notes`}
-								className={`nav-link ${active(
-									"/admin/crm/credit-notes"
-								)}`}>
-								<div className="nav-link-icon">
-									<CreditNoteSVG />
-								</div>
-								<div className="nav-link-text">Credit Notes</div>
-							</Link>
-						</li>
-						{/* Credit Notes End */}
-						{/* Staff Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/staff`}
-								className={`nav-link ${active(
-									"/admin/crm/staff"
-								)}`}>
-								<div className="nav-link-icon">
-									<StaffSVG />
-								</div>
-								<div className="nav-link-text">Staff</div>
-							</Link>
-						</li>
-						{/* Staff End */}
-						{/* Roles Start */}
-						<li className="nav-item">
-							<Link
-								to={`/admin/crm/roles`}
-								className={`nav-link ${active(
-									"/admin/crm/roles"
-								)}`}>
-								<div className="nav-link-icon">
-									<PersonGearSVG />
-								</div>
-								<div className="nav-link-text">Roles</div>
-							</Link>
-						</li>
-						{/* Roles End */}
-					</ol>
-				</div>
-				{/* Collapse End */}
-			</li>
-			{/* CRM Links End */}
-			{/* Configurations Link */}
-			<li className="nav-item">
-				<Link
-					to={`/admin/configurations`}
-					className={`nav-link my-1 ${active("/admin/configurations")}`}>
-					<div className="nav-link-icon">
-						<SettingsSVG />
-					</div>
-					<div className="nav-link-text">Configurations</div>
-				</Link>
-			</li>
-			{/* Configurations Link End */}
+					)}
+				</React.Fragment>
+			))}
+			{/* Mobile End */}
 		</React.Fragment>
 	)
 }

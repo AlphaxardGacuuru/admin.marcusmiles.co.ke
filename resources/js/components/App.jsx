@@ -27,12 +27,11 @@ function App() {
 		} else {
 			return {
 				name: "Guest",
-				username: "@guest",
 				avatar: "/storage/avatars/male-avatar.png",
 				accountType: "normal",
-				decos: 0,
-				posts: 0,
-				fans: 0,
+				roles: [],
+				roleNames: [],
+				permissions: []
 			}
 		}
 	}

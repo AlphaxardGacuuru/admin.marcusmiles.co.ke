@@ -27,6 +27,7 @@ class QuotationController extends Controller
             ->additional([
                 "status" => $status,
                 "message" => $message,
+                "statuses" => $statuses
             ]);
     }
 
@@ -45,6 +46,10 @@ class QuotationController extends Controller
             'expiryDate' => 'required|date',
             'notes' => 'required|string',
             'items' => 'required|array|min:1',
+            'items.*.description' => 'required|string|max:500',
+            'items.*.quantity' => 'required|numeric|min:0.01',
+            'items.*.rate' => 'required|numeric|min:0',
+            'items.*.total' => 'required|numeric|min:0',
         ]);
 
         [$saved, $message, $quotation] = $this->service->store($request);
@@ -86,6 +91,11 @@ class QuotationController extends Controller
             'issueDate' => 'sometimes|date',
             'expiryDate' => 'sometimes|date',
             'notes' => 'sometimes|string',
+            'items' => 'sometimes|array|min:1',
+            'items.*.description' => 'sometimes|string|max:500',
+            'items.*.quantity' => 'sometimes|numeric|min:0.01',
+            'items.*.rate' => 'sometimes|numeric|min:0',
+            'items.*.total' => 'sometimes|numeric|min:0',
         ]);
 
         [$saved, $message, $quotation] = $this->service->update($request, $id);

@@ -28,31 +28,21 @@ class InvoiceController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'clientId' => 'required|integer|exists:users,id',
+        $this->validate($request, [
+            'projectId' => 'required|exists:projects,id',
+            'total' => 'required|numeric',
             'issueDate' => 'required|date',
-            'dueDate' => 'required|date|after_or_equal:issueDate',
-            'invoiceItems' => 'required|array|min:1',
-            'invoiceItems.*.description' => 'required|string|max:500',
-            'invoiceItems.*.quantity' => 'required|numeric|min:0.01',
-            'invoiceItems.*.rate' => 'required|numeric|min:0',
-            'invoiceItems.*.amount' => 'required|numeric|min:0',
-            'total' => 'required|numeric|min:0',
-            'notes' => 'nullable|string|max:1000',
-            'terms' => 'nullable|string|max:1000',
-            'status' => 'required|in:not_paid,partially_paid,paid,over_paid',
+            'dueDate' => 'required|date',
+            'notes' => 'required|string',
+            'items' => 'required|array|min:1',
+            'items.*.description' => 'required|string|max:500',
+            'items.*.quantity' => 'required|numeric|min:0.01',
+            'items.*.rate' => 'required|numeric|min:0',
+            'items.*.total' => 'required|numeric|min:0',
         ]);
 
         [$saved, $message, $invoice] = $this->service->store($request);
@@ -68,9 +58,12 @@ class InvoiceController extends Controller
      */
     public function show($id)
     {
-        $invoice = $this->service->show($id);
+        [$status, $message, $invoice] = $this->service->show($id);
 
-        return new InvoiceResource($invoice);
+        return (new InvoiceResource($invoice))->additional([
+            "status" => $status,
+            "message" => $message
+        ]);
     }
 
     /**
@@ -86,19 +79,17 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'clientId' => 'sometimes|required|integer|exists:users,id',
-            'issueDate' => 'sometimes|required|date',
-            'dueDate' => 'sometimes|required|date|after_or_equal:issueDate',
-            'invoiceItems' => 'sometimes|required|array|min:1',
-            'invoiceItems.*.description' => 'required_with:invoiceItems|string|max:500',
-            'invoiceItems.*.quantity' => 'required_with:invoiceItems|numeric|min:0.01',
-            'invoiceItems.*.rate' => 'required_with:invoiceItems|numeric|min:0',
-            'invoiceItems.*.amount' => 'required_with:invoiceItems|numeric|min:0',
-            'total' => 'sometimes|required|numeric|min:0',
-            'notes' => 'nullable|string|max:1000',
-            'terms' => 'nullable|string|max:1000',
-            'status' => 'sometimes|required|in:not_paid,partially_paid,paid,over_paid',
+        $this->validate($request, [
+            'projectId' => 'sometimes|exists:projects,id',
+            'total' => 'sometimes|numeric',
+            'issueDate' => 'sometimes|date',
+            'dueDate' => 'sometimes|date',
+            'notes' => 'sometimes|string',
+            'items' => 'sometimes|array|min:1',
+            'items.*.description' => 'sometimes|string|max:500',
+            'items.*.quantity' => 'sometimes|numeric|min:0.01',
+            'items.*.rate' => 'sometimes|numeric|min:0',
+            'items.*.total' => 'sometimes|numeric|min:0',
         ]);
 
         [$updated, $message, $invoice] = $this->service->update($request, $id);
@@ -116,27 +107,10 @@ class InvoiceController extends Controller
     {
         [$deleted, $message, $invoice] = $this->service->destroy($id);
 
-        return response([
+        return (new InvoiceResource($invoice))->additional([
             "status" => $deleted,
             "message" => $message,
             "data" => $invoice,
-        ], 200);
-    }
-
-    public function previewPdf($id)
-    {
-        $pdf = $this->service->generatePdf($id);
-
-        return $pdf->stream("invoice-{$id}-preview.pdf");
-    }
-
-    /**
-     * Send invoice email with PDF attachment
-     */
-    public function sendInvoiceEmail($id)
-    {
-        $this->service->sendInvoiceEmail($id);
-
-        return response()->json(['message' => 'Invoice Email Sent.']);
+        ]);
     }
 }

@@ -99,7 +99,7 @@ const QuotationList = (props) => {
 							onChange={(e) => setStatus(e.target.value)}
 							required={true}>
 							<option value="">Filter by Status</option>
-							{props.invoices?.statuses.map((status, key) => (
+							{props.quotations.statuses?.map((status, key) => (
 								<option
 									key={key}
 									value={status}>

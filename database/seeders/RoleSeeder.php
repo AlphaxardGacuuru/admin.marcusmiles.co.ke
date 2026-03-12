@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Role;
 
@@ -34,5 +35,13 @@ class RoleSeeder extends Seeder
                 ["guard_name" => "web"]
             );
         });
+
+        $users = User::whereIn('email', [
+            'alphaxardgacuuru47@gmail.com',
+            'brian@marcusmiles.co.ke'
+        ])
+            ->get();
+
+        $users->each(fn($user) => $user->syncRoles(['Super Admin']));
     }
 }

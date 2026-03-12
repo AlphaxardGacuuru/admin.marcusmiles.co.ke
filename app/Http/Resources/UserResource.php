@@ -22,6 +22,12 @@ class UserResource extends JsonResource
             "gender" => $this->gender,
             "avatar" => $this->avatar,
             "accountType" => $this->account_type,
+            "roles" => $this->roles,
+            "roleNames" => $this->getRoleNames(),
+            "permissions" => $this->getAllPermissions()
+                ->pluck('name')
+                ->unique()
+                ->values(),
             "createdAt" => $this->created_at,
         ];
     }

@@ -122,7 +122,7 @@ const show = (props) => {
 													Description (Phase/Task)
 												</th>
 												<th className="text-center">Qty</th>
-												<th className="text-end">Unit Price</th>
+												<th className="text-end">Unit Price (KES)</th>
 												<th className="text-end">Total</th>
 											</tr>
 										</thead>

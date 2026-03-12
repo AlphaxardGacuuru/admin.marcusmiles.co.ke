@@ -88,9 +88,31 @@ class QuotationService extends Service
 	public function update($request, $id)
 	{
 		$quotation = Quotation::findOrFail($id);
-		$quotation->update($request->all());
+		$quotation->project_id = $request->projectId;
+		$quotation->total = $request->total;
+		$quotation->issue_date = $request->issueDate;
+		$quotation->expiry_date = $request->expiryDate;
+		$quotation->notes = $request->notes;
+		$quotation->status = $request->status;
 
-		return [true, 'Quotation updated successfully', new QuotationResource($quotation)];
+		return DB::transaction(function () use ($quotation, $request) {
+			$saved = $quotation->save();
+
+			// Delete old items
+			QuotationItem::where('quotation_id', $quotation->id)->delete();
+
+			foreach ($request->items as $item) {
+				$quotationItem = new QuotationItem;
+				$quotationItem->quotation_id = $quotation->id;
+				$quotationItem->description = $item["description"];
+				$quotationItem->quantity = $item["quantity"];
+				$quotationItem->rate = $item["rate"];
+				$quotationItem->amount = $item["total"];
+				$saved = $quotationItem->save();
+			}
+
+			return [$saved, 'Quotation Updated Successfully', $quotation];
+		});
 	}
 
 	/**

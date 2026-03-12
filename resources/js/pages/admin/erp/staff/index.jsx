@@ -4,7 +4,7 @@ import StaffList from "@/components/Staff/StaffList"
 
 const index = (props) => {
 	// Get Staff
-	const [staff, setStaff] = useState([])
+	const [staff, setStaff] = useState(props.getLocalStorage("staff"))
 	const [roles, setRoles] = useState([])
 	const [nameQuery, setNameQuery] = useState("")
 	const [emailQuery, setEmailQuery] = useState("")
@@ -19,12 +19,15 @@ const index = (props) => {
 	}, [])
 
 	useEffect(() => {
-		props.getPaginated(`staff?name=${nameQuery}&
+		props.getPaginated(
+			`staff?name=${nameQuery}&
 			email=${emailQuery}&
 			phone=${phoneQuery}&
 			gender=${genderQuery}&
 			role=${roleQuery}`,
-			setStaff)
+			setStaff,
+			"staff"
+		)
 	}, [nameQuery, emailQuery, phoneQuery, genderQuery, roleQuery])
 
 	return (

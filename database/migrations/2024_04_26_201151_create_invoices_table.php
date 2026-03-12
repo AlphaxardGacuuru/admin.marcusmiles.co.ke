@@ -19,12 +19,11 @@ return new class extends Migration
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
             $table->date('issue_date');
-            $table->date('due_date');
+            $table->date('due_date')->nullable();
             $table->unsignedBigInteger('total')->default(0);
             $table->unsignedBigInteger('paid')->default(0);
             $table->unsignedBigInteger('balance')->default(0);
             $table->text('notes')->nullable();
-            $table->text('terms')->nullable();
             $table->string('status')->default('not_paid');
             $table->foreignId('created_by')
                 ->constrained('users')

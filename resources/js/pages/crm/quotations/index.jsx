@@ -4,7 +4,9 @@ import QuotationList from "@/components/Quotations/QuotationList"
 
 const index = (props) => {
 	// Get Quotations
-	const [quotations, setQuotations] = useState([])
+	const [quotations, setQuotations] = useState(
+		props.getLocalStorage("quotations")
+	)
 
 	const [search, setSearch] = useState("")
 	const [clientQuery, setClientQuery] = useState("")
@@ -31,7 +33,8 @@ const index = (props) => {
 			endMonth=${endMonth}&
 			startYear=${startYear}&
 			endYear=${endYear}`,
-			setQuotations
+			setQuotations,
+			"quotations"
 		)
 	}, [
 		search,
@@ -40,9 +43,8 @@ const index = (props) => {
 		startMonth,
 		endMonth,
 		startYear,
-		endYear
+		endYear,
 	])
-
 
 	return (
 		<div className="row">

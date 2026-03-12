@@ -39,7 +39,9 @@ class InvoiceService extends Service
      */
     public function show($id)
     {
-        return Invoice::find($id);
+        $invoice = Invoice::findOrFail($id);
+
+        return [true, "Invoice Fetched Successfully", $invoice];
     }
 
     /*
@@ -48,27 +50,27 @@ class InvoiceService extends Service
     public function store($request)
     {
         $invoice = new Invoice;
-        $invoice->user_id = $request->clientId;
+        $invoice->code = $this->generateUniqueCode(Invoice::class);
+        $invoice->project_id = $request->projectId;
         $invoice->issue_date = $request->issueDate;
         $invoice->due_date = $request->dueDate;
-        $invoice->total = $request->total;
-        $invoice->balance = $request->total;
         $invoice->notes = $request->notes;
-        $invoice->terms = $request->terms;
-        $invoice->status = $request->status;
+        $invoice->balance = $request->total;
+        $invoice->total = $request->total;
+        $invoice->status = "not_paid";
+        $invoice->created_by = $this->id;
 
         $saved = DB::transaction(function () use ($invoice, $request) {
             $saved = $invoice->save();
 
             // Invoice Items
-            foreach ($request->invoiceItems as $item) {
+            foreach ($request->items as $item) {
                 $invoiceItem = new InvoiceItem;
                 $invoiceItem->invoice_id = $invoice->id;
-                $invoiceItem->description = $item['description'];
-                $invoiceItem->quantity = $item['quantity'];
-                $invoiceItem->rate = $item['rate'];
-                $invoiceItem->amount = $item['amount'];
-                Log::info("Invoice Request: ", $invoiceItem->toArray());
+                $invoiceItem->description = $item["description"];
+                $invoiceItem->quantity = $item["quantity"];
+                $invoiceItem->rate = $item["rate"];
+                $invoiceItem->amount = $item["total"];
                 $saved = $invoiceItem->save();
             }
 
@@ -85,14 +87,13 @@ class InvoiceService extends Service
 	*/
     public function update($request, $id)
     {
-        $invoice = Invoice::find($id);
-        $invoice->user_id = $request->input("clientId", $invoice->user_id);
-        $invoice->issue_date = $request->input("issueDate", $invoice->issue_date);
-        $invoice->due_date = $request->input("dueDate", $invoice->due_date);
-        $invoice->total = $request->input("total", $invoice->total);
-        $invoice->notes = $request->input("notes", $invoice->notes);
-        $invoice->terms = $request->input("terms", $invoice->terms);
-        $invoice->status = $request->input("status", $invoice->status);
+        $invoice = Invoice::findOrFail($id);
+        $invoice->project_id = $request->projectId;
+        $invoice->issue_date = $request->issueDate;
+        $invoice->due_date = $request->dueDate;
+        $invoice->notes = $request->notes;
+        $invoice->balance = $request->total;
+        $invoice->total = $request->total;
 
         $saved = DB::transaction(function () use ($invoice, $request) {
             $saved = $invoice->save();
@@ -101,13 +102,13 @@ class InvoiceService extends Service
             InvoiceItem::where("invoice_id", $invoice->id)->delete();
 
             // Invoice Items
-            foreach ($request->invoiceItems as $item) {
+            foreach ($request->items as $item) {
                 $invoiceItem = new InvoiceItem;
                 $invoiceItem->invoice_id = $invoice->id;
-                $invoiceItem->description = $item['description'];
-                $invoiceItem->quantity = $item['quantity'];
-                $invoiceItem->rate = $item['rate'];
-                $invoiceItem->amount = $item['amount'];
+                $invoiceItem->description = $item["description"];
+                $invoiceItem->quantity = $item["quantity"];
+                $invoiceItem->rate = $item["rate"];
+                $invoiceItem->amount = $item["total"];
                 $saved = $invoiceItem->save();
             }
 
@@ -126,19 +127,17 @@ class InvoiceService extends Service
     {
         $ids = explode(",", $id);
 
-        $deleted = DB::transaction(function () use ($ids) {
-            $deleted = Invoice::whereIn("id", $ids)->delete();
+        foreach ($ids as $itemId) {
+            $invoice = Invoice::findOrFail($itemId);
 
-            $this->updateInvoiceStatus($ids[0]);
-
-            return $deleted;
-        });
+            $deleted = $invoice->delete();
+        }
 
         $message = count($ids) > 1 ?
             "Invoices Deleted Successfully" :
             "Invoice Deleted Successfully";
 
-        return [$deleted, $message, ""];
+        return [$deleted, $message, $invoice];
     }
 
     /*
@@ -190,32 +189,5 @@ class InvoiceService extends Service
         }
 
         return $query;
-    }
-
-    /*
-	 * Generate Invoice PDF
-	 */
-    public function generatePdf($id)
-    {
-        $invoice = Invoice::findOrFail($id);
-
-        // This looks for resources/views/invoices/pdf.blade.php
-        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
-
-        return $pdf;
-    }
-
-    public function sendInvoiceEmail($id)
-    {
-        $invoice = Invoice::findOrFail($id);
-
-        $generatedPdf = $this->generatePdf($id);
-
-        $pdf = $generatedPdf->output();
-
-        $al = User::where("email", "alphaxardgacuuru47@gmail.com")->first();
-
-        // $al->notify(new InvoiceNotification($invoice, $pdf));
-        $invoice->user->notify(new InvoiceNotification($invoice, $pdf));
     }
 }

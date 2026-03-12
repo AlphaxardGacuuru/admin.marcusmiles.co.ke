@@ -4,7 +4,7 @@ import ClientList from "@/components/Clients/ClientList"
 
 const index = (props) => {
 	// Get Client
-	const [clients, setClients] = useState([])
+	const [clients, setClients] = useState(props.getLocalStorage("clients"))
 
 	const [nameQuery, setNameQuery] = useState("")
 
@@ -15,7 +15,7 @@ const index = (props) => {
 	}, [])
 
 	useEffect(() => {
-	  props.getPaginated(`clients?name=${nameQuery}`, setClients)
+	  props.getPaginated(`clients?name=${nameQuery}`, setClients, "clients")
 	}, [nameQuery])
 	
 

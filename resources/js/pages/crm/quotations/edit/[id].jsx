@@ -175,8 +175,8 @@ const edit = (props) => {
 													Description (Phase/Task)
 												</th>
 												<th>Qty</th>
-												<th>Unit Price</th>
-												<th>Total</th>
+												<th>Unit Price (KES)</th>
+												<th>Total (KES)</th>
 												<th></th>
 											</tr>
 										</thead>
