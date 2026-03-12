@@ -58,7 +58,7 @@ const show = (props) => {
 									className="mx-auto"
 									style={{ width: "5em" }}>
 									<Img
-										src="/storage/img/favicon.png"
+										src="/img/favicon.png"
 										style={{ width: "100%", height: "auto" }}
 									/>
 								</div>
@@ -80,18 +80,14 @@ const show = (props) => {
 							<div className="d-flex justify-content-between mb-4">
 								<div className="">
 									<h5 className="mb-1">Client / Project:</h5>
-									<h5 className="fw-normal text-dark">
-										{invoice.projectName}
-									</h5>
+									<h5 className="fw-normal text-dark">{invoice.projectName}</h5>
 								</div>
 
 								{/* First Header Start */}
 								<div className="text-end">
 									<h5>
 										Invoice No:{" "}
-										<span className="text-dark fw-normal">
-											{invoice.code}
-										</span>
+										<span className="text-dark fw-normal">{invoice.code}</span>
 									</h5>
 									<h5>
 										Issue Date:{" "}

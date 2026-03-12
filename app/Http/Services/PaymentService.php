@@ -21,14 +21,13 @@ class PaymentService extends Service
         $query = $this->search($query, $request);
 
         $payments = $query
-            ->with(['user', 'invoice.user'])
+            ->with(['project', 'invoice'])
             ->orderBy("id", "DESC")
-            ->paginate($request->per_page ?? 20)
-            ->appends($request->all());
+            ->paginate(20);
 
         $sum = $query->sum("amount");
 
-        return [$payments, $sum];
+        return [true, $payments->count() . " Fetched Successfully", $payments, $sum];
     }
 
     /*
@@ -36,7 +35,9 @@ class PaymentService extends Service
      */
     public function show($id)
     {
-        return Payment::with(['user', 'invoice.user'])->find($id);
+        $payment = Payment::with(['project', 'invoice'])->find($id);
+
+        return [true, "Payment Fetched Successfully", $payment];
     }
 
     /*
@@ -44,14 +45,16 @@ class PaymentService extends Service
      */
     public function store($request)
     {
-        $invoice = Invoice::find($request->invoiceId);
+        $invoice = Invoice::find($request->selectedInvoiceId);
 
         $payment = new Payment;
-        $payment->user_id = $invoice->user_id;
-        $payment->invoice_id = $request->invoiceId;
+        $payment->code = $this->generateUniqueCode(Payment::class);
+        $payment->project_id = $invoice->project_id;
+        $payment->invoice_id = $request->selectedInvoiceId;
         $payment->amount = $request->amount;
         $payment->payment_date = $request->paymentDate;
         $payment->notes = $request->notes;
+        $payment->created_by = $this->id;
 
         $saved = DB::transaction(function () use ($payment) {
             $saved = $payment->save();
@@ -70,6 +73,7 @@ class PaymentService extends Service
     public function update($request, $id)
     {
         $payment = Payment::find($id);
+        $payment->invoice_id = $request->input("selectedInvoiceId", $payment->invoice_id);
         $payment->amount = $request->input("amount", $payment->amount);
         $payment->payment_date = $request->input("paymentDate", $payment->payment_date);
         $payment->notes = $request->input("notes", $payment->notes);
@@ -92,12 +96,15 @@ class PaymentService extends Service
     {
         $ids = explode(",", $id);
 
-        $deleted = DB::transaction(function () use ($ids) {
-            $query = Payment::whereIn("id", $ids);
+        [$deleted, $payment] = DB::transaction(function () use ($ids) {
 
-            $deleted = $query->delete();
+            foreach ($ids as $itemId) {
+                $payment = Payment::findOrFail($itemId);
 
-            $this->updateInvoiceStatus($query->first()->invoice_id);
+                $deleted = $payment->delete();
+            }
+
+            $this->updateInvoiceStatus($payment->invoice_id);
 
             return $deleted;
         });
@@ -106,9 +113,7 @@ class PaymentService extends Service
             "Payments Deleted Successfully" :
             "Payment Deleted Successfully";
 
-        DB::commit();
-
-        return [$deleted, $message, ""];
+        return [$deleted, $message, $payment];
     }
 
     /*

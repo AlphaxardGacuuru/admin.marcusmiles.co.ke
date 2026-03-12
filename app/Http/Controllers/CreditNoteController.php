@@ -49,9 +49,12 @@ class CreditNoteController extends Controller
      */
     public function show($id)
     {
-        $creditNote = $this->service->show($id);
+        [$status, $message, $creditNote] = $this->service->show($id);
 
-        return new CreditNoteResource($creditNote);
+        return (new CreditNoteResource($creditNote))->additional([
+            "status" => $status,
+            "message" => $message
+        ]);
     }
 
     /**
@@ -81,10 +84,10 @@ class CreditNoteController extends Controller
     {
         [$deleted, $message, $creditNote] = $this->service->destroy($id);
 
-        return response([
+        return (new CreditNoteResource($creditNote))->additional([
             "status" => $deleted,
             "message" => $message,
             "data" => $creditNote,
-        ], 200);
+        ]);
     }
 }

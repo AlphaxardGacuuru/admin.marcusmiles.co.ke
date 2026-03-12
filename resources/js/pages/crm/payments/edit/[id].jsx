@@ -14,23 +14,24 @@ const edit = (props) => {
 
 	const [payment, setPayment] = useState({})
 
-	const [amount, setAmount] = useState()
-	const [channel, setChannel] = useState()
-	const [transactionReference, setTransactionReference] = useState()
-	const [paidOn, setPaidOn] = useState()
-	const [loading, setLoading] = useState()
+	const [invoices, setInvoices] = useState([])
 
-	const channels = ["Bank", "Mpesa"]
+	const [invoiceId, setInvoiceId] = useState()
+	const [amount, setAmount] = useState()
+	const [paymentDate, setPaymentDate] = useState()
+	const [notes, setNotes] = useState()
+	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
 		props.setPage({
 			name: "Edit Payment",
-			path: ["payments", "edit"],
+			path: ["crm/payments", "edit"],
 		})
 
 		// Fetch Payment
-		props.get(`/payments/${id}`, setPayment)
+		props.get(`payments/${id}`, setPayment)
+		props.get("invoices?idAndName=true", setInvoices)
 	}, [])
 
 	/*
@@ -41,17 +42,17 @@ const edit = (props) => {
 
 		setLoading(true)
 		Axios.put(`/api/payments/${id}`, {
-			channel: channel,
+			invoiceId: invoiceId,
 			amount: amount,
-			transactionReference: transactionReference,
-			paidOn: paidOn,
+			paymentDate: paymentDate,
+			notes: notes,
 		})
 			.then((res) => {
 				setLoading(false)
 				// Show messages
 				props.setMessages([res.data.message])
 				// Fetch Payment
-				props.get(`/payments/${id}`, setPayment)
+				props.get(`payments/${id}`, setPayment)
 			})
 			.catch((err) => {
 				setLoading(false)
@@ -65,23 +66,25 @@ const edit = (props) => {
 			<div className="col-sm-4"></div>
 			<div className="col-sm-4">
 				<form onSubmit={onSubmit}>
-					{/* Channel */}
+					{/* Invoice Start */}
+					<label className="form-label">Invoice</label>
 					<select
 						type="text"
-						name="type"
-						className="form-control text-capitalize mb-2 me-2"
-						onChange={(e) => setChannel(e.target.value)}>
-						<option value="">Select Payment Channel</option>
-						{channels.map((channel, key) => (
+						name="projectId"
+						className="form-control mb-2"
+						onChange={(e) => setInvoiceId(e.target.value)}
+						required>
+						<option value="">Select Invoice</option>
+						{invoices.map((invoice, key) => (
 							<option
 								key={key}
-								value={channel}
-								selected={channel == payment.channel}>
-								{channel}
+								value={invoice.id}
+								selected={invoice.id === payment.invoiceId}>
+								{invoice.code}
 							</option>
 						))}
 					</select>
-					{/* Channel End */}
+					{/* Invoice End */}
 
 					{/* Amount */}
 					<label htmlFor="">Amount</label>
@@ -89,31 +92,34 @@ const edit = (props) => {
 						type="number"
 						min="1"
 						placeholder="20000"
+						defaultValue={payment.amount}
 						className="form-control mb-2"
-						defaultValue={payment.amount?.replace(/,/g, "")}
 						onChange={(e) => setAmount(e.target.value)}
 					/>
 					{/* Amount End */}
 
-					{/* Transaction Reference */}
-					<label htmlFor="">Transaction Reference</label>
-					<input
-						type="text"
-						placeholder="ITHX23939950CV"
-						className="form-control mb-2"
-						onChange={(e) => setTransactionReference(e.target.value)}
-					/>
-					{/* Transaction Reference End */}
-
-					{/* Paid On */}
-					<label htmlFor="">Paid On</label>
+					{/* Payment Date */}
+					<label htmlFor="">Payment Date</label>
 					<input
 						type="date"
 						className="form-control mb-2"
-						defaultValue={payment.paidOnFormatted}
-						onChange={(e) => setPaidOn(e.target.value)}
+						value={
+							payment.paymentDateFormatted || new Date().toISOString().split("T")[0]
+						}
+						onChange={(e) => setPaymentDate(e.target.value)}
 					/>
-					{/* Paid On End */}
+					{/* Payment Date End */}
+
+					{/* Notes Start */}
+					<label className="form-label">Notes</label>
+					<textarea
+						name="notes"
+						className="form-control mb-4"
+						defaultValue={payment.notes}
+						rows="3"
+						placeholder="e.g. 20% deposit required to commence works..."
+						onChange={(e) => setNotes(e.target.value)}></textarea>
+					{/* Notes End */}
 
 					<div className="d-flex justify-content-end mb-2">
 						<Btn
@@ -124,7 +130,7 @@ const edit = (props) => {
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo={`/payments`}
+							linkTo={`/crm/payments`}
 							icon={<BackSVG />}
 							text="back to payments"
 						/>

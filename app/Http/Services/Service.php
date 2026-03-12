@@ -29,7 +29,11 @@ class Service
     protected function generateUniqueCode($model, $padLength = 3)
     {
         $currentYear = Carbon::now()->format('y');
-        $newNumber = $model::count() + 1;
+        
+        $query = $model::query();
+        
+        $newNumber = (int) $query->max('id') + 1;
+        
         $code = str_pad($newNumber, $padLength, '0', STR_PAD_LEFT);
 
         return $currentYear . $code;

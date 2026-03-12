@@ -22,7 +22,7 @@ return new class extends Migration
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->decimal('amount', 10, 2);
+            $table->unsignedBigInteger('amount');
             $table->date('issue_date');
             $table->text('notes')->nullable();
             $table->foreignId('created_by')

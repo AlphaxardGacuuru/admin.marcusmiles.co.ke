@@ -17,14 +17,15 @@ class PaymentResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "tenantName" => $this->invoice->userUnit->user->name,
-            "unitName" => $this->invoice->userUnit->unit->name,
-            "invoiceId" => $this->invoice_id,
-            "channel" => $this->channel,
-            "transactionReference" => $this->transaction_reference,
+            "code" => $this->code,
+            "projectId" => $this->project->id,
+            "projectName" => $this->project->name,
+            "invoiceId" => $this->invoice->id,
+            "invoiceCode" => $this->invoice->code,
             "amount" => number_format($this->amount),
-            "paidOn" => $this->paid_on,
-            "paidOnFormatted" => Carbon::parse($this->paid_on)->format("Y-m-d"),
+            "paymentDate" => $this->payment_date,
+            "paymentDateFormatted" => Carbon::parse($this->payment_date)->format("Y-m-d"),
+            "notes" => $this->notes,
             "updatedAt" => $this->updatedAt,
             "createdAt" => $this->createdAt,
         ];

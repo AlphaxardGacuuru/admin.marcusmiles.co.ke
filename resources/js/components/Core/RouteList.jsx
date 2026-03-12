@@ -93,10 +93,12 @@ import AdminInvoiceEdit from "@/pages/crm/invoices/edit/[id]"
 
 import AdminPayments from "@/pages/crm/payments/index"
 import AdminPaymentCreate from "@/pages/crm/payments/create"
+import AdminPaymentView from "@/pages/crm/payments/[id]"
 import AdminPaymentEdit from "@/pages/crm/payments/edit/[id]"
 
 import AdminCreditNotes from "@/pages/crm/credit-notes/index"
 import AdminCreditNoteCreate from "@/pages/crm/credit-notes/create"
+import AdminCreditNoteView from "@/pages/crm/credit-notes/[id]"
 import AdminCreditNoteEdit from "@/pages/crm/credit-notes/edit/[id]"
 
 import AdminStaff from "@/pages/admin/erp/staff/index"
@@ -240,8 +242,8 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			component: <AdminIssues {...GLOBAL_STATE} />,
 		},
 		/*
-		* Documents
-		*/
+		 * Documents
+		 */
 		{
 			path: "/admin/documents/delivery-notes",
 			component: <AdminDeliveryNotes {...GLOBAL_STATE} />,
@@ -337,8 +339,8 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			component: <AdminRequisitionEdit {...GLOBAL_STATE} />,
 		},
 		/*
-		* CRM
-		*/
+		 * CRM
+		 */
 		{
 			path: "/admin/crm/clients",
 			component: <AdminClients {...GLOBAL_STATE} />,
@@ -392,8 +394,16 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			component: <AdminPayments {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/crm/payments/:id/create",
+			path: "/admin/crm/payments/create",
 			component: <AdminPaymentCreate {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/payments/:invoiceId/create",
+			component: <AdminPaymentCreate {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/payments/:id/view",
+			component: <AdminPaymentView {...GLOBAL_STATE} />,
 		},
 		{
 			path: "/admin/crm/payments/:id/edit",
@@ -404,8 +414,12 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			component: <AdminCreditNotes {...GLOBAL_STATE} />,
 		},
 		{
-			path: "/admin/crm/credit-notes/:id/create",
+			path: "/admin/crm/credit-notes/create",
 			component: <AdminCreditNoteCreate {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/credit-notes/:id/view",
+			component: <AdminCreditNoteView {...GLOBAL_STATE} />,
 		},
 		{
 			path: "/admin/crm/credit-notes/:id/edit",
@@ -423,7 +437,10 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			path: "/admin/crm/staff/:id/edit",
 			component: <AdminStaffEdit {...GLOBAL_STATE} />,
 		},
-		{ path: "/admin/crm/roles", component: <AdminRoleIndex {...GLOBAL_STATE} /> },
+		{
+			path: "/admin/crm/roles",
+			component: <AdminRoleIndex {...GLOBAL_STATE} />,
+		},
 		{
 			path: "/admin/crm/roles/create",
 			component: <AdminRoleCreate {...GLOBAL_STATE} />,

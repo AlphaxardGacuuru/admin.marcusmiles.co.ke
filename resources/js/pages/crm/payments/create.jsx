@@ -11,24 +11,25 @@ import BackSVG from "@/svgs/BackSVG"
 import CloseSVG from "@/svgs/CloseSVG"
 
 const create = (props) => {
-	var { id } = useParams()
+	var { invoiceId } = useParams()
 
 	var history = useHistory()
 
-	const [amount, setAmount] = useState()
-	const [channel, setChannel] = useState()
-	const [transactionReference, setTransactionReference] = useState()
-	const [paidOn, setPaidOn] = useState()
-	const [loading, setLoading] = useState()
+	const [invoices, setInvoices] = useState(props.getLocalStorage("invoicesShortList"))
 
-	const channels = ["Bank", "Mpesa"]
+	const [selectedInvoiceId, setSelectedInvoiceId] = useState()
+	const [amount, setAmount] = useState()
+	const [paymentDate, setPaymentDate] = useState()
+	const [notes, setNotes] = useState()
+	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
 		props.setPage({
 			name: "Add Payment",
-			path: ["payments", "create"],
+			path: ["crm/payments", "create"],
 		})
+		props.get("invoices?idAndName=true", setInvoices, "invoicesShortList")
 	}, [])
 
 	/*
@@ -39,11 +40,10 @@ const create = (props) => {
 
 		setLoading(true)
 		Axios.post("/api/payments", {
-			invoiceId: id,
-			channel: channel,
-			transactionReference: transactionReference,
+			selectedInvoiceId: selectedInvoiceId,
 			amount: amount,
-			paidOn: paidOn,
+			paymentDate: paymentDate,
+			notes: notes
 		})
 			.then((res) => {
 				setLoading(false)
@@ -51,7 +51,7 @@ const create = (props) => {
 				props.setMessages([res.data.message])
 
 				// Redirect to Payments
-				setTimeout(() => history.push(`/admin/payments`), 500)
+				setTimeout(() => history.push(`/admin/crm/payments`), 500)
 			})
 			.catch((err) => {
 				setLoading(false)
@@ -65,23 +65,25 @@ const create = (props) => {
 			<div className="col-sm-4"></div>
 			<div className="col-sm-4">
 				<form onSubmit={onSubmit}>
-					{/* Channel */}
+					{/* Invoice Start */}
+					<label className="form-label">Invoice</label>
 					<select
 						type="text"
-						name="type"
-						className="form-control text-capitalize mb-2 me-2"
-						onChange={(e) => setChannel(e.target.value)}
-						required={true}>
-						<option value="">Select Payment Channel</option>
-						{channels.map((channel, key) => (
+						name="projectId"
+						className="form-control mb-2"
+						onChange={(e) => setSelectedInvoiceId(e.target.value)}
+						required>
+						<option value="">Select Invoice</option>
+						{invoices.map((invoice, key) => (
 							<option
 								key={key}
-								value={channel}>
-								{channel}
+								value={invoice.id}
+								selected={invoiceId == invoice.id}>
+								{invoice.code}
 							</option>
 						))}
 					</select>
-					{/* Channel End */}
+					{/* Invoice End */}
 
 					{/* Amount */}
 					<label htmlFor="">Amount</label>
@@ -94,24 +96,25 @@ const create = (props) => {
 					/>
 					{/* Amount End */}
 
-					{/* Transaction Reference */}
-					<label htmlFor="">Transaction Reference</label>
-					<input
-						type="text"
-						placeholder="ITHX23939950CV"
-						className="form-control mb-2"
-						onChange={(e) => setTransactionReference(e.target.value)}
-					/>
-					{/* Transaction Reference End */}
-
-					{/* Paid On */}
-					<label htmlFor="">Paid On</label>
+					{/* Payment Date */}
+					<label htmlFor="">Payment Date</label>
 					<input
 						type="date"
 						className="form-control mb-2"
-						onChange={(e) => setPaidOn(e.target.value)}
+						value={paymentDate || new Date().toISOString().split("T")[0]}
+						onChange={(e) => setPaymentDate(e.target.value)}
 					/>
-					{/* Paid On End */}
+					{/* Payment Date End */}
+
+					{/* Notes Start */}
+					<label className="form-label">Notes</label>
+					<textarea
+						name="notes"
+						className="form-control mb-4"
+						rows="3"
+						placeholder="e.g. 20% deposit required to commence works..."
+						onChange={(e) => setNotes(e.target.value)}></textarea>
+					{/* Notes End */}
 
 					<div className="d-flex justify-content-end mb-2">
 						<Btn
@@ -122,7 +125,7 @@ const create = (props) => {
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo={`/payments`}
+							linkTo={`/crm/payments`}
 							icon={<BackSVG />}
 							text="back to payments"
 						/>

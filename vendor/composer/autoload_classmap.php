@@ -43,6 +43,7 @@ return array(
     'App\\Http\\Controllers\\ProjectServiceProviderController' => $baseDir . '/app/Http/Controllers/ProjectServiceProviderController.php',
     'App\\Http\\Controllers\\ProjectStageController' => $baseDir . '/app/Http/Controllers/ProjectStageController.php',
     'App\\Http\\Controllers\\QuotationController' => $baseDir . '/app/Http/Controllers/QuotationController.php',
+    'App\\Http\\Controllers\\QuotationItemController' => $baseDir . '/app/Http/Controllers/QuotationItemController.php',
     'App\\Http\\Controllers\\RequisitionController' => $baseDir . '/app/Http/Controllers/RequisitionController.php',
     'App\\Http\\Controllers\\RoleController' => $baseDir . '/app/Http/Controllers/RoleController.php',
     'App\\Http\\Controllers\\ServiceProviderController' => $baseDir . '/app/Http/Controllers/ServiceProviderController.php',

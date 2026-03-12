@@ -18,6 +18,14 @@ class InvoiceService extends Service
      */
     public function index($request)
     {
+        if ($request->filled("idAndName")) {
+            $invoices = Invoice::select("id", "code")
+                ->orderBy("id", "DESC")
+                ->get();
+
+            return [$invoices, 0, 0, 0, []];
+        }
+
         $invoiceQuery = new Invoice;
 
         $invoiceQuery = $this->search($invoiceQuery, $request);

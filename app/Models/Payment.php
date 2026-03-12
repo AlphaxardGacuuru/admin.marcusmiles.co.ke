@@ -21,6 +21,14 @@ class Payment extends Model
     /**
      * Accessors.
      */
+
+    protected function paymentDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => Carbon::parse($value)->format('d M Y'),
+        );
+    }
+
     protected function updatedAt(): Attribute
     {
         return Attribute::make(
@@ -38,9 +46,10 @@ class Payment extends Model
     /**
      * Relationships
      */
-    public function user()
+
+    public function project()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Project::class);
     }
 
     public function invoice()
@@ -48,12 +57,12 @@ class Payment extends Model
         return $this->belongsTo(Invoice::class);
     }
 
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     /*
     * Custom Functions
     */
-
-    public function getNumberAttribute()
-    {
-        return 'P-' . str_pad($this->id, 4, '0', STR_PAD_LEFT);
-    }
 }

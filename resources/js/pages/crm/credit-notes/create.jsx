@@ -8,21 +8,28 @@ import Btn from "@/components/Core/Btn"
 import MyLink from "@/components/Core/MyLink"
 
 import BackSVG from "@/svgs/BackSVG"
+import CloseSVG from "@/svgs/CloseSVG"
 
 const create = (props) => {
-	var { id } = useParams()
-	const history = useHistory()
+	var history = useHistory()
 
-	const [description, setDescription] = useState()
+	const [invoices, setInvoices] = useState(
+		props.getLocalStorage("invoicesShortList")
+	)
+
+	const [invoiceId, setInvoiceId] = useState()
 	const [amount, setAmount] = useState()
+	const [issueDate, setIssueDate] = useState()
+	const [notes, setNotes] = useState()
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
 		props.setPage({
-			name: "Create Credit Note",
-			path: ["credit-notes", "create"],
+			name: "Add Credit Note",
+			path: ["crm/credit-notes", "create"],
 		})
+		props.get("invoices?idAndName=true", setInvoices, "invoicesShortList")
 	}, [])
 
 	/*
@@ -33,9 +40,10 @@ const create = (props) => {
 
 		setLoading(true)
 		Axios.post("/api/credit-notes", {
-			invoiceId: id,
-			description: description,
+			invoiceId: invoiceId,
 			amount: amount,
+			issueDate: issueDate,
+			notes: notes,
 		})
 			.then((res) => {
 				setLoading(false)
@@ -43,7 +51,7 @@ const create = (props) => {
 				props.setMessages([res.data.message])
 
 				// Redirect to Credit Notes
-				setTimeout(() => history.push(`/admin/credit-notes`), 500)
+				setTimeout(() => history.push(`/admin/crm/credit-notes`), 500)
 			})
 			.catch((err) => {
 				setLoading(false)
@@ -57,37 +65,66 @@ const create = (props) => {
 			<div className="col-sm-4"></div>
 			<div className="col-sm-4">
 				<form onSubmit={onSubmit}>
+					{/* Invoice Start */}
+					<label className="form-label">Invoice</label>
+					<select
+						type="text"
+						name="projectId"
+						className="form-control mb-2"
+						onChange={(e) => setInvoiceId(e.target.value)}
+						required>
+						<option value="">Select Invoice</option>
+						{invoices.map((invoice, key) => (
+							<option
+								key={key}
+								value={invoice.id}>
+								{invoice.code}
+							</option>
+						))}
+					</select>
+					{/* Invoice End */}
+
 					{/* Amount */}
 					<label htmlFor="">Amount</label>
 					<input
 						type="number"
+						min="1"
 						placeholder="20000"
 						className="form-control mb-2"
 						onChange={(e) => setAmount(e.target.value)}
-						required={true}
 					/>
 					{/* Amount End */}
 
-					{/* Description */}
-					<label htmlFor="">Description</label>
-					<textarea
-						placeholder="For Damages"
+					{/* Issue Date */}
+					<label htmlFor="">Issue Date</label>
+					<input
+						type="date"
 						className="form-control mb-2"
-						rows="5"
-						onChange={(e) => setDescription(e.target.value)}
-						required={true}></textarea>
-					{/* Description End */}
+						value={issueDate || new Date().toISOString().split("T")[0]}
+						onChange={(e) => setIssueDate(e.target.value)}
+					/>
+					{/* Issue Date End */}
+
+					{/* Notes Start */}
+					<label className="form-label">Notes</label>
+					<textarea
+						name="notes"
+						className="form-control mb-4"
+						rows="3"
+						placeholder="e.g. 20% deposit required to commence works..."
+						onChange={(e) => setNotes(e.target.value)}></textarea>
+					{/* Notes End */}
 
 					<div className="d-flex justify-content-end mb-2">
 						<Btn
-							text="create credit note"
+							text="add credit note"
 							loading={loading}
 						/>
 					</div>
 
 					<div className="d-flex justify-content-center mb-5">
 						<MyLink
-							linkTo={`/credit-notes`}
+							linkTo={`/crm/credit-notes`}
 							icon={<BackSVG />}
 							text="back to credit notes"
 						/>

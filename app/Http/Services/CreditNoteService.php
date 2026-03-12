@@ -20,10 +20,9 @@ class CreditNoteService extends Service
         $query = $this->search($query, $request);
 
         $creditNotes = $query
-            ->with(['user', 'invoice.user'])
+            ->with(['project', 'invoice'])
             ->orderBy("id", "DESC")
-            ->paginate($request->per_page ?? 20)
-            ->appends($request->all());
+            ->paginate(20);
 
         $sum = $query->sum("amount");
 
@@ -35,7 +34,9 @@ class CreditNoteService extends Service
      */
     public function show($id)
     {
-        return CreditNote::with(['user', 'invoice.user'])->find($id);
+        $creditNote = CreditNote::with(['project', 'invoice'])->find($id);
+
+        return [true, "Credit Note Fetched Successfully", $creditNote];
     }
 
     /*
@@ -46,11 +47,13 @@ class CreditNoteService extends Service
         $invoice = Invoice::find($request->invoiceId);
 
         $creditNote = new CreditNote;
-        $creditNote->user_id = $invoice->user_id;
+        $creditNote->code = $this->generateUniqueCode(CreditNote::class);
+        $creditNote->project_id = $invoice->project_id;
         $creditNote->invoice_id = $request->invoiceId;
         $creditNote->amount = $request->amount;
         $creditNote->issue_date = $request->issueDate;
         $creditNote->notes = $request->notes;
+        $creditNote->created_by = $this->id;
 
         $saved = DB::transaction(function () use ($creditNote) {
             $saved = $creditNote->save();
@@ -69,6 +72,7 @@ class CreditNoteService extends Service
     public function update($request, $id)
     {
         $creditNote = CreditNote::find($id);
+        $creditNote->invoice_id = $request->input("invoiceId", $creditNote->invoice_id);
         $creditNote->amount = $request->input("amount", $creditNote->amount);
         $creditNote->issue_date = $request->input("issueDate", $creditNote->issue_date);
         $creditNote->notes = $request->input("notes", $creditNote->notes);
@@ -85,27 +89,30 @@ class CreditNoteService extends Service
     }
 
     /*
-     * Destroy Credit Note
+     * Destroy CreditNote
      */
     public function destroy($id)
     {
         $ids = explode(",", $id);
 
-        $deleted = DB::transaction(function () use ($ids) {
-            $query = CreditNote::whereIn("id", $ids);
+        [$deleted, $creditNote] = DB::transaction(function () use ($ids) {
 
-            $deleted = $query->delete();
+            foreach ($ids as $itemId) {
+                $creditNote = CreditNote::findOrFail($itemId);
 
-            $this->updateInvoiceStatus($query->first()->invoice_id);
+                $deleted = $creditNote->delete();
+            }
+
+            $this->updateInvoiceStatus($creditNote->invoice_id);
 
             return $deleted;
         });
 
         $message = count($ids) > 1 ?
-            "Credit Notes Deleted Successfully" :
-            "Credit Note Deleted Successfully";
+            "CreditNotes Deleted Successfully" :
+            "CreditNote Deleted Successfully";
 
-        return [$deleted, $message, ""];
+        return [$deleted, $message, $creditNote];
     }
 
     /*

@@ -10,21 +10,21 @@ import PrintSVG from "@/svgs/PrintSVG"
 const show = (props) => {
 	var { id } = useParams()
 
-	const [quotation, setQuotation] = useState({})
+	const [payment, setPayment] = useState({})
 
 	useEffect(() => {
 		// Set page
 		props.setPage({
-			name: "View Quotation",
-			path: ["crm/quotations", "view"],
+			name: "View Payment",
+			path: ["crm/payments", "view"],
 		})
-		props.get(`quotations/${id}`, setQuotation)
+		props.get(`payments/${id}`, setPayment)
 	}, [])
 
 	/*
-	 * Print Quotation
+	 * Print Payment
 	 */
-	const printQuotation = () => {
+	const printPayment = () => {
 		var contentToPrint = document.getElementById("contentToPrint").innerHTML
 
 		document.body.innerHTML = contentToPrint
@@ -42,7 +42,7 @@ const show = (props) => {
 					className="me-5"
 					icon={<PrintSVG />}
 					text="print"
-					onClick={printQuotation}
+					onClick={printPayment}
 				/>
 			</div>
 			{/*Create Link End*/}
@@ -71,38 +71,25 @@ const show = (props) => {
 
 							<div>
 								<h2 className="mb-0 text-end">QUOTATION</h2>
-								<div className="text-end fw-bold text-uppercase mt-2">
-									Status: {quotation.status}
-								</div>
 							</div>
 						</div>
 						<div className="card-body">
 							<div className="d-flex justify-content-between mb-4">
 								<div className="">
 									<h5 className="mb-1">Client / Project:</h5>
-									<h5 className="fw-normal text-dark">
-										{quotation.projectName}
-									</h5>
+									<h5 className="fw-normal text-dark">{payment.projectName}</h5>
 								</div>
 
 								{/* First Header Start */}
 								<div className="text-end">
 									<h5>
-										Quotation No:{" "}
-										<span className="text-dark fw-normal">
-											{quotation.code}
-										</span>
+										Payment No:{" "}
+										<span className="text-dark fw-normal">{payment.code}</span>
 									</h5>
 									<h5>
-										Issue Date:{" "}
+										Payment Date:{" "}
 										<span className="text-dark fw-normal">
-											{quotation.issueDate}
-										</span>
-									</h5>
-									<h5>
-										Valid Until:{" "}
-										<span className="text-dark fw-normal">
-											{quotation.expiryDate}
+											{payment.paymentDate}
 										</span>
 									</h5>
 								</div>
@@ -112,62 +99,25 @@ const show = (props) => {
 							<hr />
 
 							<div className="centered-grey-background my-4">
-								<h5 className="mb-3 px-2">Scope of Work</h5>
 								{/* Table Start */}
 								<div className="table-responsive-sm">
 									<table className="table bg-white border">
 										<thead className="table-light">
 											<tr>
-												<th style={{ width: "50%" }}>
-													Description (Phase/Task)
-												</th>
-												<th className="text-center">Qty</th>
-												<th className="text-end">Unit Price (KES)</th>
-												<th className="text-end">Total</th>
+												<th style={{ width: "50%" }}>Description</th>
+												<th className="text-end">Amount (KES)</th>
 											</tr>
 										</thead>
 										<tbody>
-											{quotation.items?.map((item, key) => (
-												<tr key={key}>
-													<td>{item.description}</td>
-													<td className="text-center">{item.quantity}</td>
-													<td className="text-end">
-														{(
-															item.rate ||
-															item.amount / item.quantity ||
-															0
-														).toLocaleString()}
-													</td>
-													<td className="text-end fw-bold">
-														{(item.amount || item.total || 0).toLocaleString()}
-													</td>
-												</tr>
-											))}
+											<tr>
+												<td>Payment for Invoice {payment.invoiceCode}</td>
+												<td className="text-end fw-bold">{payment.amount}</td>
+											</tr>
 										</tbody>
 									</table>
 								</div>
 							</div>
 							{/* Table End */}
-
-							{/* Totals Section */}
-							<div className="row justify-content-end mb-4">
-								<div className="col-md-5">
-									<table className="table table-borderless">
-										<tbody>
-											<tr>
-												<td className="text-start fs-5">
-													<strong>Grand Total:</strong>
-												</td>
-												<td className="text-end fs-5 text-dark">
-													<strong>
-														KES {(quotation.total || 0).toLocaleString()}
-													</strong>
-												</td>
-											</tr>
-										</tbody>
-									</table>
-								</div>
-							</div>
 						</div>
 
 						{/* First Footer Start */}
@@ -177,17 +127,8 @@ const show = (props) => {
 								<p
 									className="text-dark fw-normal"
 									style={{ whiteSpace: "pre-wrap" }}>
-									{quotation.notes || "No notes available."}
+									{payment.notes || "No notes available."}
 								</p>
-
-								<div className="mt-5">
-									<h6 className="text-dark mb-1">
-										Prepared By:{" "}
-										<span className="text-dark fw-normal">
-											{quotation.createdByName}
-										</span>
-									</h6>
-								</div>
 							</div>
 						</div>
 						{/* First Footer End */}

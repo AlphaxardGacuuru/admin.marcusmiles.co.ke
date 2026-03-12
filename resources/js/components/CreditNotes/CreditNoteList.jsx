@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"
+import React, { useState, useEffect } from "react"
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min"
 
 import MyLink from "@/components/Core/MyLink"
@@ -8,16 +8,15 @@ import PaginationLinks from "@/components/Core/PaginationLinks"
 
 import HeroHeading from "@/components/Core/HeroHeading"
 import HeroIcon from "@/components/Core/HeroIcon"
+import Btn from "@/components/Core/Btn"
 
 import ViewSVG from "@/svgs/ViewSVG"
 import EditSVG from "@/svgs/EditSVG"
 import PlusSVG from "@/svgs/PlusSVG"
-import InvoiceSVG from "@/svgs/InvoiceSVG"
-import PaymentSVG from "@/svgs/PaymentSVG"
+import CreditNoteSVG from "@/svgs/CreditNoteSVG"
 import BalanceSVG from "@/svgs/BalanceSVG"
-import Btn from "@/components/Core/Btn"
 
-const InvoiceList = (props) => {
+const CreditNoteList = (props) => {
 	const [clients, setClients] = useState([])
 	const [projects, setProjects] = useState([])
 
@@ -30,38 +29,25 @@ const InvoiceList = (props) => {
 	}, [])
 
 	/*
-	 * Handle DeleteId checkboxes
+	 * Delete Credit Note
 	 */
-	const handleSetDeleteIds = (invoiceId) => {
-		var exists = deleteIds.includes(invoiceId)
-
-		var newDeleteIds = exists
-			? deleteIds.filter((item) => item != invoiceId)
-			: [...deleteIds, invoiceId]
-
-		setDeleteIds(newDeleteIds)
-	}
-
-	/*
-	 * Delete Invoice
-	 */
-	const onDeleteInvoice = (invoiceId) => {
+	const onDeleteCreditNote = (creditNoteId) => {
 		setLoading(true)
-		var invoiceIds = Array.isArray(invoiceId) ? invoiceId.join(",") : invoiceId
+		var creditNoteIds = Array.isArray(creditNoteId) ? creditNoteId.join(",") : creditNoteId
 
-		Axios.delete(`/api/invoices/${invoiceIds}`)
+		Axios.delete(`/api/credit-notes/${creditNoteIds}`)
 			.then((res) => {
 				setLoading(false)
 				props.setMessages([res.data.message])
 				// Remove row
-				props.setInvoices({
-					meta: props.invoices.meta,
-					links: props.invoices.links,
-					data: props.invoices.data.filter((invoice) => {
-						if (Array.isArray(invoiceId)) {
-							return !invoiceIds.includes(invoice.id)
+				props.setCreditNotes({
+					meta: props.creditNotes.meta,
+					links: props.creditNotes.links,
+					data: props.creditNotes.data.filter((creditNote) => {
+						if (Array.isArray(creditNoteId)) {
+							return !creditNoteIds.includes(creditNote.id)
 						} else {
-							return invoice.id != invoiceId
+							return creditNote.id != creditNoteId
 						}
 					}),
 				})
@@ -81,50 +67,22 @@ const InvoiceList = (props) => {
 			{/* Data */}
 			<div className="card shadow-sm mb-2 p-2">
 				<div className="d-flex justify-content-between">
-					{/* Total */}
 					<div className="d-flex justify-content-between flex-wrap w-100 align-items-center mx-4">
-						{/* Due */}
+						{/* Total */}
 						<HeroHeading
-							heading="Due"
+							heading="Total"
 							data={
 								<span>
-									<small>KES</small> {props.invoices.due}
+									<small>KES</small> {props.creditNotes.sum}
 								</span>
 							}
 						/>
 						<HeroIcon>
-							<InvoiceSVG />
+							<CreditNoteSVG />
 						</HeroIcon>
-						{/* Due End */}
-						{/* Paid */}
-						<HeroHeading
-							heading="Paid"
-							data={
-								<span>
-									<small>KES</small> {props.invoices.paid}
-								</span>
-							}
-						/>
-						<HeroIcon>
-							<PaymentSVG />
-						</HeroIcon>
-						{/* Paid End */}
-						{/* Balance */}
-						<HeroHeading
-							heading="Balance"
-							data={
-								<span>
-									<small>KES</small> {props.invoices.balance}
-								</span>
-							}
-						/>
-						<HeroIcon>
-							<BalanceSVG />
-						</HeroIcon>
-						{/* Balance End */}
+						{/* Total End */}
 					</div>
 				</div>
-				{/* Total End */}
 			</div>
 			{/* Data End */}
 
@@ -181,28 +139,6 @@ const InvoiceList = (props) => {
 						</select>
 					</div>
 					{/* Project End */}
-					{/* Status */}
-					<div className="flex-grow-1 me-2 mb-2">
-						<select
-							type="text"
-							name="status"
-							className="form-control text-capitalize"
-							onChange={(e) => setStatus(e.target.value)}
-							required={true}>
-							<option value="">Filter by Status</option>
-							{props.invoices.statuses?.map((status, key) => (
-								<option
-									key={key}
-									value={status}>
-									{status
-										.split("_")
-										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
-										.join(" ")}
-								</option>
-							))}
-						</select>
-					</div>
-					{/* Status End */}
 				</div>
 			</div>
 
@@ -216,6 +152,7 @@ const InvoiceList = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setStartMonth(e.target.value)}>
+								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -257,6 +194,7 @@ const InvoiceList = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setEndMonth(e.target.value)}>
+								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -301,133 +239,64 @@ const InvoiceList = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="10"></th>
+							<th colSpan="6"></th>
 							<th className="text-end">
 								<div className="d-flex justify-content-end">
 									{deleteIds.length > 0 && (
 										<Btn
 											text={`delete ${deleteIds.length}`}
 											className="me-2"
-											onClick={() => onDeleteInvoice(deleteIds)}
+											onClick={() => onDeleteCreditNote(deleteIds)}
 											loading={loading}
 										/>
 									)}
 
 									<MyLink
-										linkTo={`/crm/invoices/create`}
+										linkTo={`/crm/credit-notes/create`}
 										icon={<PlusSVG />}
-										text="create invoice"
+										text="create credit note"
 									/>
 								</div>
 							</th>
 						</tr>
 						<tr>
-							{/* <th>
-								<input
-									type="checkbox"
-									checked={
-										deleteIds.length == props.invoices.data?.length &&
-										deleteIds.length != 0
-									}
-									onClick={() =>
-										setDeleteIds(
-											deleteIds.length == props.invoices.data.length
-												? []
-												: props.invoices.data.map((invoice) => invoice.id)
-										)
-									}
-								/>
-							</th> */}
 							<th>#</th>
-							<th>Invoice Code</th>
+							<th>Credit Note Code</th>
 							<th>Project</th>
+							<th>Invoice No</th>
+							<th>Amount</th>
 							<th>Issue Date</th>
-							<th>Due Date</th>
-							<th>Total</th>
-							<th>Paid</th>
-							<th>Balance</th>
-							<th>Status</th>
-							<th>Created By</th>
 							<th className="text-center">Action</th>
 						</tr>
-						{props.invoices.data?.map((invoice, key) => (
+						{props.creditNotes.data?.map((creditNote, key) => (
 							<tr key={key}>
-								{/* <td>
-									<input
-										type="checkbox"
-										checked={deleteIds.includes(invoice.id)}
-										onClick={() => handleSetDeleteIds(invoice.id)}
-									/>
-								</td> */}
-								<td>{props.iterator(key, props.invoices)}</td>
-								<td>{invoice.code}</td>
-								<td>{invoice.projectName}</td>
-								<td>{invoice.issueDate}</td>
-								<td>{invoice.dueDate}</td>
+								<td>{props.iterator(key, props.creditNotes)}</td>
+								<td>{creditNote.code}</td>
+								<td>{creditNote.projectName}</td>
+								<td>{creditNote.invoiceCode}</td>
 								<td className="text-success">
-									<small>KES</small> {invoice.total}
+									<small>KES</small> {creditNote.amount}
 								</td>
-								<td className="text-success">
-									<small>KES</small> {invoice.paid}
-								</td>
-								<td className="text-success">
-									<small>KES</small> {invoice.balance}
-								</td>
-								<td>{invoice.createdByName}</td>
-								<td className="text-capitalize">
-									<span
-										className={`
-											${
-												invoice.status == "not_paid"
-													? "bg-danger-subtle"
-													: invoice.status == "partially_paid"
-														? "bg-warning-subtle"
-														: invoice.status == "paid"
-															? "bg-success-subtle"
-															: "bg-dark-subtle"
-											}
-										 py-1 px-3`}>
-										{invoice.status
-											.split("_")
-											.map(
-												(word) => word.charAt(0).toUpperCase() + word.slice(1)
-											)
-											.join(" ")}
-									</span>
-								</td>
+								<td>{creditNote.issueDate}</td>
 								<td>
 									<div className="d-flex justify-content-center">
-										<div className="d-flex justify-content-center">
-											{/* Attach Payment Start */}
-											<MyLink
-												linkTo={`/crm/payments/${invoice.id}/create`}
-												icon={<PaymentSVG />}
-												text="attach payment"
-												className="me-1"
-											/>
-											{/* Attach Payment End */}
-											{/* View Start */}
-											<MyLink
-												linkTo={`/crm/invoices/${invoice.id}/view`}
-												icon={<ViewSVG />}
-												className="me-1"
-											/>
-											{/* View End */}
-											{/* Edit Start */}
-											<MyLink
-												linkTo={`/crm/invoices/${invoice.id}/edit`}
-												icon={<EditSVG />}
-												className="me-1"
-											/>
-											{/* Edit End */}
-										</div>
+										<MyLink
+											linkTo={`/crm/credit-notes/${creditNote.id}/view`}
+											icon={<ViewSVG />}
+											className="me-1"
+										/>
+
+										<MyLink
+											linkTo={`/crm/credit-notes/${creditNote.id}/edit`}
+											icon={<EditSVG />}
+										/>
 
 										<div className="mx-1">
 											<DeleteModal
-												index={`invoice${key}`}
-												model={invoice}
-												modelName="Invoice"
-												onDelete={onDeleteInvoice}
+												index={`creditNote${key}`}
+												model={creditNote}
+												modelName="CreditNote"
+												onDelete={onDeleteCreditNote}
 											/>
 										</div>
 									</div>
@@ -438,9 +307,9 @@ const InvoiceList = (props) => {
 				</table>
 				{/* Pagination Links */}
 				<PaginationLinks
-					list={props.invoices}
+					list={props.creditNotes}
 					getPaginated={props.getPaginated}
-					setState={props.setInvoices}
+					setState={props.setCreditNotes}
 				/>
 				{/* Pagination Links End */}
 			</div>
@@ -449,4 +318,4 @@ const InvoiceList = (props) => {
 	)
 }
 
-export default InvoiceList
+export default CreditNoteList

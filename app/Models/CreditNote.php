@@ -15,6 +15,14 @@ class CreditNote extends Model
     /**
      * Accessors.
      */
+    
+    protected function issueDate(): Attribute
+    {
+        return Attribute::make(
+            get: fn($value) => Carbon::parse($value)->format('d M Y'),
+        );
+    }
+
     protected function updatedAt(): Attribute
     {
         return Attribute::make(
@@ -32,13 +40,19 @@ class CreditNote extends Model
     /**
      * Relationships
      */
-    public function user()
+
+    public function project()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Project::class);
     }
 
     public function invoice()
     {
         return $this->belongsTo(Invoice::class);
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
     }
 }

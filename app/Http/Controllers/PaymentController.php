@@ -16,10 +16,12 @@ class PaymentController extends Controller
      */
     public function index(Request $request)
     {
-        [$payments, $sum] = $this->service->index($request);
+        [$status, $message, $payments, $sum] = $this->service->index($request);
 
         return PaymentResource::collection($payments)
             ->additional([
+                "status" => $status,
+                "message" => $message,
                 "sum" => number_format($sum, 2),
             ]);
     }
@@ -30,7 +32,7 @@ class PaymentController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'invoiceId' => 'required|integer|exists:invoices,id',
+            'selectedInvoiceId' => 'required|integer|exists:invoices,id',
             'amount' => 'required|numeric|min:0.01',
             'paymentDate' => 'required|date',
             'notes' => 'nullable|string|max:1000',
@@ -49,9 +51,12 @@ class PaymentController extends Controller
      */
     public function show($id)
     {
-        $payment = $this->service->show($id);
+        [$status, $message, $payment] = $this->service->show($id);
 
-        return new PaymentResource($payment);
+        return (new PaymentResource($payment))->additional([
+            'status' => $status,
+            'message' => $message,
+        ]);
     }
 
     /**

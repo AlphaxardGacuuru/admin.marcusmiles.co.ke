@@ -170,7 +170,7 @@ const AdminMenu = (props) => {
 												to="/admin/dashboard"
 												className="text-white">
 												<Img
-													src="/storage/img/logo.svg"
+													src="/img/logo.svg"
 													style={{ width: "8em", height: "auto" }}
 												/>
 											</Link>

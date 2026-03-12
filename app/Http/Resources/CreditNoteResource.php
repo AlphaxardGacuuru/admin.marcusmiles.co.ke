@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class CreditNoteResource extends JsonResource
@@ -16,15 +17,17 @@ class CreditNoteResource extends JsonResource
     {
         return [
             "id" => $this->id,
-            "tenantName" => $this->invoice->userUnit->user->name,
-            "unitName" => $this->invoice->userUnit->unit->name,
-            "invoiceId" => $this->invoice_id,
-            "type" => $this->invoice->type,
-            "description" => $this->description,
+            "code" => $this->code,
+            "projectId" => $this->project->id,
+            "projectName" => $this->project->name,
+            "invoiceId" => $this->invoice->id,
+            "invoiceCode" => $this->invoice->code,
             "amount" => number_format($this->amount),
-            "createdBy" => $this->createdBy,
-            "updatedAt" => $this->updated_at,
-            "createdAt" => $this->created_at,
+            "issueDate" => $this->issue_date,
+            "issueDateFormatted" => Carbon::parse($this->issue_date)->format("Y-m-d"),
+            "notes" => $this->notes,
+            "updatedAt" => $this->updatedAt,
+            "createdAt" => $this->createdAt,
         ];
     }
 }

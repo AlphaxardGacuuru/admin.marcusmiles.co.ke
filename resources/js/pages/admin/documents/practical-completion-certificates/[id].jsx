@@ -64,7 +64,7 @@ const form = (props) => {
 									className="mx-auto"
 									style={{ width: "5em" }}>
 									<Img
-										src="/storage/img/favicon.png"
+										src="/img/favicon.png"
 										style={{ width: "100%", height: "auto" }}
 									/>
 								</div>
@@ -148,7 +148,7 @@ const form = (props) => {
 						</p>
 
 						<hr />
-						
+
 						<div className="centered-grey-background">
 							<div className="my-5 py-5"></div>
 							<div className="my-5 py-5"></div>
