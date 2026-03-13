@@ -9,11 +9,11 @@ import IssueBoard from "@/components/Issues/IssueBoard"
 import DeleteSVG from "@/svgs/DeleteSVG"
 
 const index = (props) => {
-	const [stages, setStages] = useState([])
-	const [issues, setIssues] = useState([])
+	const [stages, setStages] = useState(props.getLocalStorage("stages"))
+	const [issues, setIssues] = useState(props.getLocalStorage("issues"))
 	const [issueComments, setIssueComments] = useState([])
-	const [staff, setStaff] = useState([])
-	const [projects, setProjects] = useState([])
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+	const [projects, setProjects] = useState(props.getLocalStorage("projectsShortList"))
 
 	const [creatingStage, setCreatingStage] = useState(true)
 	const [stageId, setStageId] = useState("")
@@ -44,14 +44,10 @@ const index = (props) => {
 	useEffect(() => {
 		// Set page
 		props.setPage({ name: "Issues", path: ["issues"] })
-		// Fetch Issues
-		props.get("issues", setIssues)
-		// Fetch Issues Comments
+		props.get("issues", setIssues, "issues")
 		props.get("issue-comments", setIssueComments)
-		// Fetch Staff
-		props.get("staff?idAndName=true", setStaff)
-		// Fetch Projects
-		props.get("projects", setProjects)
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
+		props.get("projects", setProjects, "projectsShortList")
 	}, [])
 
 	useEffect(() => {
@@ -67,7 +63,8 @@ const index = (props) => {
 			endMonth=${endMonthQuery}&
 			startYear=${startYearQuery}&
 			endYear=${endYearQuery}`,
-			setStages
+			setStages,
+			"stages"
 		)
 	}, [
 		titleQuery,

@@ -79,7 +79,6 @@ Route::apiResources([
     "requisitions" => RequisitionController::class,
 
     "invoices" => InvoiceController::class,
-    "water-readings" => WaterReadingController::class,
     "payments" => PaymentController::class,
     "credit-notes" => CreditNoteController::class,
     "users" => UserController::class,
@@ -93,8 +92,9 @@ Route::apiResources([
 /*
  * Dashboard
  */
-Route::get("dashboard/{id}", [DashboardController::class, "index"]);
-Route::get("dashboard/properties/{id}", [DashboardController::class, "properties"]);
+Route::get("dashboard", [DashboardController::class, "index"]);
+Route::get("dashboard/erp", [DashboardController::class, "erpDashboard"]);
+Route::get("dashboard/crm", [DashboardController::class, "crmDashboard"]);
 
 /*
 * Work Plan

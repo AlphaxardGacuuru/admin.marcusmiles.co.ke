@@ -140,6 +140,11 @@ const AdminNavLinks = (props) => {
 			icon: <StaffSVG />,
 			links: [
 				{
+					link: "/admin/crm/dashboard",
+					icon: <HomeSVG />,
+					name: "Dashboard"
+				},
+				{
 					link: "/admin/crm/clients",
 					icon: <PersonSVG />,
 					name: "Clients",

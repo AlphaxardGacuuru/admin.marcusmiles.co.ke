@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 import InventoryList from "@/components/Inventories/InventoryList"
 
 const index = (props) => {
-	const [inventories, setInventories] = useState([])
+	const [inventories, setInventories] = useState(props.getLocalStorage("inventories"))
 
 	const [name, setName] = useState("")
 	const [type, setType] = useState("")
@@ -31,7 +31,8 @@ const index = (props) => {
 			endMonth=${endMonth}&
 			startYear=${startYear}&
 			endYear=${endYear}`,
-			setInventories
+			setInventories,
+			"inventories"
 		)
 	}, [name, type, location, clientId, startMonth, endMonth, startYear, endYear])
 

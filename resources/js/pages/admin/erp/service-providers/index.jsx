@@ -4,20 +4,25 @@ import ServiceProviderList from "@/components/ServiceProviders/ServiceProviderLi
 
 const index = (props) => {
 	// Get ServiceProvider
-	const [serviceProviders, setServiceProviders] = useState([])
+	const [serviceProviders, setServiceProviders] = useState(
+		props.getLocalStorage("serviceProviders")
+	)
 
 	const [nameQuery, setNameQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
 		props.setPage({ name: "Service Providers", path: ["service-providers"] })
-		props.getPaginated("service-providers", setServiceProviders)
 	}, [])
 
 	useEffect(() => {
-	  props.getPaginated(`service-providers?name=${nameQuery}`, setServiceProviders)
+		props.getPaginated(
+			`service-providers?
+		name=${nameQuery}`,
+			setServiceProviders,
+			"serviceProviders"
+		)
 	}, [nameQuery])
-	
 
 	return (
 		<div className="row">

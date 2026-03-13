@@ -4,18 +4,22 @@ import SupplierList from "@/components/Suppliers/SupplierList"
 
 const index = (props) => {
 	// Get Supplier
-	const [suppliers, setSuppliers] = useState([])
+	const [suppliers, setSuppliers] = useState(props.getLocalStorage("suppliers"))
 
 	const [nameQuery, setNameQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
 		props.setPage({ name: "Suppliers", path: ["suppliers"] })
-		props.getPaginated("suppliers", setSuppliers)
 	}, [])
 
 	useEffect(() => {
-	  props.getPaginated(`suppliers?name=${nameQuery}`, setSuppliers)
+	  props.getPaginated(
+		`suppliers?
+		name=${nameQuery}`, 
+		setSuppliers, 
+		"suppliers"
+	)
 	}, [nameQuery])
 	
 

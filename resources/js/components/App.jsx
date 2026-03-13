@@ -12,11 +12,11 @@ import { random } from "lodash"
 
 function App() {
 	// Function for checking local storage
-	const getLocalStorage = (state) => {
+	const getLocalStorage = (state, defaultValue = []) => {
 		if (typeof window !== "undefined" && localStorage.getItem(state)) {
 			return JSON.parse(localStorage.getItem(state))
 		} else {
-			return []
+			return defaultValue
 		}
 	}
 

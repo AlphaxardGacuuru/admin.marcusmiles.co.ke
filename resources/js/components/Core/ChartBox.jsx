@@ -1,4 +1,5 @@
 import React from "react"
+import { Link } from "react-router-dom/cjs/react-router-dom.min"
 
 import Line from "@/components/Charts/Line"
 
@@ -11,13 +12,15 @@ const ChartBox = (props) => {
 			className="m-1 me-4 p-2 card"
 			style={{ width: "19.5em", height: "auto" }}>
 			<div className="d-flex justify-content-between align-items-center">
-				<div className="px-4">
-					<h4>{props.title}</h4>
-					<h6>{props.total}</h6>
+				<div className="">
+					<Link
+						to={props.link}
+						className="text-decoration-none text-dark">
+						<h4>{props.title}</h4>
+						<h6>{props.total}</h6>
+					</Link>
 				</div>
-				<div className="px-4 fs-2 text-secondary rounded">
-					{props.icon}
-				</div>
+				<div className="fs-2 text-secondary rounded">{props.icon}</div>
 			</div>
 			<div className="d-flex justify-content-end align-items-center">
 				<div className="mt-1">

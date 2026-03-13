@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
 use App\Http\Services\DashboardService;
+use App\Http\Services\ERPDashboardService;
+use App\Http\Services\CRMDashboardService;
 
 class DashboardController extends Controller
 {
@@ -24,14 +26,16 @@ class DashboardController extends Controller
         return response(["data" => $data], 200);
     }
 
-    /*
-     * Get Property Data by ID
-     */
-    public function properties($propertyIds)
+    public function erpDashboard()
     {
-        $propertyIds = explode(",", $propertyIds);
+        $data = (new ERPDashboardService)->index();
 
-        $data = $this->service->properties($propertyIds);
+        return response(["data" => $data], 200);
+    }
+
+    public function crmDashboard()
+    {
+        $data = (new CRMDashboardService)->index();
 
         return response(["data" => $data], 200);
     }

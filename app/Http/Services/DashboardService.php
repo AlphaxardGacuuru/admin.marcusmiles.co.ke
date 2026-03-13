@@ -14,24 +14,10 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardService extends Service
 {
-    public $allMonths = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "September",
-        "October",
-        "November",
-        "December",
-    ];
-
     public function index($propertyIds)
     {
         return [
+            "projects" => $this->projects(),
             "units" => $this->units($propertyIds),
             "rent" => $this->rent($propertyIds),
             "water" => $this->water($propertyIds),
@@ -400,35 +386,6 @@ class DashboardService extends Service
             "labels" => $labels,
             "data" => $data,
         ];
-    }
-
-    public function getLabelsAndData($queriedData)
-    {
-        $allMonths = $this->allMonths;
-
-        // Extract the months from your collection
-        $existingMonths = $queriedData->pluck("month")->toArray();
-
-        // Fill missing months with default count of zero
-        $missingMonths = array_diff($allMonths, $existingMonths);
-        $missingMonthsSetToZero = collect($missingMonths)
-            ->map(fn($month) => [
-                "month" => $month,
-                "count" => 0,
-            ])->toArray();
-
-        // Merge existing data with the missing months filled with default count
-        $mergedData = $queriedData
-            ->concat($missingMonthsSetToZero)
-            ->sortBy(function ($item) use ($allMonths) {
-                return array_search($item["month"], $allMonths);
-            })
-            ->values();
-
-        $labels = $mergedData->map(fn($item) => $item["month"]);
-        $data = $mergedData->map(fn($item) => $item["count"]);
-
-        return [$labels, $data];
     }
 
     // Calculate Percentage

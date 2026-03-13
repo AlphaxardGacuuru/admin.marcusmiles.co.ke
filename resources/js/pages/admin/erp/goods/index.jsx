@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react"
 import GoodList from "@/components/Goods/GoodList"
 
 const index = (props) => {
-	const [goods, setGoods] = useState([])
+	const [goods, setGoods] = useState(props.getLocalStorage("goods"))
 
 	const [name, setName] = useState("")
 
@@ -14,7 +14,7 @@ const index = (props) => {
 
 	useEffect(() => {
 		// Fetch Goods
-		props.getPaginated(`goods?name=${name}`, setGoods)
+		props.getPaginated(`goods?name=${name}`, setGoods, "goods")
 	}, [name])
 
 	return (

@@ -3,8 +3,8 @@ import React, { useEffect, useState } from "react"
 import ProjectList from "@/components/Projects/ProjectList"
 
 const index = (props) => {
-	const [projects, setProjects] = useState([])
-	const [stages, setStages] = useState([])
+	const [projects, setProjects] = useState(props.getLocalStorage("projects"))
+	const [stages, setStages] = useState(props.getLocalStorage("stages"))
 
 	const [nameQuery, setNameQuery] = useState("")
 	const [typeQuery, setTypeQuery] = useState("")
@@ -19,7 +19,7 @@ const index = (props) => {
 		// Set page
 		props.setPage({ name: "Projects", path: ["projects"] })
 		// Fetch Stages
-		props.get("stages?type=project", setStages)
+		props.get("stages?type=project", setStages, "stages")
 	}, [])
 
 	useEffect(() => {
@@ -34,7 +34,8 @@ const index = (props) => {
 			endMonth=${endMonthQuery}&
 			startYear=${startYearQuery}&
 			endYear=${endYearQuery}`,
-			setProjects
+			setProjects,
+			"projects"
 		)
 	}, [
 		nameQuery,

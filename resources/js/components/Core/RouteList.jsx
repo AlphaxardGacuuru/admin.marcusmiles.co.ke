@@ -8,12 +8,9 @@ import ClientRegister from "@/pages/clients/register"
 import AdminNav from "@/components/Layouts/AdminNav"
 
 import AdminDashboard from "@/pages/admin/index"
-import AdminProjectDashboard from "@/pages/admin/erp-dashboard"
 
-import AdminClients from "@/pages/crm/clients/index"
-import AdminClientCreate from "@/pages/crm/clients/create"
-import AdminClientView from "@/pages/crm/clients/[id]"
-import AdminClientEdit from "@/pages/crm/clients/edit/[id]"
+
+import AdminERPDashboard from "@/pages/admin/erp/dashboard"
 
 import AdminGoods from "@/pages/admin/erp/goods/index"
 import AdminGoodCreate from "@/pages/admin/erp/goods/create"
@@ -52,6 +49,8 @@ import AdminSupplierGoodEdit from "@/pages/admin/erp/supplier-goods/edit/[id]"
 
 import AdminIssues from "@/pages/admin/erp/issues/index"
 
+
+
 import AdminDeliveryNotes from "@/pages/admin/documents/delivery-notes/index"
 import AdminDeliveryNoteView from "@/pages/admin/documents/delivery-notes/[id]"
 import AdminDeliveryNoteEdit from "@/pages/admin/documents/delivery-notes/edit/[id]"
@@ -81,25 +80,34 @@ import AdminRequisitionCreate from "@/pages/admin/documents/requisitions/create"
 import AdminRequisitionView from "@/pages/admin/documents/requisitions/[id]"
 import AdminRequisitionEdit from "@/pages/admin/documents/requisitions/edit/[id]"
 
-import AdminQuotations from "@/pages/crm/quotations/index"
-import AdminQuotationCreate from "@/pages/crm/quotations/create"
-import AdminQuotationView from "@/pages/crm/quotations/[id]"
-import AdminQuotationEdit from "@/pages/crm/quotations/edit/[id]"
+import AdminQuotations from "@/pages/admin/crm/quotations/index"
+import AdminQuotationCreate from "@/pages/admin/crm/quotations/create"
+import AdminQuotationView from "@/pages/admin/crm/quotations/[id]"
+import AdminQuotationEdit from "@/pages/admin/crm/quotations/edit/[id]"
 
-import AdminInvoices from "@/pages/crm/invoices/index"
-import AdminInvoiceCreate from "@/pages/crm/invoices/create"
-import AdminInvoiceView from "@/pages/crm/invoices/[id]"
-import AdminInvoiceEdit from "@/pages/crm/invoices/edit/[id]"
 
-import AdminPayments from "@/pages/crm/payments/index"
-import AdminPaymentCreate from "@/pages/crm/payments/create"
-import AdminPaymentView from "@/pages/crm/payments/[id]"
-import AdminPaymentEdit from "@/pages/crm/payments/edit/[id]"
 
-import AdminCreditNotes from "@/pages/crm/credit-notes/index"
-import AdminCreditNoteCreate from "@/pages/crm/credit-notes/create"
-import AdminCreditNoteView from "@/pages/crm/credit-notes/[id]"
-import AdminCreditNoteEdit from "@/pages/crm/credit-notes/edit/[id]"
+import AdminCRMDashboard from "@/pages/admin/crm/dashboard"
+
+import AdminClients from "@/pages/admin/crm/clients/index"
+import AdminClientCreate from "@/pages/admin/crm/clients/create"
+import AdminClientView from "@/pages/admin/crm/clients/[id]"
+import AdminClientEdit from "@/pages/admin/crm/clients/edit/[id]"
+
+import AdminInvoices from "@/pages/admin/crm/invoices/index"
+import AdminInvoiceCreate from "@/pages/admin/crm/invoices/create"
+import AdminInvoiceView from "@/pages/admin/crm/invoices/[id]"
+import AdminInvoiceEdit from "@/pages/admin/crm/invoices/edit/[id]"
+
+import AdminPayments from "@/pages/admin/crm/payments/index"
+import AdminPaymentCreate from "@/pages/admin/crm/payments/create"
+import AdminPaymentView from "@/pages/admin/crm/payments/[id]"
+import AdminPaymentEdit from "@/pages/admin/crm/payments/edit/[id]"
+
+import AdminCreditNotes from "@/pages/admin/crm/credit-notes/index"
+import AdminCreditNoteCreate from "@/pages/admin/crm/credit-notes/create"
+import AdminCreditNoteView from "@/pages/admin/crm/credit-notes/[id]"
+import AdminCreditNoteEdit from "@/pages/admin/crm/credit-notes/edit/[id]"
 
 import AdminStaff from "@/pages/admin/erp/staff/index"
 import AdminStaffCreate from "@/pages/admin/erp/staff/create"
@@ -131,7 +139,7 @@ const RouteList = ({ GLOBAL_STATE }) => {
 		},
 		{
 			path: "/admin/erp/dashboard",
-			component: <AdminProjectDashboard {...GLOBAL_STATE} />,
+			component: <AdminERPDashboard {...GLOBAL_STATE} />,
 		},
 		{
 			path: "/admin/erp/goods",
@@ -341,6 +349,10 @@ const RouteList = ({ GLOBAL_STATE }) => {
 		/*
 		 * CRM
 		 */
+		{
+			path: "/admin/crm/dashboard",
+			component: <AdminCRMDashboard {...GLOBAL_STATE} />,
+		},
 		{
 			path: "/admin/crm/clients",
 			component: <AdminClients {...GLOBAL_STATE} />,
