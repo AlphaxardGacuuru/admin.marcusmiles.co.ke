@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('type');
             $table->longText('description')->nullable();
             $table->string('location')->nullable();
+            $table->string('drive_folder_id')->nullable();
             $table->foreignId('client_id')
                 ->constrained('users')
                 ->onUpdate('cascade')

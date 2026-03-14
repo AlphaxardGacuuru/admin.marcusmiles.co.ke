@@ -8,6 +8,9 @@ use App\Models\ProjectStage;
 use App\Models\Stage;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Exception;
 
 class ProjectService extends Service
 {
@@ -62,6 +65,7 @@ class ProjectService extends Service
         $saved = DB::transaction(function () use ($project) {
             $project->save();
 
+            // Create initial project stage
             $firstStage = Stage::where("type", "project")
                 ->orderBy('position', 'asc')
                 ->first();
@@ -70,7 +74,26 @@ class ProjectService extends Service
             $projectStage->stage_id = $firstStage->id;
             $projectStage->project_id = $project->id;
             $projectStage->created_by = $this->id;
-            return $projectStage->save();
+            $saved = $projectStage->save();
+
+            // Create Google Drive folder for the project
+            try {
+                // This creates a folder inside your master folder on google drive
+                $disk = Storage::disk('google');
+
+                $disk->makeDirectory($project->code);
+
+                $metadata = $disk->getAdapter()->getMetadata($project->code);
+                
+                $folderId = $metadata->extraMetadata()['id'] ?? null;
+
+                if ($folderId) {
+                    $project->drive_folder_id = $folderId;
+                    $project->save();
+                }
+            } catch (Exception $e) {
+                Log::error('Failed to create Google Drive folder for project ' . $project->name . ': ' . $e->getMessage());
+            }
         });
 
         $message = $project->name . " Created Successfully";

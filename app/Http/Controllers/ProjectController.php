@@ -4,10 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Resources\ProjectResource;
 use App\Http\Services\ProjectService;
-use App\Models\Project;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -49,13 +46,6 @@ class ProjectController extends Controller
         ]);
 
         [$saved, $message, $project] = $this->service->store($request);
-        
-        try {
-            // This creates a folder inside your master folder on google drive
-            Storage::disk('google')->makeDirectory($project->code);
-        } catch (\Exception $e) {
-            Log::error('Failed to create Google Drive folder for project ' . $project->name . ': ' . $e->getMessage());
-        }
 
         return response([
             "status" => $saved,
