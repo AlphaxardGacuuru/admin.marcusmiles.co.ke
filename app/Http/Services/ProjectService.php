@@ -73,7 +73,7 @@ class ProjectService extends Service
             return $projectStage->save();
         });
 
-        $message = $project->name . " created successfully";
+        $message = $project->name . " Created Successfully";
 
         return [$saved, $message, $project];
     }
@@ -111,7 +111,7 @@ class ProjectService extends Service
 
         $saved = $project->save();
 
-        $message = $project->name . " updated successfully";
+        $message = $project->name . " Updated Successfully";
 
         return [$saved, $message, $project];
     }
@@ -125,7 +125,7 @@ class ProjectService extends Service
 
         $deleted = $project->delete();
 
-        $message = $project->name . " deleted successfully";
+        $message = $project->name . " Deleted Successfully";
 
         return [$deleted, $message, $project];
     }
