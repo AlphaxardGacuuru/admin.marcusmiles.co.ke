@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
 			ProjectSeeder::class,
 			GoodSeeder::class,
 			IssueSeeder::class,
+            ProductSeeder::class,
 			ConfigurationSeeder::class,
 			RoleSeeder::class,
 			// InvoiceSeeder::class

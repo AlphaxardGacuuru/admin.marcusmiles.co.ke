@@ -142,7 +142,7 @@ const AdminNavLinks = (props) => {
 				{
 					link: "/admin/crm/dashboard",
 					icon: <HomeSVG />,
-					name: "Dashboard"
+					name: "Dashboard",
 				},
 				{
 					link: "/admin/crm/clients",
@@ -160,14 +160,14 @@ const AdminNavLinks = (props) => {
 					name: "Quotations",
 				},
 				{
-					link: "/admin/crm/orders",
-					icon: <OrderSVG />,
-					name: "Orders",
-				},
-				{
 					link: "/admin/crm/products",
 					icon: <ProductSVG />,
 					name: "Products",
+				},
+				{
+					link: "/admin/crm/orders",
+					icon: <OrderSVG />,
+					name: "Orders",
 				},
 				{
 					link: "/admin/crm/invoices",
@@ -283,7 +283,7 @@ const AdminNavLinks = (props) => {
 											key={index}>
 											<Link
 												to={link.link}
-												className={`nav-link ${activeStrict(link.link)}`}>
+												className={`nav-link ${active(link.link)}`}>
 												<div className="nav-link-icon">{link.icon}</div>
 												<div className="nav-link-text">{link.name}</div>
 											</Link>
@@ -345,7 +345,7 @@ const AdminNavLinks = (props) => {
 											key={index}>
 											<Link
 												to={link.link}
-												className={`nav-link ${activeStrict(link.link)}`}
+												className={`nav-link ${active(link.link)}`}
 												onClick={() => props.setAdminMenu("")}>
 												<div className="nav-link-icon">{link.icon}</div>
 												<div className="nav-link-text">{link.name}</div>

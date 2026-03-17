@@ -78,7 +78,7 @@ class InvoiceService extends Service
                 $invoiceItem->description = $item["description"];
                 $invoiceItem->quantity = $item["quantity"];
                 $invoiceItem->rate = $item["rate"];
-                $invoiceItem->amount = $item["total"];
+                $invoiceItem->total = $item["total"];
                 $saved = $invoiceItem->save();
             }
 
@@ -116,7 +116,7 @@ class InvoiceService extends Service
                 $invoiceItem->description = $item["description"];
                 $invoiceItem->quantity = $item["quantity"];
                 $invoiceItem->rate = $item["rate"];
-                $invoiceItem->amount = $item["total"];
+                $invoiceItem->total = $item["total"];
                 $saved = $invoiceItem->save();
             }
 

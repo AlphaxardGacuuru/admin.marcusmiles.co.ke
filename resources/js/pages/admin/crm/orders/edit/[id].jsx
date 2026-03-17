@@ -1,94 +1,103 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom/cjs/react-router-dom.min"
+import {
+	useHistory,
+	useParams,
+} from "react-router-dom/cjs/react-router-dom.min"
 
 import Btn from "@/components/Core/Btn"
-
+import MyLink from "@/components/Core/MyLink"
 import CloseSVG from "@/svgs/CloseSVG"
 import PlusSVG from "@/svgs/PlusSVG"
 
 const edit = (props) => {
 	const { id } = useParams()
+	var history = useHistory()
 
-	const [quotation, setQuotation] = useState({
-		projectId: "",
-		issueDate: new Date().toISOString().split("T")[0],
-		expiryDate: new Date().toISOString().split("T")[0],
+	const [order, setOrder] = useState({
+		clientId: "",
+		total: "",
 		notes: "",
-		items: [{ description: "", quantity: 1, rate: 0, total: 0 }],
-		total: 0,
+		items: [{ productId: "", quantity: 1, rate: 0, total: 0 }],
 	})
 
-	const [projects, setProjects] = useState([])
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientsShortList")
+	)
+	const [products, setProducts] = useState(
+		props.getLocalStorage("productsShortList")
+	)
 	const [loading, setLoading] = useState(false)
 
 	useEffect(() => {
 		// Set page
-		props.setPage({
-			name: "Edit Quotation",
-			path: ["crm/quotations", "edit"],
-		})
+		props.setPage({ name: "Edit Order", path: ["crm/orders", "edit"] })
+		props.get("clients?idAndName=true", setClients, "clientsShortList")
+		props.get("products?idAndName=true", setProducts, "productsShortList")
 
-		props.get("projects?idAndName=true", setProjects)
-
-		Axios.get(`/api/quotations/${id}`)
+		Axios.get(`/api/orders/${id}`)
 			.then((res) => {
 				const data = res.data.data
 
-				setQuotation({
-					projectId: data.projectId || "",
-					issueDate: props.formatDateForEdit(data.issueDate),
-					expiryDate: props.formatDateForEdit(data.expiryDate),
-					notes: data.notes || "",
+				setOrder({
+					code: data.code || "",
+					clientId: data.clientId || "",
 					items:
 						data.items && data.items.length > 0
 							? data.items.map((item) => ({
 									...item,
+									productId: item.product_id || "",
 									total: item.total || 0,
 								}))
-							: [{ description: "", quantity: 1, rate: 0, total: 0 }],
+							: [{ productId: "", quantity: 1, rate: 0, total: 0 }],
 					total: data.total || 0,
-					code: data.code || "",
+					notes: data.notes || "",
 					status: data.status || "",
 				})
 			})
 			.catch((err) => {
 				props.getErrors(err)
 			})
-	}, [id])
+	}, [])
 
 	// Handle high-level field changes
 	const handleInputChange = (e) => {
 		const { name, value } = e.target
-		setQuotation({ ...quotation, [name]: value })
+		setOrder({ ...order, [name]: value })
 	}
 
 	// Handle line item changes
 	const handleItemChange = (index, e) => {
 		const { name, value } = e.target
-		const newItems = [...quotation.items]
+		const newItems = [...order.items]
 		newItems[index][name] = value
+
+		if (name === "productId") {
+			const product = products.find((p) => p.id == value)
+			newItems[index].rate = product ? product.price || 0 : 0
+		}
+
 		newItems[index].total = newItems[index].quantity * newItems[index].rate
-		setQuotation({ ...quotation, items: newItems })
+		setOrder({ ...order, items: newItems })
 	}
 
 	const addItem = (e) => {
 		e.preventDefault()
-		setQuotation({
-			...quotation,
+		setOrder({
+			...order,
 			items: [
-				...quotation.items,
-				{ description: "", quantity: 1, rate: 0, total: 0 },
+				...order.items,
+				{ productId: "", quantity: 1, rate: 0, total: 0 },
 			],
 		})
 	}
 
 	const removeItem = (index, e) => {
 		e.preventDefault()
-		const newItems = quotation.items.filter((_, i) => i !== index)
-		setQuotation({ ...quotation, items: newItems })
+		const newItems = order.items.filter((_, i) => i !== index)
+		setOrder({ ...order, items: newItems })
 	}
 
-	const subtotal = quotation.items.reduce(
+	const subtotal = order.items.reduce(
 		(sum, item) => sum + Number(item.total),
 		0
 	)
@@ -99,10 +108,12 @@ const edit = (props) => {
 
 		setLoading(true)
 
-		Axios.put(`/api/quotations/${id}`, { ...quotation, total: grandTotal })
+		Axios.put(`/api/orders/${id}`, { ...order, total: grandTotal })
 			.then((res) => {
 				setLoading(false)
 				props.setMessages([res.data.message])
+				// Redirect to Orders
+				history.push("/admin/crm/orders")
 			})
 			.catch((err) => {
 				setLoading(false)
@@ -120,62 +131,36 @@ const edit = (props) => {
 							<form onSubmit={handleSubmit}>
 								{/* Project Header Info */}
 								<div className="row mb-3">
-									{/* Project Start */}
-									<div className="col-md-6 mb-3">
-										<label className="form-label">Project</label>
+									<div className="col-md-12 mb-3">
+										{/* Client Start */}
+										<label className="form-label">Client</label>
 										<select
 											type="text"
-											name="projectId"
-											className="form-control"
-											value={quotation.projectId}
-											onChange={handleInputChange}
+											name="clientId"
+											className="form-control mb-2"
+											value={order.clientId}
+											onChange={(e) => handleInputChange(e)}
 											required>
-											<option value="">Select Project</option>
-											{projects.map((project, key) => (
+											<option value="">Select Client</option>
+											{clients.map((client, key) => (
 												<option
 													key={key}
-													value={project.id}>
-													{project.name}
+													value={client.id}>
+													{client.name}
 												</option>
 											))}
 										</select>
+										{/* Client End */}
 									</div>
-									{/* Project End */}
-									{/* Issue Date Start */}
-									<div className="col-md-3 mb-3">
-										<label className="form-label">Issue Date</label>
-										<input
-											type="date"
-											name="issueDate"
-											className="form-control"
-											value={quotation.issueDate}
-											onChange={handleInputChange}
-										/>
-									</div>
-									{/* Issue Date End */}
-									{/* Expirey Date Start */}
-									<div className="col-md-3 mb-3">
-										<label className="form-label">Expiry Date</label>
-										<input
-											type="date"
-											name="expiryDate"
-											className="form-control"
-											value={quotation.expiryDate}
-											onChange={handleInputChange}
-										/>
-									</div>
-									{/* Expirey Date End */}
 								</div>
 
 								{/* Line Items Section */}
-								<h5 className="ms-1 mb-2">Scope of Work</h5>
+								<h5 className="ms-1 mb-2">Items</h5>
 								<div className="table-responsive">
 									<table className="table table-bordered">
 										<thead className="table-light">
 											<tr>
-												<th style={{ width: "45%" }}>
-													Description (Phase/Task)
-												</th>
+												<th style={{ width: "25%" }}>Product</th>
 												<th>Qty</th>
 												<th>Unit Price (KES)</th>
 												<th>Total (KES)</th>
@@ -183,18 +168,27 @@ const edit = (props) => {
 											</tr>
 										</thead>
 										<tbody>
-											{quotation.items.map((item, index) => (
+											{order.items.map((item, index) => (
 												<tr key={index}>
 													<td>
-														<input
-															type="text"
-															name="description"
-															className="form-control"
-															placeholder="e.g. Schematic Design Phase"
-															value={item.description}
-															onChange={(e) => handleItemChange(index, e)}
-															required
-														/>
+														{/* Products Start */}
+														<div className="d-flex">
+															<select
+																name="productId"
+																className="form-control me-2"
+																onChange={(e) => handleItemChange(index, e)}>
+																<option value="">Select Product</option>
+																{products.map((product, key) => (
+																	<option
+																		key={key}
+																		value={product.id}
+																		selected={item.productId == product.id}>
+																		{product.name}
+																	</option>
+																))}
+															</select>
+														</div>
+														{/* Products End */}
 													</td>
 													<td>
 														<input
@@ -212,12 +206,13 @@ const edit = (props) => {
 															className="form-control"
 															value={item.rate}
 															onChange={(e) => handleItemChange(index, e)}
+															disabled={true}
 														/>
 													</td>
 													<td className="align-middle">
-														<strong>{item.total.toLocaleString()}</strong>
+														{item.total.toLocaleString()}
 													</td>
-													<td>
+													<td className="align-middle text-center">
 														<Btn
 															icon={<CloseSVG />}
 															className="mysonar-sm px-2"
@@ -232,7 +227,7 @@ const edit = (props) => {
 								<div className="d-flex justify-content-end mb-2">
 									<Btn
 										icon={<PlusSVG />}
-										text="Add Phase/Item"
+										text="Add Item"
 										onClick={addItem}
 									/>
 								</div>
@@ -242,12 +237,16 @@ const edit = (props) => {
 									<div className="col-md-4">
 										<div className="d-flex justify-content-between mb-2">
 											<span>Subtotal:</span>
-											<span>KES {subtotal.toLocaleString()}</span>
+											<span>
+												KES {subtotal.toLocaleString()}
+											</span>
 										</div>
 										<hr />
 										<div className="d-flex justify-content-between h5">
 											<strong>Total:</strong>
-											<strong>KES {grandTotal.toLocaleString()}</strong>
+											<strong>
+												KES {grandTotal.toLocaleString()}
+											</strong>
 										</div>
 									</div>
 								</div>
@@ -258,14 +257,14 @@ const edit = (props) => {
 										name="notes"
 										className="form-control"
 										rows="3"
-										value={quotation.notes}
+										value={order.notes}
 										placeholder="e.g. 20% deposit required to commence works..."
 										onChange={handleInputChange}></textarea>
 								</div>
 
 								<div className="mt-4 text-end">
 									<Btn
-										text="Update Quotation"
+										text="Update Order"
 										onClick={handleSubmit}
 										loading={loading}
 									/>
@@ -274,8 +273,8 @@ const edit = (props) => {
 						</div>
 					</div>
 				</div>
+				<div className="col-sm-2"></div>
 			</div>
-			<div className="col-sm-2"></div>
 		</div>
 	)
 }

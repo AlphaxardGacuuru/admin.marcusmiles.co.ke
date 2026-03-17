@@ -15,10 +15,12 @@ class SupplierGoodResource extends JsonResource
      */
     public function toArray($request)
     {
-		$currentPrice = $this->supplierGoodPrices()
-                ->orderBy("id", "desc")
-                ->first()
-                ->price;
+        $currentPrice = $this->supplierGoodPrices()
+            ->orderBy("id", "desc")
+            ->first()
+            ->price;
+
+        $markup = ($this->good->markup / 100) + 1;
 
         return [
             "id" => $this->id,
@@ -30,7 +32,7 @@ class SupplierGoodResource extends JsonResource
             "supplierName" => $this->supplier->name,
             "createdByName" => $this->createdBy->name,
             "currentPrice" => number_format($currentPrice),
-            "sellingPrice" => number_format($currentPrice * ($this->good->markup + 100)),
+            "sellingPrice" => number_format($currentPrice * $markup),
             "prices" => SupplierGoodPriceResource::collection($this->supplierGoodPrices),
         ];
     }

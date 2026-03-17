@@ -20,7 +20,7 @@ return new class extends Migration
             $table->string('description', 500);
             $table->integer('quantity');
             $table->unsignedBigInteger('rate');
-            $table->unsignedBigInteger('amount');
+            $table->unsignedBigInteger('total');
             $table->timestamps();
         });
     }

@@ -10,21 +10,21 @@ import PrintSVG from "@/svgs/PrintSVG"
 const show = (props) => {
 	var { id } = useParams()
 
-	const [quotation, setQuotation] = useState({})
+	const [order, setOrder] = useState({})
 
 	useEffect(() => {
 		// Set page
 		props.setPage({
-			name: "View Quotation",
-			path: ["crm/quotations", "view"],
+			name: "View Order",
+			path: ["crm/orders", "view"],
 		})
-		props.get(`quotations/${id}`, setQuotation)
+		props.get(`orders/${id}`, setOrder)
 	}, [])
 
 	/*
-	 * Print Quotation
+	 * Print Order
 	 */
-	const printQuotation = () => {
+	const printOrder = () => {
 		var contentToPrint = document.getElementById("contentToPrint").innerHTML
 
 		document.body.innerHTML = contentToPrint
@@ -42,7 +42,7 @@ const show = (props) => {
 					className="me-5"
 					icon={<PrintSVG />}
 					text="print"
-					onClick={printQuotation}
+					onClick={printOrder}
 				/>
 			</div>
 			{/*Create Link End*/}
@@ -70,9 +70,9 @@ const show = (props) => {
 							</div>
 
 							<div>
-								<h2 className="mb-0 text-end">QUOTATION</h2>
+								<h2 className="mb-0 text-end">ORDER</h2>
 								<div className="text-end fw-bold text-uppercase mt-2">
-									Status: {quotation.status}
+									Status: {order.status}
 								</div>
 							</div>
 						</div>
@@ -80,29 +80,19 @@ const show = (props) => {
 							<div className="d-flex justify-content-between mb-4">
 								<div className="">
 									<h5 className="mb-1">Client / Project:</h5>
-									<h5 className="fw-normal text-dark">
-										{quotation.projectName}
-									</h5>
+									<h5 className="fw-normal text-dark">{order.clientName}</h5>
 								</div>
 
 								{/* First Header Start */}
 								<div className="text-end">
 									<h5>
-										Quotation No:{" "}
-										<span className="text-dark fw-normal">
-											{quotation.code}
-										</span>
+										Order No:{" "}
+										<span className="text-dark fw-normal">{order.code}</span>
 									</h5>
 									<h5>
-										Issue Date:{" "}
+										Order Date:{" "}
 										<span className="text-dark fw-normal">
-											{quotation.issueDate}
-										</span>
-									</h5>
-									<h5>
-										Valid Until:{" "}
-										<span className="text-dark fw-normal">
-											{quotation.expiryDate}
+											{order.createdAt}
 										</span>
 									</h5>
 								</div>
@@ -112,34 +102,32 @@ const show = (props) => {
 							<hr />
 
 							<div className="centered-grey-background my-4">
-								<h5 className="mb-3 px-2">Scope of Work</h5>
+								<h5 className="mb-3 px-2">Items</h5>
 								{/* Table Start */}
 								<div className="table-responsive-sm">
 									<table className="table bg-white border">
 										<thead className="table-light">
 											<tr>
-												<th style={{ width: "50%" }}>
-													Description (Phase/Task)
-												</th>
+												<th style={{ width: "25%" }}>Product</th>
 												<th className="text-center">Qty</th>
 												<th className="text-end">Unit Price (KES)</th>
-												<th className="text-end">Total</th>
+												<th className="text-end">Total (KES)</th>
 											</tr>
 										</thead>
 										<tbody>
-											{quotation.items?.map((item, key) => (
+											{order.items?.map((item, key) => (
 												<tr key={key}>
-													<td>{item.description}</td>
+													<td>{item.productName}</td>
 													<td className="text-center">{item.quantity}</td>
 													<td className="text-end">
 														{(
 															item.rate ||
-															item.total / item.quantity ||
+															item.amount / item.quantity ||
 															0
 														).toLocaleString()}
 													</td>
 													<td className="text-end fw-bold">
-														{(item.total || 0).toLocaleString()}
+														{(item.amount || item.total || 0).toLocaleString()}
 													</td>
 												</tr>
 											))}
@@ -160,7 +148,7 @@ const show = (props) => {
 												</td>
 												<td className="text-end fs-5 text-dark">
 													<strong>
-														KES {(quotation.total || 0).toLocaleString()}
+														KES {(order.total || 0).toLocaleString()}
 													</strong>
 												</td>
 											</tr>
@@ -177,14 +165,14 @@ const show = (props) => {
 								<p
 									className="text-dark fw-normal"
 									style={{ whiteSpace: "pre-wrap" }}>
-									{quotation.notes || "No notes available."}
+									{order.notes || "No notes available."}
 								</p>
 
 								<div className="mt-5">
 									<h6 className="text-dark mb-1">
 										Prepared By:{" "}
 										<span className="text-dark fw-normal">
-											{quotation.createdByName}
+											{order.createdByName}
 										</span>
 									</h6>
 								</div>

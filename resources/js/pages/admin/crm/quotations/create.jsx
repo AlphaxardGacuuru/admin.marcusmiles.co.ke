@@ -45,7 +45,8 @@ const create = (props) => {
 		setQuotation({ ...quotation, items: newItems })
 	}
 
-	const addItem = () => {
+	const addItem = (e) => {
+		e.preventDefault()
 		setQuotation({
 			...quotation,
 			items: [
@@ -55,7 +56,8 @@ const create = (props) => {
 		})
 	}
 
-	const removeItem = (index) => {
+	const removeItem = (index, e) => {
+		e.preventDefault()
 		const newItems = quotation.items.filter((_, i) => i !== index)
 		setQuotation({ ...quotation, items: newItems })
 	}
@@ -194,7 +196,7 @@ const create = (props) => {
 														<Btn
 															icon={<CloseSVG />}
 															className="mysonar-sm px-2"
-															onClick={() => removeItem(index)}
+															onClick={(e) => removeItem(index, e)}
 														/>
 													</td>
 												</tr>
@@ -216,14 +218,14 @@ const create = (props) => {
 										<div className="d-flex justify-content-between mb-2">
 											<span>Subtotal:</span>
 											<span>
-												{quotation.currency} {subtotal.toLocaleString()}
+												KES {subtotal.toLocaleString()}
 											</span>
 										</div>
 										<hr />
 										<div className="d-flex justify-content-between h5">
 											<strong>Total:</strong>
 											<strong>
-												{quotation.currency} {grandTotal.toLocaleString()}
+												KES {grandTotal.toLocaleString()}
 											</strong>
 										</div>
 									</div>

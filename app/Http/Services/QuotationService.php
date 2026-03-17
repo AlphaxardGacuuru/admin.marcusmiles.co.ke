@@ -57,7 +57,7 @@ class QuotationService extends Service
 				$quotationItem->description = $item["description"];
 				$quotationItem->quantity = $item["quantity"];
 				$quotationItem->rate = $item["rate"];
-				$quotationItem->amount = $item["total"];
+				$quotationItem->total = $item["total"];
 				$saved = $quotationItem->save();
 			}
 
@@ -107,7 +107,7 @@ class QuotationService extends Service
 				$quotationItem->description = $item["description"];
 				$quotationItem->quantity = $item["quantity"];
 				$quotationItem->rate = $item["rate"];
-				$quotationItem->amount = $item["total"];
+				$quotationItem->total = $item["total"];
 				$saved = $quotationItem->save();
 			}
 

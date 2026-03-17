@@ -43,7 +43,7 @@ const edit = (props) => {
 						data.items && data.items.length > 0
 							? data.items.map((item) => ({
 									...item,
-									total: item.amount || item.total || 0,
+									total: item.total || 0,
 								}))
 							: [{ description: "", quantity: 1, rate: 0, total: 0 }],
 					total: data.total || 0,
@@ -71,7 +71,8 @@ const edit = (props) => {
 		setInvoice({ ...invoice, items: newItems })
 	}
 
-	const addItem = () => {
+	const addItem = (e) => {
+		e.preventDefault()
 		setInvoice({
 			...invoice,
 			items: [
@@ -81,7 +82,8 @@ const edit = (props) => {
 		})
 	}
 
-	const removeItem = (index) => {
+	const removeItem = (index, e) => {
+		e.preventDefault()
 		const newItems = invoice.items.filter((_, i) => i !== index)
 		setInvoice({ ...invoice, items: newItems })
 	}
@@ -219,7 +221,7 @@ const edit = (props) => {
 														<Btn
 															icon={<CloseSVG />}
 															className="mysonar-sm px-2"
-															onClick={() => removeItem(index)}
+															onClick={(e) => removeItem(index, e)}
 														/>
 													</td>
 												</tr>

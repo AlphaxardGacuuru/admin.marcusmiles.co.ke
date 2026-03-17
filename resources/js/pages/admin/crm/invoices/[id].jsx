@@ -130,12 +130,12 @@ const show = (props) => {
 													<td className="text-end">
 														{(
 															item.rate ||
-															item.amount / item.quantity ||
+															item.total / item.quantity ||
 															0
 														).toLocaleString()}
 													</td>
 													<td className="text-end fw-bold">
-														{(item.amount || item.total || 0).toLocaleString()}
+														{(item.total || 0).toLocaleString()}
 													</td>
 												</tr>
 											))}

@@ -45,7 +45,8 @@ const create = (props) => {
 		setInvoice({ ...invoice, items: newItems })
 	}
 
-	const addItem = () => {
+	const addItem = (e) => {
+		e.preventDefault()
 		setInvoice({
 			...invoice,
 			items: [
@@ -55,7 +56,8 @@ const create = (props) => {
 		})
 	}
 
-	const removeItem = (index) => {
+	const removeItem = (index, e) => {
+		e.preventDefault()
 		const newItems = invoice.items.filter((_, i) => i !== index)
 		setInvoice({ ...invoice, items: newItems })
 	}
@@ -194,7 +196,7 @@ const create = (props) => {
 														<Btn
 															icon={<CloseSVG />}
 															className="mysonar-sm px-2"
-															onClick={() => removeItem(index)}
+															onClick={(e) => removeItem(index, e)}
 														/>
 													</td>
 												</tr>
@@ -215,16 +217,12 @@ const create = (props) => {
 									<div className="col-md-4">
 										<div className="d-flex justify-content-between mb-2">
 											<span>Subtotal:</span>
-											<span>
-												{invoice.currency} {subtotal.toLocaleString()}
-											</span>
+											<span>KES {subtotal.toLocaleString()}</span>
 										</div>
 										<hr />
 										<div className="d-flex justify-content-between h5">
 											<strong>Total:</strong>
-											<strong>
-												{invoice.currency} {grandTotal.toLocaleString()}
-											</strong>
+											<strong>KES {grandTotal.toLocaleString()}</strong>
 										</div>
 									</div>
 								</div>

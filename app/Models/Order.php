@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Order extends Model
 {
     use HasFactory;
 
@@ -35,9 +35,14 @@ class Product extends Model
      * Relationships
      */
 
-    public function project()
+    public function client()
     {
-        return $this->belongsTo(Project::class);
+        return $this->belongsTo(User::class, "client_id");
+    }
+
+    public function orderItems()
+    {
+        return $this->hasMany(OrderItem::class);
     }
 
     public function createdBy()

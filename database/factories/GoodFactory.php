@@ -42,7 +42,7 @@ class GoodFactory extends Factory
 
         return [
             "code" => 'G' . str_pad($number++, 3, '0', STR_PAD_LEFT),
-            "name" => $this->faker->randomElement($goods) . ' ' . $number, // append string to ensure diversity in name visually, though not required unique
+            "name" => $this->faker->unique()->randomElement($goods),
             "markup" => rand(20, 30),
             "notification_quantity" => 1,
             "created_by" => User::where("account_type", "staff")

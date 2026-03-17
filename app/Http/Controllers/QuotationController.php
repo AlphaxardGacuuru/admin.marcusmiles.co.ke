@@ -83,7 +83,7 @@ class QuotationController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update($request, $id)
+    public function update(Request $request, $id)
     {
         $this->validate($request, [
             'projectId' => 'sometimes|exists:projects,id',

@@ -13,13 +13,16 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('quotation_items', function (Blueprint $table) {
+        Schema::create('order_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('quotation_id')
+            $table->foreignId('order_id')
                 ->constrained()
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
-            $table->string('description', 500);
+            $table->foreignId('product_id')
+                ->constrained()
+                ->onUpdate('cascade')
+                ->onDelete('cascade');
             $table->integer('quantity');
             $table->unsignedBigInteger('rate');
             $table->unsignedBigInteger('total');
@@ -34,6 +37,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('quotation_items');
+        Schema::dropIfExists('order_items');
     }
 };

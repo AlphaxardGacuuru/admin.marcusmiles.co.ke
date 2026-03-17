@@ -80,11 +80,6 @@ import AdminRequisitionCreate from "@/pages/admin/documents/requisitions/create"
 import AdminRequisitionView from "@/pages/admin/documents/requisitions/[id]"
 import AdminRequisitionEdit from "@/pages/admin/documents/requisitions/edit/[id]"
 
-import AdminQuotations from "@/pages/admin/crm/quotations/index"
-import AdminQuotationCreate from "@/pages/admin/crm/quotations/create"
-import AdminQuotationView from "@/pages/admin/crm/quotations/[id]"
-import AdminQuotationEdit from "@/pages/admin/crm/quotations/edit/[id]"
-
 
 
 import AdminCRMDashboard from "@/pages/admin/crm/dashboard"
@@ -93,6 +88,20 @@ import AdminClients from "@/pages/admin/crm/clients/index"
 import AdminClientCreate from "@/pages/admin/crm/clients/create"
 import AdminClientView from "@/pages/admin/crm/clients/[id]"
 import AdminClientEdit from "@/pages/admin/crm/clients/edit/[id]"
+
+import AdminQuotations from "@/pages/admin/crm/quotations/index"
+import AdminQuotationCreate from "@/pages/admin/crm/quotations/create"
+import AdminQuotationView from "@/pages/admin/crm/quotations/[id]"
+import AdminQuotationEdit from "@/pages/admin/crm/quotations/edit/[id]"
+
+import AdminProducts from "@/pages/admin/crm/products/index"
+import AdminProductCreate from "@/pages/admin/crm/products/create"
+import AdminProductEdit from "@/pages/admin/crm/products/edit/[id]"
+
+import AdminOrders from "@/pages/admin/crm/orders/index"
+import AdminOrderCreate from "@/pages/admin/crm/orders/create"
+import AdminOrderView from "@/pages/admin/crm/orders/[id]"
+import AdminOrderEdit from "@/pages/admin/crm/orders/edit/[id]"
 
 import AdminInvoices from "@/pages/admin/crm/invoices/index"
 import AdminInvoiceCreate from "@/pages/admin/crm/invoices/create"
@@ -346,9 +355,11 @@ const RouteList = ({ GLOBAL_STATE }) => {
 			path: "/admin/documents/requisitions/:id/edit",
 			component: <AdminRequisitionEdit {...GLOBAL_STATE} />,
 		},
+
 		/*
 		 * CRM
 		 */
+
 		{
 			path: "/admin/crm/dashboard",
 			component: <AdminCRMDashboard {...GLOBAL_STATE} />,
@@ -384,6 +395,34 @@ const RouteList = ({ GLOBAL_STATE }) => {
 		{
 			path: "/admin/crm/quotations/:id/edit",
 			component: <AdminQuotationEdit {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/products",
+			component: <AdminProducts {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/products/create",
+			component: <AdminProductCreate {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/products/:id/edit",
+			component: <AdminProductEdit {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/orders",
+			component: <AdminOrders {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/orders/create",
+			component: <AdminOrderCreate {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/orders/:id/view",
+			component: <AdminOrderView {...GLOBAL_STATE} />,
+		},
+		{
+			path: "/admin/crm/orders/:id/edit",
+			component: <AdminOrderEdit {...GLOBAL_STATE} />,
 		},
 		{
 			path: "/admin/crm/invoices",

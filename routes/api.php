@@ -15,9 +15,12 @@ use App\Http\Controllers\IssueCommentLikeController;
 use App\Http\Controllers\IssueController;
 use App\Http\Controllers\IssueStageController;
 use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\ProductContoller;
+use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PracticalCompletionCertificateController;
+use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ProjectController;
 use App\Http\Controllers\ProjectServiceProviderController;
 use App\Http\Controllers\RequisitionController;
@@ -55,29 +58,32 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::get('auth', [UserController::class, 'auth']);
 
 Route::apiResources([
-    "clients" => ClientController::class,
-    "quotations" => QuotationController::class,
     "goods" => GoodController::class,
     "service-providers" => ServiceProviderController::class,
     "projects" => ProjectController::class,
     "work-plans" => WorkPlanController::class,
     "work-plan-steps" => WorkPlanStepController::class,
-    "inventories" => InventoryController::class,
     "project-service-providers" => ProjectServiceProviderController::class,
     "suppliers" => SupplierController::class,
     "supplier-goods" => SupplierGoodController::class,
+    "inventories" => InventoryController::class,
     "stages" => StageController::class,
     "issues" => IssueController::class,
     "issue-comments" => IssueCommentController::class,
     "issue-comment-likes" => IssueCommentLikeController::class,
     "issue-stages" => IssueStageController::class,
+
     "delivery-notes" => DeliveryNoteController::class,
     "wage-sheets" => WageSheetController::class,
     "status-reports" => StatusReportController::class,
     "practical-completion-certificates" => PracticalCompletionCertificateController::class,
     "site-visit-reports" => SiteVisitReportController::class,
     "requisitions" => RequisitionController::class,
-
+    
+    "clients" => ClientController::class,
+    "quotations" => QuotationController::class,
+    "products" => ProductController::class,
+    "orders" => OrderController::class,
     "invoices" => InvoiceController::class,
     "payments" => PaymentController::class,
     "credit-notes" => CreditNoteController::class,
