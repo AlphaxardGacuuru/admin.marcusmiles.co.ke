@@ -25,7 +25,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Status Report",
-			path: ["status-reports", "edit"],
+			path: ["documents/status-reports", "edit"],
 		})
 		// Fetch Status Report
 		Axios.get(`api/status-reports/${id}`)

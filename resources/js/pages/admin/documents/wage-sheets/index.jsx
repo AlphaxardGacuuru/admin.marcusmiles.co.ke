@@ -17,37 +17,57 @@ import BalanceSVG from "@/svgs/BalanceSVG"
 import Btn from "@/components/Core/Btn"
 
 const index = (props) => {
-	const [wageSheets, setWageSheets] = useState([])
+	const [wageSheets, setWageSheets] = useState(props.getLocalStorage("wageSheets"))
 
-	const [tenant, setTenant] = useState("")
-	const [unit, setUnit] = useState("")
-	const [propertyId, setPropertyId] = useState("")
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+
+	const [codeQuery, setCodeQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
+	const [approvedByQuery, setApprovedByQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [startYear, setStartYear] = useState("")
 	const [endMonth, setEndMonth] = useState("")
 	const [endYear, setEndYear] = useState("")
-
-	const [properties, setProperties] = useState([])
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Wage Sheets", path: ["wage-sheets"] })
+		props.setPage({ name: "Wage Sheets", path: ["documents/wage-sheets"] })
+		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	useEffect(() => {
 		// Fetch Wage Sheet
 		props.getPaginated(
 			`wage-sheets?
+			code=${codeQuery}&
+			projectId=${projectIdQuery}&
+			approvedBy=${approvedByQuery}&
+			createdBy=${createdByQuery}&
 			startMonth=${startMonth}&
 			endMonth=${endMonth}&
 			startYear=${startYear}&
 			endYear=${endYear}`,
-			setWageSheets
+			setWageSheets,
+			"wageSheets"
 		)
-	}, [startMonth, endMonth, startYear, endYear])
+	}, [
+		codeQuery,
+		projectIdQuery,
+		approvedByQuery,
+		createdByQuery,
+		startMonth,
+		endMonth,
+		startYear,
+		endYear,
+	])
 
 	/*
 	 * Delete WageSheet
@@ -112,6 +132,82 @@ const index = (props) => {
 			<br />
 
 			{/* Filters */}
+			<div className="card shadow-sm px-4 pt-4 pb-3 mb-2">
+				<div className="d-flex flex-wrap">
+					{/* Code */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Code</label>
+						<input
+							type="text"
+							placeholder="Search by Code"
+							className="form-control"
+							onChange={(e) => setCodeQuery(e.target.value)}
+						/>
+					</div>
+					{/* Code End */}
+					{/* Project ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Project</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setProjectIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{projects.map((project, key) => (
+								<option
+									key={key}
+									value={project.id}>
+									{project.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Project ID End */}
+					{/* Approved By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Approved By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setApprovedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Approved By End */}
+					{/* Created By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Created By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setCreatedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By End */}
+				</div>
+			</div>
+
 			<div className="card shadow-sm py-2 px-4">
 				<div className="d-flex justify-content-end flex-wrap">
 					<div className="d-flex flex-grow-1">
@@ -122,7 +218,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setStartMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -164,7 +259,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setEndMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -184,7 +278,7 @@ const index = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -223,13 +317,13 @@ const index = (props) => {
 						<tr>
 							<th>#</th>
 							<th>Form No</th>
-							<th>Project No</th>
 							<th>Project</th>
 							<th>Total Labour Force</th>
 							<th>Total Wages</th>
 							<th>From</th>
 							<th>To</th>
 							<th>Approved By</th>
+							<th>Created By</th>
 							<th>Issue Date</th>
 							<th className="text-center">Action</th>
 						</tr>
@@ -237,7 +331,6 @@ const index = (props) => {
 							<tr key={key}>
 								<td>{props.iterator(key, wageSheets)}</td>
 								<td>{wageSheet.code}</td>
-								<td>{wageSheet.projectCode}</td>
 								<td>{wageSheet.projectName}</td>
 								<td>{wageSheet.totalLabourForce}</td>
 								<td>
@@ -250,6 +343,7 @@ const index = (props) => {
 								<td>{wageSheet.startsAt}</td>
 								<td>{wageSheet.endsAt}</td>
 								<td>{wageSheet.approvedByName}</td>
+								<td>{wageSheet.createdByName}</td>
 								<td>{wageSheet.createdAt}</td>
 								<td>
 									<div className="d-flex justify-content-center">

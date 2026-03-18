@@ -151,9 +151,9 @@ const edit = (props) => {
 
 					<div className="d-flex justify-content-center">
 						<MyLink
-							linkTo={`/erp/projects/${id}/view`}
+							linkTo={`/erp/projects/${inventory.projectId}/view`}
 							icon={<BackSVG />}
-							text="back to projects"
+							text="back to project"
 						/>
 					</div>
 					<div className="col-sm-4"></div>

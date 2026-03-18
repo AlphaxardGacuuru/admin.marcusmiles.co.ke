@@ -17,37 +17,69 @@ import BalanceSVG from "@/svgs/BalanceSVG"
 import Btn from "@/components/Core/Btn"
 
 const index = (props) => {
-	const [statusReports, setStatusReports] = useState([])
+	const [statusReports, setStatusReports] = useState(
+		props.getLocalStorage("statusReports")
+	)
 
-	const [tenant, setTenant] = useState("")
-	const [unit, setUnit] = useState("")
-	const [propertyId, setPropertyId] = useState("")
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientShortList")
+	)
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+
+	const [codeQuery, setCodeQuery] = useState("")
+	const [clientIdQuery, setClientIdQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
+	const [approvedByQuery, setApprovedByQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [startYear, setStartYear] = useState("")
 	const [endMonth, setEndMonth] = useState("")
 	const [endYear, setEndYear] = useState("")
-
-	const [properties, setProperties] = useState([])
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Status Reports", path: ["status-reports"] })
+		props.setPage({
+			name: "Status Reports",
+			path: ["documents/status-reports"],
+		})
+		props.get("clients?idAndName=true", setClients, "clientShortList")
+		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	useEffect(() => {
 		// Fetch Status Report
 		props.getPaginated(
 			`status-reports?
+			code=${codeQuery}&
+			clientId=${clientIdQuery}&
+			projectId=${projectIdQuery}&
+			approvedBy=${approvedByQuery}&
+			createdBy=${createdByQuery}&
 			startMonth=${startMonth}&
 			endMonth=${endMonth}&
 			startYear=${startYear}&
 			endYear=${endYear}`,
-			setStatusReports
+			setStatusReports,
+			"statusReports"
 		)
-	}, [startMonth, endMonth, startYear, endYear])
+	}, [
+		codeQuery,
+		clientIdQuery,
+		projectIdQuery,
+		approvedByQuery,
+		createdByQuery,
+		startMonth,
+		endMonth,
+		startYear,
+		endYear,
+	])
 
 	/*
 	 * Delete StatusReport
@@ -112,6 +144,102 @@ const index = (props) => {
 			<br />
 
 			{/* Filters */}
+			<div className="card shadow-sm px-4 pt-4 pb-3 mb-2">
+				<div className="d-flex flex-wrap">
+					{/* Code */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Code</label>
+						<input
+							type="text"
+							placeholder="Search by Code"
+							className="form-control"
+							onChange={(e) => setCodeQuery(e.target.value)}
+						/>
+					</div>
+					{/* Code End */}
+					{/* Client */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Client</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setClientIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{clients.map((client, key) => (
+								<option
+									key={key}
+									value={client.id}>
+									{client.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Client End */}
+					{/* Project ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Project</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setProjectIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{projects.map((project, key) => (
+								<option
+									key={key}
+									value={project.id}>
+									{project.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Project ID End */}
+					{/* Approved By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Approved By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setApprovedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Approved By End */}
+					{/* Created By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Created By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setCreatedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By End */}
+				</div>
+			</div>
+
 			<div className="card shadow-sm py-2 px-4">
 				<div className="d-flex justify-content-end flex-wrap">
 					<div className="d-flex flex-grow-1">
@@ -122,7 +250,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setStartMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -164,7 +291,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setEndMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -184,7 +310,7 @@ const index = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -209,7 +335,7 @@ const index = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="6"></th>
+							<th colSpan="7"></th>
 							<th className="text-end">
 								<div className="d-flex justify-content-end">
 									<MyLink
@@ -223,9 +349,10 @@ const index = (props) => {
 						<tr>
 							<th>#</th>
 							<th>Form No</th>
-							<th>Project No</th>
+							<th>Client</th>
 							<th>Project</th>
 							<th>Approved By</th>
+							<th>Created By</th>
 							<th>Issue Date</th>
 							<th className="text-center">Action</th>
 						</tr>
@@ -233,9 +360,10 @@ const index = (props) => {
 							<tr key={key}>
 								<td>{props.iterator(key, statusReports)}</td>
 								<td>{statusReport.code}</td>
-								<td>{statusReport.projectCode}</td>
+								<td>{statusReport.clientName}</td>
 								<td>{statusReport.projectName}</td>
 								<td>{statusReport.approvedByName}</td>
+								<td>{statusReport.createdByName}</td>
 								<td>{statusReport.createdAt}</td>
 								<td>
 									<div className="d-flex justify-content-center">

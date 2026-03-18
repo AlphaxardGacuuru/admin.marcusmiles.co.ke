@@ -42,7 +42,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Wage Sheet",
-			path: ["wage-sheets", "edit"],
+			path: ["documents/wage-sheets", "edit"],
 		})
 		// Fetch Wage Sheet
 		Axios.get(`api/wage-sheets/${id}`)

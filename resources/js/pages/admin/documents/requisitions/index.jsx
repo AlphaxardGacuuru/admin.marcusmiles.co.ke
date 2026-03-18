@@ -17,37 +17,72 @@ import BalanceSVG from "@/svgs/BalanceSVG"
 import Btn from "@/components/Core/Btn"
 
 const index = (props) => {
-	const [requisitions, setRequisitions] = useState([])
+	const [requisitions, setRequisitions] = useState(
+		props.getLocalStorage("requisitions")
+	)
 
-	const [tenant, setTenant] = useState("")
-	const [unit, setUnit] = useState("")
-	const [propertyId, setPropertyId] = useState("")
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientShortList")
+	)
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+
+	const [codeQuery, setCodeQuery] = useState("")
+	const [clientIdQuery, setClientIdQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
+	const [approvedByQuery, setApprovedByQuery] = useState("")
+	const [checkedByQuery, setCheckedByQuery] = useState("")
+	const [paidByQuery, setPaidByQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [startYear, setStartYear] = useState("")
 	const [endMonth, setEndMonth] = useState("")
 	const [endYear, setEndYear] = useState("")
-
-	const [properties, setProperties] = useState([])
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Requisitions", path: ["requisitions"] })
+		props.setPage({ name: "Requisitions", path: ["documents/requisitions"] })
+		props.get("clients?idAndName=true", setClients, "clientShortList")
+		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	useEffect(() => {
 		// Fetch Requisition
 		props.getPaginated(
 			`requisitions?
+			code=${codeQuery}&
+			clientId=${clientIdQuery}&
+			projectId=${projectIdQuery}&
+			approvedBy=${approvedByQuery}&
+			checkedBy=${checkedByQuery}&
+			paidBy=${paidByQuery}&
+			createdBy=${createdByQuery}&
 			startMonth=${startMonth}&
 			endMonth=${endMonth}&
 			startYear=${startYear}&
 			endYear=${endYear}`,
-			setRequisitions
+			setRequisitions,
+			"requisitions"
 		)
-	}, [startMonth, endMonth, startYear, endYear])
+	}, [
+		codeQuery,
+		clientIdQuery,
+		projectIdQuery,
+		approvedByQuery,
+		checkedByQuery,
+		paidByQuery,
+		createdByQuery,
+		startMonth,
+		endMonth,
+		startYear,
+		endYear,
+	])
 
 	/*
 	 * Delete Requisition
@@ -96,8 +131,7 @@ const index = (props) => {
 							heading="Total"
 							data={
 								<span>
-									<small>KES</small>{" "}
-									{requisitions.meta?.total}
+									<small>KES</small> {requisitions.meta?.total}
 								</span>
 							}
 						/>
@@ -113,6 +147,142 @@ const index = (props) => {
 			<br />
 
 			{/* Filters */}
+			<div className="card shadow-sm px-4 pt-4 pb-3 mb-2">
+				<div className="d-flex flex-wrap">
+					{/* Code */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Code</label>
+						<input
+							type="text"
+							placeholder="Search by Code"
+							className="form-control"
+							onChange={(e) => setCodeQuery(e.target.value)}
+						/>
+					</div>
+					{/* Code End */}
+					{/* Client */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Client</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setClientIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{clients.map((client, key) => (
+								<option
+									key={key}
+									value={client.id}>
+									{client.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Client End */}
+					{/* Project ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Project</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setProjectIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{projects.map((project, key) => (
+								<option
+									key={key}
+									value={project.id}>
+									{project.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Project ID End */}
+					{/* Approved By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Approved By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setApprovedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Approved By End */}
+					{/* Checked By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Checked By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setCheckedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Checked By End */}
+					{/* Paid By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Paid By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setPaidByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Paid By End */}
+					{/* Created By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Ordered By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setCreatedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By End */}
+				</div>
+			</div>
+
 			<div className="card shadow-sm py-2 px-4">
 				<div className="d-flex justify-content-end flex-wrap">
 					<div className="d-flex flex-grow-1">
@@ -123,7 +293,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setStartMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -165,7 +334,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setEndMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -185,7 +353,7 @@ const index = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -224,8 +392,8 @@ const index = (props) => {
 						<tr>
 							<th>#</th>
 							<th>Form No</th>
-							<th>Project No</th>
 							<th>Client</th>
+							<th>Project</th>
 							<th>Approved By</th>
 							<th>Checked By</th>
 							<th>Paid By</th>
@@ -233,46 +401,42 @@ const index = (props) => {
 							<th>Issue Date</th>
 							<th className="text-center">Action</th>
 						</tr>
-						{requisitions.data?.map(
-							(requisition, key) => (
-								<tr key={key}>
-									<td>
-										{props.iterator(key, requisitions)}
-									</td>
-									<td>{requisition.code}</td>
-									<td>{requisition.projectCode}</td>
-									<td>{requisition.clientName}</td>
-									<td>{requisition.approvedByName}</td>
-									<td>{requisition.checkedByName}</td>
-									<td>{requisition.paidByName}</td>
-									<td>{requisition.createdByName}</td>
-									<td>{requisition.createdAt}</td>
-									<td>
-										<div className="d-flex justify-content-center">
-											<MyLink
-												linkTo={`/documents/requisitions/${requisition.id}/view`}
-												icon={<ViewSVG />}
-												className="me-1"
-											/>
+						{requisitions.data?.map((requisition, key) => (
+							<tr key={key}>
+								<td>{props.iterator(key, requisitions)}</td>
+								<td>{requisition.code}</td>
+								<td>{requisition.clientName}</td>
+								<td>{requisition.projectName}</td>
+								<td>{requisition.approvedByName}</td>
+								<td>{requisition.checkedByName}</td>
+								<td>{requisition.paidByName}</td>
+								<td>{requisition.createdByName}</td>
+								<td>{requisition.createdAt}</td>
+								<td>
+									<div className="d-flex justify-content-center">
+										<MyLink
+											linkTo={`/documents/requisitions/${requisition.id}/view`}
+											icon={<ViewSVG />}
+											className="me-1"
+										/>
 
-											<MyLink
-												linkTo={`/documents/requisitions/${requisition.id}/edit`}
-												icon={<EditSVG />}
-											/>
+										<MyLink
+											linkTo={`/documents/requisitions/${requisition.id}/edit`}
+											icon={<EditSVG />}
+										/>
 
-											<div className="mx-1">
-												<DeleteModal
-													index={`requisition${key}`}
-													model={requisition}
-													modelName="Requisition"
-													onDelete={onDeleteRequisition}
-												/>
-											</div>
+										<div className="mx-1">
+											<DeleteModal
+												index={`requisition${key}`}
+												model={requisition}
+												modelName="Requisition"
+												onDelete={onDeleteRequisition}
+											/>
 										</div>
-									</td>
-								</tr>
-							)
-						)}
+									</div>
+								</td>
+							</tr>
+						))}
 					</thead>
 				</table>
 				{/* Pagination Links */}

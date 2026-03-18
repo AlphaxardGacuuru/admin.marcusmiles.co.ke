@@ -16,7 +16,7 @@ const form = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "View Wage Sheet", path: ["wage-sheets", "view"] })
+		props.setPage({ name: "View Wage Sheet", path: ["documents/wage-sheets", "view"] })
 		props.get(`wage-sheets/${id}`, setWageSheet)
 	}, [])
 

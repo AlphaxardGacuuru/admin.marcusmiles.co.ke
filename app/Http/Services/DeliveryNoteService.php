@@ -128,16 +128,8 @@ class DeliveryNoteService extends Service
      */
     public function search($query, $request)
     {
-        if ($request->filled("name")) {
-            $query = $query->where("name", "LIKE", "%" . $request->name . "%");
-        }
-
-        if ($request->filled("type")) {
-            $query = $query->where("type", $request->type);
-        }
-
-        if ($request->filled("location")) {
-            $query = $query->where("location", "LIKE", "%" . $request->location . "%");
+        if ($request->filled("code")) {
+            $query = $query->where("code", "LIKE", "%" . $request->code . "%");
         }
 
         $clientId = $request->clientId;
@@ -148,29 +140,35 @@ class DeliveryNoteService extends Service
             });
         }
 
+        $projectId = $request->projectId;
+
+        if ($request->filled("projectId")) {
+            $query = $query->where("project_id", $projectId);
+        }
+
         if ($request->filled("createdBy")) {
             $query = $query->where("created_by", $request->createdBy);
         }
 
-        $startMonth = $request->filled("startMonth") ? $request->input("startMonth") : Carbon::now()->month;
-        $endMonth = $request->filled("endMonth") ? $request->input("endMonth") : Carbon::now()->month;
-        $startYear = $request->filled("startYear") ? $request->input("startYear") : Carbon::now()->year;
-        $endYear = $request->filled("endYear") ? $request->input("endYear") : Carbon::now()->year;
+        $startMonth = $request->input("startMonth");
+        $endMonth = $request->input("endMonth");
+        $startYear = $request->input("startYear");
+        $endYear = $request->input("endYear");
 
-        $start = Carbon::createFromDate($startYear, $startMonth, 1)
-            ->startOfMonth()
-            ->toDateTimeString(); // Output: 2024-01-01 00:00:00 (or current year)
-
-        $end = Carbon::createFromDate($endYear, $endMonth, 1)
-            ->endOfMonth()
-            ->toDateTimeString(); // Output: 2024-01-01 00:00:00 (or current year)
-
+        // Build start date filter
         if ($request->filled("startMonth") || $request->filled("startYear")) {
-            $query = $query->whereDate("created_at", ">=", $start);
+            $year = $startYear ?? date('Y');
+            $month = $startMonth ?? 1;
+            $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+            $query = $query->where("issue_date", ">=", $startDate);
         }
 
+        // Build end date filter
         if ($request->filled("endMonth") || $request->filled("endYear")) {
-            $query = $query->whereDate("created_at", "<=", $end);
+            $year = $endYear ?? date('Y');
+            $month = $endMonth ?? 12;
+            $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+            $query = $query->where("issue_date", "<=", $endDate);
         }
 
         $serviceProviderId = $request->serviceProviderId;

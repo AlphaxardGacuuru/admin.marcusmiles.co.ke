@@ -22,7 +22,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Delivery Note",
-			path: ["delivery-notes", "edit"],
+			path: ["documents/delivery-notes", "edit"],
 		})
 
 		// Fetch Delivery Note

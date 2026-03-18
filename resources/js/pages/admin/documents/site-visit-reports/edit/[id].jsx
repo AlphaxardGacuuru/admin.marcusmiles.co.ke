@@ -25,7 +25,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Site Visit Report",
-			path: ["site-visit-report", "edit"],
+			path: ["documents/site-visit-reports", "edit"],
 		})
 		// Fetch Site Visit Report
 		props.get(`site-visit-reports/${id}`, setSiteVisitReport)

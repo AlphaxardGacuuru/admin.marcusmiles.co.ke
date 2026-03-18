@@ -29,7 +29,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Practical Completion Certificate",
-			path: ["practical-completion-certificate", "edit"],
+			path: ["documents/practical-completion-certificates", "edit"],
 		})
 		// Fetch Practical Completion Certificate
 		props.get(

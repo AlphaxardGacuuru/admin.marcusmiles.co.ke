@@ -18,7 +18,7 @@ const form = (props) => {
 		// Set page
 		props.setPage({
 			name: "View Site Visit Report",
-			path: ["site-visit-reports", "view"],
+			path: ["documents/site-visit-reports", "view"],
 		})
 		props.get(`site-visit-reports/${id}`, setSiteVisitReport)
 	}, [])

@@ -33,7 +33,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Create Status Report",
-			path: ["status-reports", "create"],
+			path: ["documents/status-reports", "create"],
 		})
 		// Fetch Projects
 		props.get("projects?idAndName=true", setProjects)

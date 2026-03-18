@@ -27,7 +27,7 @@ const edit = (props) => {
 		// Set page
 		props.setPage({
 			name: "Edit Requisition",
-			path: ["requisition", "edit"],
+			path: ["documents/requisitions", "edit"],
 		})
 		// Fetch Requisition
 		props.get(`requisitions/${id}`, setRequisition)

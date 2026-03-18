@@ -17,37 +17,69 @@ import BalanceSVG from "@/svgs/BalanceSVG"
 import Btn from "@/components/Core/Btn"
 
 const index = (props) => {
-	const [siteVisitReports, setSiteVisitReports] = useState([])
+	const [siteVisitReports, setSiteVisitReports] = useState(
+		props.getLocalStorage("siteVisitReports")
+	)
 
-	const [tenant, setTenant] = useState("")
-	const [unit, setUnit] = useState("")
-	const [propertyId, setPropertyId] = useState("")
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientShortList")
+	)
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+
+	const [codeQuery, setCodeQuery] = useState("")
+	const [clientIdQuery, setClientIdQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
+	const [approvedByQuery, setApprovedByQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [startYear, setStartYear] = useState("")
 	const [endMonth, setEndMonth] = useState("")
 	const [endYear, setEndYear] = useState("")
-
-	const [properties, setProperties] = useState([])
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Site Visit Reports", path: ["site-visit-reports"] })
+		props.setPage({
+			name: "Site Visit Reports",
+			path: ["documents/site-visit-reports"],
+		})
+		props.get("clients?idAndName=true", setClients, "clientShortList")
+		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	useEffect(() => {
 		// Fetch Site Visit Report
 		props.getPaginated(
 			`site-visit-reports?
+			code=${codeQuery}&
+			clientId=${clientIdQuery}&
+			projectId=${projectIdQuery}&
+			approvedBy=${approvedByQuery}&
+			createdBy=${createdByQuery}&
 			startMonth=${startMonth}&
 			endMonth=${endMonth}&
 			startYear=${startYear}&
 			endYear=${endYear}`,
-			setSiteVisitReports
+			setSiteVisitReports,
+			"siteVisitReports"
 		)
-	}, [startMonth, endMonth, startYear, endYear])
+	}, [
+		codeQuery,
+		clientIdQuery,
+		projectIdQuery,
+		approvedByQuery,
+		createdByQuery,
+		startMonth,
+		endMonth,
+		startYear,
+		endYear,
+	])
 
 	/*
 	 * Delete SiteVisitReport
@@ -96,8 +128,7 @@ const index = (props) => {
 							heading="Total"
 							data={
 								<span>
-									<small>KES</small>{" "}
-									{siteVisitReports.meta?.total}
+									<small>KES</small> {siteVisitReports.meta?.total}
 								</span>
 							}
 						/>
@@ -113,6 +144,102 @@ const index = (props) => {
 			<br />
 
 			{/* Filters */}
+			<div className="card shadow-sm px-4 pt-4 pb-3 mb-2">
+				<div className="d-flex flex-wrap">
+					{/* Code */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Code</label>
+						<input
+							type="text"
+							placeholder="Search by Code"
+							className="form-control"
+							onChange={(e) => setCodeQuery(e.target.value)}
+						/>
+					</div>
+					{/* Code End */}
+					{/* Client */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Client</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setClientIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{clients.map((client, key) => (
+								<option
+									key={key}
+									value={client.id}>
+									{client.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Client End */}
+					{/* Project ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Project</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setProjectIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{projects.map((project, key) => (
+								<option
+									key={key}
+									value={project.id}>
+									{project.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Project ID End */}
+					{/* Approved By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Approved By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setApprovedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Approved By End */}
+					{/* Created By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Created By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setCreatedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By End */}
+				</div>
+			</div>
+
 			<div className="card shadow-sm py-2 px-4">
 				<div className="d-flex justify-content-end flex-wrap">
 					<div className="d-flex flex-grow-1">
@@ -123,7 +250,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setStartMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -165,7 +291,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setEndMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -185,7 +310,7 @@ const index = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -224,51 +349,47 @@ const index = (props) => {
 						<tr>
 							<th>#</th>
 							<th>Form No</th>
-							<th>Project No</th>
 							<th>Client</th>
+							<th>Project</th>
 							<th>Approved By</th>
-							<th>Prepared By</th>
+							<th>Created By</th>
 							<th>Issue Date</th>
 							<th className="text-center">Action</th>
 						</tr>
-						{siteVisitReports.data?.map(
-							(siteVisitReport, key) => (
-								<tr key={key}>
-									<td>
-										{props.iterator(key, siteVisitReports)}
-									</td>
-									<td>{siteVisitReport.code}</td>
-									<td>{siteVisitReport.projectCode}</td>
-									<td>{siteVisitReport.clientName}</td>
-									<td>{siteVisitReport.approvedByName}</td>
-									<td>{siteVisitReport.createdByName}</td>
-									<td>{siteVisitReport.createdAt}</td>
-									<td>
-										<div className="d-flex justify-content-center">
-											<MyLink
-												linkTo={`/documents/site-visit-reports/${siteVisitReport.id}/view`}
-												icon={<ViewSVG />}
-												className="me-1"
-											/>
+						{siteVisitReports.data?.map((siteVisitReport, key) => (
+							<tr key={key}>
+								<td>{props.iterator(key, siteVisitReports)}</td>
+								<td>{siteVisitReport.code}</td>
+								<td>{siteVisitReport.clientName}</td>
+								<td>{siteVisitReport.projectName}</td>
+								<td>{siteVisitReport.approvedByName}</td>
+								<td>{siteVisitReport.createdByName}</td>
+								<td>{siteVisitReport.createdAt}</td>
+								<td>
+									<div className="d-flex justify-content-center">
+										<MyLink
+											linkTo={`/documents/site-visit-reports/${siteVisitReport.id}/view`}
+											icon={<ViewSVG />}
+											className="me-1"
+										/>
 
-											<MyLink
-												linkTo={`/documents/site-visit-reports/${siteVisitReport.id}/edit`}
-												icon={<EditSVG />}
-											/>
+										<MyLink
+											linkTo={`/documents/site-visit-reports/${siteVisitReport.id}/edit`}
+											icon={<EditSVG />}
+										/>
 
-											<div className="mx-1">
-												<DeleteModal
-													index={`siteVisitReport${key}`}
-													model={siteVisitReport}
-													modelName="Site Visit Report"
-													onDelete={onDeleteSiteVisitReport}
-												/>
-											</div>
+										<div className="mx-1">
+											<DeleteModal
+												index={`siteVisitReport${key}`}
+												model={siteVisitReport}
+												modelName="Site Visit Report"
+												onDelete={onDeleteSiteVisitReport}
+											/>
 										</div>
-									</td>
-								</tr>
-							)
-						)}
+									</div>
+								</td>
+							</tr>
+						))}
 					</thead>
 				</table>
 				{/* Pagination Links */}

@@ -17,48 +17,82 @@ import BalanceSVG from "@/svgs/BalanceSVG"
 import Btn from "@/components/Core/Btn"
 
 const index = (props) => {
-	const [practicalCompletionCertificates, setPracticalCompletionCertificates] = useState([])
+	const [practicalCompletionCertificates, setPracticalCompletionCertificates] =
+		useState(props.getLocalStorage("practicalCompletionCertificates"))
 
-	const [tenant, setTenant] = useState("")
-	const [unit, setUnit] = useState("")
-	const [propertyId, setPropertyId] = useState("")
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientShortList")
+	)
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+
+	const [codeQuery, setCodeQuery] = useState("")
+	const [clientIdQuery, setClientIdQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [startYear, setStartYear] = useState("")
 	const [endMonth, setEndMonth] = useState("")
 	const [endYear, setEndYear] = useState("")
-
-	const [properties, setProperties] = useState([])
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Practical Completion Certificates", path: ["practical-completion-certificates"] })
+		props.setPage({
+			name: "Practical Completion Certificates",
+			path: ["documents/practical-completion-certificates"],
+		})
+		props.get("clients?idAndName=true", setClients, "clientShortList")
+		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	useEffect(() => {
 		// Fetch Practical Completion Certificate
 		props.getPaginated(
 			`practical-completion-certificates?
+			code=${codeQuery}&
+			clientId=${clientIdQuery}&
+			projectId=${projectIdQuery}&
+			createdBy=${createdByQuery}&
 			startMonth=${startMonth}&
 			endMonth=${endMonth}&
 			startYear=${startYear}&
 			endYear=${endYear}`,
-			setPracticalCompletionCertificates
+			setPracticalCompletionCertificates,
+			"practicalCompletionCertificates"
 		)
-	}, [startMonth, endMonth, startYear, endYear])
+	}, [
+		codeQuery,
+		clientIdQuery,
+		projectIdQuery,
+		createdByQuery,
+		startMonth,
+		endMonth,
+		startYear,
+		endYear,
+	])
 
 	/*
 	 * Delete PracticalCompletionCertificate
 	 */
-	const onDeletePracticalCompletionCertificate = (practicalCompletionCertificateId) => {
+	const onDeletePracticalCompletionCertificate = (
+		practicalCompletionCertificateId
+	) => {
 		setLoading(true)
-		var practicalCompletionCertificateIds = Array.isArray(practicalCompletionCertificateId)
+		var practicalCompletionCertificateIds = Array.isArray(
+			practicalCompletionCertificateId
+		)
 			? practicalCompletionCertificateId.join(",")
 			: practicalCompletionCertificateId
 
-		Axios.delete(`/api/practical-completion-certificates/${practicalCompletionCertificateIds}`)
+		Axios.delete(
+			`/api/practical-completion-certificates/${practicalCompletionCertificateIds}`
+		)
 			.then((res) => {
 				setLoading(false)
 				props.setMessages([res.data.message])
@@ -66,13 +100,20 @@ const index = (props) => {
 				setPracticalCompletionCertificates({
 					meta: practicalCompletionCertificates.meta,
 					links: practicalCompletionCertificates.links,
-					data: practicalCompletionCertificates.data.filter((practicalCompletionCertificate) => {
-						if (Array.isArray(practicalCompletionCertificateId)) {
-							return !practicalCompletionCertificateIds.includes(practicalCompletionCertificate.id)
-						} else {
-							return practicalCompletionCertificate.id != practicalCompletionCertificateId
+					data: practicalCompletionCertificates.data.filter(
+						(practicalCompletionCertificate) => {
+							if (Array.isArray(practicalCompletionCertificateId)) {
+								return !practicalCompletionCertificateIds.includes(
+									practicalCompletionCertificate.id
+								)
+							} else {
+								return (
+									practicalCompletionCertificate.id !=
+									practicalCompletionCertificateId
+								)
+							}
 						}
-					}),
+					),
 				})
 				// Clear DeleteIds
 				setDeleteIds([])
@@ -113,6 +154,82 @@ const index = (props) => {
 			<br />
 
 			{/* Filters */}
+			<div className="card shadow-sm px-4 pt-4 pb-3 mb-2">
+				<div className="d-flex flex-wrap">
+					{/* Code */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Code</label>
+						<input
+							type="text"
+							placeholder="Search by Code"
+							className="form-control"
+							onChange={(e) => setCodeQuery(e.target.value)}
+						/>
+					</div>
+					{/* Code End */}
+					{/* Client */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Client</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setClientIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{clients.map((client, key) => (
+								<option
+									key={key}
+									value={client.id}>
+									{client.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Client End */}
+					{/* Project ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Project</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setProjectIdQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{projects.map((project, key) => (
+								<option
+									key={key}
+									value={project.id}>
+									{project.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Project ID End */}
+					{/* Created By */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Created By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => setCreatedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By End */}
+				</div>
+			</div>
+
 			<div className="card shadow-sm py-2 px-4">
 				<div className="d-flex justify-content-end flex-wrap">
 					<div className="d-flex flex-grow-1">
@@ -123,7 +240,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setStartMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -165,7 +281,6 @@ const index = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => setEndMonth(e.target.value)}>
-								<option value="">Select Month</option>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
@@ -185,7 +300,7 @@ const index = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -210,7 +325,7 @@ const index = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="9"></th>
+							<th colSpan="10"></th>
 							<th className="text-end">
 								<div className="d-flex justify-content-end">
 									<MyLink
@@ -224,12 +339,13 @@ const index = (props) => {
 						<tr>
 							<th>#</th>
 							<th>Form No</th>
-							<th>Project No</th>
+							<th>Client</th>
+							<th>Project</th>
 							<th>Employer</th>
 							<th>Contractor</th>
 							<th>Project Manager</th>
-							<th>Brief</th>
 							<th>Contract Dates</th>
+							<th>Created By</th>
 							<th>Issue Date</th>
 							<th className="text-center">Action</th>
 						</tr>
@@ -240,12 +356,13 @@ const index = (props) => {
 										{props.iterator(key, practicalCompletionCertificates)}
 									</td>
 									<td>{practicalCompletionCertificate.code}</td>
-									<td>{practicalCompletionCertificate.projectCode}</td>
+									<td>{practicalCompletionCertificate.clientName}</td>
+									<td>{practicalCompletionCertificate.projectName}</td>
 									<td>{practicalCompletionCertificate.employer}</td>
 									<td>{practicalCompletionCertificate.contractor}</td>
 									<td>{practicalCompletionCertificate.projectManager}</td>
-									<td>{practicalCompletionCertificate.brief}</td>
 									<td>{practicalCompletionCertificate.contractDates}</td>
+									<td>{practicalCompletionCertificate.createdByName}</td>
 									<td>{practicalCompletionCertificate.createdAt}</td>
 									<td>
 										<div className="d-flex justify-content-center">

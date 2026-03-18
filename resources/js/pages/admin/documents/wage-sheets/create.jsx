@@ -40,7 +40,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Create Wage Sheet",
-			path: ["wage-sheets", "create"],
+			path: ["documents/wage-sheets", "create"],
 		})
 		// Fetch Projects
 		props.get("projects?idAndName=true", setProjects)

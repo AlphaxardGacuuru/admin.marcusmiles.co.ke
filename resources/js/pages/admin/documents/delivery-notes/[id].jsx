@@ -17,7 +17,7 @@ const form = (props) => {
 		// Set page
 		props.setPage({
 			name: "View Delivery Note",
-			path: ["delivery-notes", "view"],
+			path: ["documents/delivery-notes", "view"],
 		})
 		props.get(`delivery-notes/${id}`, setDeliveryNote)
 	}, [])

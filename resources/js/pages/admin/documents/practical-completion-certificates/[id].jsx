@@ -19,7 +19,7 @@ const form = (props) => {
 		// Set page
 		props.setPage({
 			name: "View Practical Completion Certificate",
-			path: ["practical-completion-certificates", "view"],
+			path: ["documents/practical-completion-certificates", "view"],
 		})
 		props.get(
 			`practical-completion-certificates/${id}`,

@@ -28,7 +28,7 @@ const create = (props) => {
 		// Set page
 		props.setPage({
 			name: "Create Practical Completion Certificate",
-			path: ["practical-completion-certificates", "create"],
+			path: ["documents/practical-completion-certificates", "create"],
 		})
 		// Fetch Projects
 		props.get("projects?idAndName=true", setProjects)
