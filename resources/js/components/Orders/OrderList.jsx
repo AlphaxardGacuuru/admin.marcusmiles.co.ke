@@ -57,12 +57,26 @@ const OrderList = (props) => {
 			<br />
 
 			{/* Filters */}
-			<div className="card shadow-sm p-4">
+			<div className="card shadow-sm px-4 pt-4 pb-3 mb-2">
 				<div className="d-flex flex-wrap">
+					{/* Code */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="code">Code</label>
+						<input
+							id="code"
+							type="text"
+							name="code"
+							placeholder="Search by Code"
+							className="form-control"
+							onChange={(e) => props.setCodeQuery(e.target.value)}
+						/>
+					</div>
+					{/* Code End */}
 					{/* Name */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="name">Name</label>
 						<input
-							id=""
+							id="name"
 							type="text"
 							name="name"
 							placeholder="Search by Name"
@@ -71,6 +85,116 @@ const OrderList = (props) => {
 						/>
 					</div>
 					{/* Name End */}
+					{/* Status */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="status">Status</label>
+						<select
+							type="text"
+							name="status"
+							className="form-control text-capitalize"
+							onChange={(e) => props.setStatusQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{props.orders.statuses?.map((status, key) => (
+								<option
+									key={key}
+									value={status}>
+									{status
+										.split("_")
+										.map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+										.join(" ")}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Status End */}
+				</div>
+			</div>
+
+			<div className="card shadow-sm py-2 px-4">
+				<div className="d-flex justify-content-end flex-wrap">
+					<div className="d-flex flex-grow-1">
+						{/* Start Date */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label htmlFor="">Start At</label>
+							{/* Start Month */}
+							<select
+								className="form-control"
+								onChange={(e) => props.setStartMonth(e.target.value)}>
+								{props.months.map((month, key) => (
+									<option
+										key={key}
+										value={key > 0 ? key : ""}>
+										{month}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* Start Month End */}
+						{/* Start Year */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label
+								htmlFor=""
+								className="invisible">
+								Start At
+							</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setStartYear(e.target.value)}>
+								<option value="">Select Year</option>
+								{props.years.map((year, key) => (
+									<option
+										key={key}
+										value={year}>
+										{year}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* Start Year End */}
+					</div>
+					{/* Start Date End */}
+					{/* End Date */}
+					<div className="d-flex flex-grow-1">
+						{/* End Month */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label htmlFor="">End At</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setEndMonth(e.target.value)}>
+								{props.months.map((month, key) => (
+									<option
+										key={key}
+										value={key > 0 ? key : ""}>
+										{month}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* End Month End */}
+						{/* End Year */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label
+								htmlFor=""
+								className="invisible">
+								End At
+							</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setEndYear(e.target.value)}>
+								<option value="">Select Year</option>
+								{props.years.map((year, key) => (
+									<option
+										key={key}
+										value={year}>
+										{year}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* End Year End */}
+					</div>
+					{/* End Date End */}
 				</div>
 			</div>
 			{/* Filters End */}

@@ -36,8 +36,8 @@ const edit = (props) => {
 
 				setInvoice({
 					projectId: data.projectId || "",
-					issueDate: props.formatDateForEdit(data.issueDate),
-					dueDate: props.formatDateForEdit(data.dueDate),
+					issueDate: data.issueDateFormatted,
+					dueDate: data.dueDateFormatted,
 					notes: data.notes || "",
 					items:
 						data.items && data.items.length > 0

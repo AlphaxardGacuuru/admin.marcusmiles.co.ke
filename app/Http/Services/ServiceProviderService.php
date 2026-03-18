@@ -113,9 +113,7 @@ class ServiceProviderService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
-                ->where("name", "LIKE", "%" . $request->input("name") . "%")
-                ->orWhere("email", "LIKE", "%" . $request->input("name") . "%");
+            $query = $query->where("name", "LIKE", "%" . $request->input("name") . "%");
         }
 
         $projectId = $request->projectId;
@@ -124,6 +122,10 @@ class ServiceProviderService extends Service
             $query = $query->whereHas("projectServiceProviders", function ($query) use ($projectId) {
                 $query->where("project_id", $projectId);
             });
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         return $query;

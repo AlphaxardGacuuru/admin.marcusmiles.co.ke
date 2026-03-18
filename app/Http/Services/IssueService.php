@@ -168,8 +168,11 @@ class IssueService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
-                ->where("name", "LIKE", "%" . $request->name . "%");
+            $query = $query->where("name", "LIKE", "%" . $request->name . "%");
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         return $query;

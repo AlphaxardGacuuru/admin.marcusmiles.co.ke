@@ -201,6 +201,18 @@ class WageSheetService extends Service
             });
         }
 
+        $projectServiceProviderId = $request->projectServiceProviderId;
+
+        if ($request->filled("projectServiceProviderId")) {
+            $query = $query->whereHas("project_service_providers", function ($query) use ($projectServiceProviderId) {
+                $query->where("project_service_provider_id", $projectServiceProviderId);
+            });
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
+        }
+
         $startMonth = $request->filled("startMonth") ? $request->input("startMonth") : Carbon::now()->month;
         $endMonth = $request->filled("endMonth") ? $request->input("endMonth") : Carbon::now()->month;
         $startYear = $request->filled("startYear") ? $request->input("startYear") : Carbon::now()->year;
@@ -220,14 +232,6 @@ class WageSheetService extends Service
 
         if ($request->filled("endMonth") || $request->filled("endYear")) {
             $query = $query->whereDate("created_at", "<=", $end);
-        }
-
-        $projectServiceProviderId = $request->projectServiceProviderId;
-
-        if ($request->filled("projectServiceProviderId")) {
-            $query = $query->whereHas("project_service_providers", function ($query) use ($projectServiceProviderId) {
-                $query->where("project_service_provider_id", $projectServiceProviderId);
-            });
         }
 
         return $query;

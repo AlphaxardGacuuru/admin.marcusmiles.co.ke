@@ -129,19 +129,15 @@ class DeliveryNoteService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
-                ->where("name", "LIKE", "%" . $request->name . "%")
-                ->orWhere("code", "LIKE", "%" . $request->name . "%");
+            $query = $query->where("name", "LIKE", "%" . $request->name . "%");
         }
 
         if ($request->filled("type")) {
-            $query = $query
-                ->where("type", $request->type);
+            $query = $query->where("type", $request->type);
         }
 
         if ($request->filled("location")) {
-            $query = $query
-                ->where("location", "LIKE", "%" . $request->location . "%");
+            $query = $query->where("location", "LIKE", "%" . $request->location . "%");
         }
 
         $clientId = $request->clientId;
@@ -150,6 +146,10 @@ class DeliveryNoteService extends Service
             $query = $query->whereHas("client", function ($query) use ($clientId) {
                 $query->where("id", $clientId);
             });
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         $startMonth = $request->filled("startMonth") ? $request->input("startMonth") : Carbon::now()->month;

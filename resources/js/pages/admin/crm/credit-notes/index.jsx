@@ -8,7 +8,7 @@ const index = (props) => {
 	const [codeQuery, setCodeQuery] = useState("")
 	const [clientIdQuery, setClientIdQuery] = useState("")
 	const [projectIdQuery, setProjectIdQuery] = useState("")
-	const [statusQuery, setStatusQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 	const [startMonth, setStartMonth] = useState("")
 	const [endMonth, setEndMonth] = useState("")
 	const [startYear, setStartYear] = useState("")
@@ -25,11 +25,11 @@ const index = (props) => {
 			code=${codeQuery}&
 			clientId=${clientIdQuery}&
 			projectId=${projectIdQuery}&
-			status=${statusQuery}&
-			start_month=${startMonth}&
-			end_month=${endMonth}&
-			start_year=${startYear}&
-			end_year=${endYear}`,
+			createdBy=${createdByQuery}&
+			startMonth=${startMonth}&
+			endMonth=${endMonth}&
+			startYear=${startYear}&
+			endYear=${endYear}`,
 			setCreditNotes,
 			"creditNotes"
 		)
@@ -37,7 +37,7 @@ const index = (props) => {
 		codeQuery,
 		clientIdQuery,
 		projectIdQuery,
-		statusQuery,
+		createdByQuery,
 		startMonth,
 		endMonth,
 		startYear,
@@ -55,7 +55,7 @@ const index = (props) => {
 					setCodeQuery={setCodeQuery}
 					setClientIdQuery={setClientIdQuery}
 					setProjectIdQuery={setProjectIdQuery}
-					setStatusQuery={setStatusQuery}
+					setCreatedByQuery={setCreatedByQuery}
 					setStartMonth={setStartMonth}
 					setEndMonth={setEndMonth}
 					setStartYear={setStartYear}

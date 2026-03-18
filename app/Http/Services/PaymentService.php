@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Notifications\PaymentNotification;
 use Illuminate\Support\Facades\DB;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Carbon\Carbon;
 
 class PaymentService extends Service
 {
@@ -139,12 +140,8 @@ class PaymentService extends Service
             });
         }
 
-        if ($request->filled("startDate")) {
-            $query = $query->whereDate("payment_date", ">=", $request->startDate);
-        }
-
-        if ($request->filled("endDate")) {
-            $query = $query->whereDate("payment_date", "<=", $request->endDate);
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         if ($request->filled("minAmount")) {
@@ -153,6 +150,27 @@ class PaymentService extends Service
 
         if ($request->filled("maxAmount")) {
             $query = $query->where("amount", "<=", $request->maxAmount);
+        }
+
+        $startMonth = $request->input("startMonth");
+        $endMonth = $request->input("endMonth");
+        $startYear = $request->input("startYear");
+        $endYear = $request->input("endYear");
+
+        // Build start date filter
+        if ($request->filled("startMonth") || $request->filled("startYear")) {
+            $year = $startYear ?? date('Y'); 
+            $month = $startMonth ?? 1;
+            $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+            $query = $query->where("payment_date", ">=", $startDate);
+        }
+
+        // Build end date filter
+        if ($request->filled("endMonth") || $request->filled("endYear")) {
+            $year = $endYear ?? date('Y');
+            $month = $endMonth ?? 12;
+            $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+            $query = $query->where("payment_date", "<=", $endDate);
         }
 
         return $query;

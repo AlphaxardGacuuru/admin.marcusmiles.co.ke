@@ -8,6 +8,11 @@ const index = (props) => {
 
 	const [codeQuery, setCodeQuery] = useState("")
 	const [nameQuery, setNameQuery] = useState("")
+	const [statusQuery, setStatusQuery] = useState("")
+	const [startMonth, setStartMonth] = useState("")
+	const [endMonth, setEndMonth] = useState("")
+	const [startYear, setStartYear] = useState("")
+	const [endYear, setEndYear] = useState("")
 
 	useEffect(() => {
 		// Set page
@@ -17,12 +22,17 @@ const index = (props) => {
 	useEffect(() => {
 		props.getPaginated(
 			`orders?
-		code=${codeQuery}&
-		name=${nameQuery}`,
+			code=${codeQuery}&
+			name=${nameQuery}&
+			status=${statusQuery}&
+			startMonth=${startMonth}&
+			endMonth=${endMonth}&
+			startYear=${startYear}&
+			endYear=${endYear}`,
 			setOrders,
 			"orders"
 		)
-	}, [codeQuery, nameQuery])
+	}, [codeQuery, nameQuery, statusQuery, startMonth, endMonth, startYear, endYear])
 
 	return (
 		<div className="row">
@@ -34,6 +44,11 @@ const index = (props) => {
 					setOrders={setOrders}
 					setCodeQuery={setCodeQuery}
 					setNameQuery={setNameQuery}
+					setStatusQuery={setStatusQuery}
+					setStartMonth={setStartMonth}
+					setEndMonth={setEndMonth}
+					setStartYear={setStartYear}
+					setEndYear={setEndYear}
 				/>
 				{/* Orders Tab End */}
 			</div>

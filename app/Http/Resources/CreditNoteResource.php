@@ -26,6 +26,7 @@ class CreditNoteResource extends JsonResource
             "issueDate" => $this->issue_date,
             "issueDateFormatted" => Carbon::parse($this->issue_date)->format("Y-m-d"),
             "notes" => $this->notes,
+            "createdByName" => $this->createdBy->name,
             "updatedAt" => $this->updatedAt,
             "createdAt" => $this->createdAt,
         ];

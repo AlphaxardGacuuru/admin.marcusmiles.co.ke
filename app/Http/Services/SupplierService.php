@@ -158,9 +158,11 @@ class SupplierService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
-                ->where("name", "LIKE", "%" . $request->input("name") . "%")
-                ->orWhere("email", "LIKE", "%" . $request->input("name") . "%");
+            $query = $query->where("name", "LIKE", "%" . $request->input("name") . "%");
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         return $query;

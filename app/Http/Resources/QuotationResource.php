@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class QuotationResource extends JsonResource
@@ -20,7 +21,9 @@ class QuotationResource extends JsonResource
             'projectId' => $this->project_id,
             'projectName' => $this->project->name,
             'issueDate' => $this->issue_date,
+            "issueDateFormatted" => Carbon::parse($this->issue_date)->format("Y-m-d"),
             'expiryDate' => $this->expiry_date,
+            "expiryDateFormatted" => Carbon::parse($this->expiry_date)->format("Y-m-d"),
             'notes' => $this->notes,
             'total' => $this->total,
             'status' => $this->status,

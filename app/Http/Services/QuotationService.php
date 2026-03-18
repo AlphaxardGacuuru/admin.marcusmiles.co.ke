@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Resources\QuotationResource;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 class QuotationService extends Service
@@ -158,6 +159,10 @@ class QuotationService extends Service
 			$query = $query->whereIn("status", $statuses);
 		}
 
+		if ($request->filled("createdBy")) {
+			$query = $query->where("created_by", $request->createdBy);
+		}
+
 		$startMonth = $request->input("startMonth");
 		$endMonth = $request->input("endMonth");
 		$startYear = $request->input("startYear");
@@ -168,7 +173,7 @@ class QuotationService extends Service
 			$year = $startYear ?? date('Y');
 			$month = $startMonth ?? 1;
 			$startDate = Carbon::create($year, $month, 1)->startOfMonth();
-			$query = $query->where("created_at", ">=", $startDate);
+			$query = $query->where("issue_date", ">=", $startDate);
 		}
 
 		// Build end date filter
@@ -176,7 +181,7 @@ class QuotationService extends Service
 			$year = $endYear ?? date('Y');
 			$month = $endMonth ?? 12;
 			$endDate = Carbon::create($year, $month, 1)->endOfMonth();
-			$query = $query->where("created_at", "<=", $endDate);
+			$query = $query->where("issue_date", "<=", $endDate);
 		}
 
 		return $query;

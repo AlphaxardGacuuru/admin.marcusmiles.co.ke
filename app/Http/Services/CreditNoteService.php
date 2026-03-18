@@ -133,9 +133,13 @@ class CreditNoteService extends Service
         }
 
         if ($request->filled("clientId")) {
-            $query = $query->whereHas("project.client", function($query) use($request) {
+            $query = $query->whereHas("project.client", function ($query) use ($request) {
                 $query->where("id", $request->clientId);
             });
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         if ($request->filled("startDate")) {

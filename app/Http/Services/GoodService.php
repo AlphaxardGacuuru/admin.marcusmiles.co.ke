@@ -42,7 +42,7 @@ class GoodService extends Service
         $goodNumber = Good::count() + 1;
         $paddedGoodNumber = str_pad($goodNumber, 3, '0', STR_PAD_LEFT);
 
-		$code = "G-" . $paddedGoodNumber;
+        $code = "G-" . $paddedGoodNumber;
 
         $good = new Good;
         $good->code = $code;
@@ -103,9 +103,11 @@ class GoodService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
-                ->where("name", "LIKE", "%" . $request->name . "%")
-                ->orWhere("item_no", "LIKE", "%" . $request->itemNo . "%");
+            $query = $query->where("name", "LIKE", "%" . $request->name . "%");
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         return $query;

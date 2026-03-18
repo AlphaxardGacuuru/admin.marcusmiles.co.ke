@@ -2,6 +2,7 @@
 
 namespace App\Http\Resources;
 
+use Carbon\Carbon;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class InvoiceResource extends JsonResource
@@ -33,7 +34,9 @@ class InvoiceResource extends JsonResource
 			"status" => $this->status,
 			"createdByName" => $this->createdBy->name,
 			"issueDate" => $this->issue_date,
+			"issueDateFormatted" => Carbon::parse($this->issue_date)->format("Y-m-d"),
 			"dueDate" => $this->due_date,
+			"dueDateFormatted" => Carbon::parse($this->due_date)->format("Y-m-d"),
 			"notes" => $this->notes,
 			"items" => $this->invoiceItems,
 			"updatedAt" => $this->updated_at,

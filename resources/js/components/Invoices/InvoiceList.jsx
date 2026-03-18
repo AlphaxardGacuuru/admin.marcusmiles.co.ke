@@ -190,13 +190,14 @@ const InvoiceList = (props) => {
 					{/* Project ID End */}
 					{/* Status */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="status">Status</label>
 						<select
 							type="text"
 							name="status"
 							className="form-control text-capitalize"
-							onChange={(e) => setStatus(e.target.value)}
+							onChange={(e) => props.setStatusQuery(e.target.value)}
 							required={true}>
-							<option value="">Filter by Status</option>
+							<option value="">All</option>
 							{props.invoices.statuses?.map((status, key) => (
 								<option
 									key={key}
@@ -226,7 +227,7 @@ const InvoiceList = (props) => {
 								{props.months.map((month, key) => (
 									<option
 										key={key}
-										value={key}>
+										value={key > 0 ? key : ""}>
 										{month}
 									</option>
 								))}
@@ -267,7 +268,7 @@ const InvoiceList = (props) => {
 								{props.months.map((month, key) => (
 									<option
 										key={key}
-										value={key}>
+										value={key > 0 ? key : ""}>
 										{month}
 									</option>
 								))}
@@ -283,7 +284,7 @@ const InvoiceList = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => props.setStartYear(e.target.value)}>
+								onChange={(e) => props.setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option

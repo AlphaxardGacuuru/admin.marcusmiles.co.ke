@@ -93,13 +93,6 @@ function App() {
 		setErrors(newError)
 	}
 
-	// Helper to format date for edit components
-	const formatDateForEdit = (dateString) => {
-		if (!dateString) return ""
-		const date = new Date(dateString)
-		return !isNaN(date.getTime()) ? date.toISOString().split("T")[0] : ""
-	}
-
 	// Fetch data on page load
 	useEffect(() => {
 		get("auth", setAuth, "auth", false)
@@ -193,7 +186,6 @@ function App() {
 		getPaginated,
 		iterator,
 		getErrors,
-		formatDateForEdit,
 		login,
 		setLogin,
 		auth,

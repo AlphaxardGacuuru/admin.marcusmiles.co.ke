@@ -18,6 +18,7 @@ class PaymentResource extends JsonResource
         return [
             "id" => $this->id,
             "code" => $this->code,
+            "clientName" => $this->project->client->name,
             "projectId" => $this->project->id,
             "projectName" => $this->project->name,
             "invoiceId" => $this->invoice->id,
@@ -26,6 +27,7 @@ class PaymentResource extends JsonResource
             "paymentDate" => $this->payment_date,
             "paymentDateFormatted" => Carbon::parse($this->payment_date)->format("Y-m-d"),
             "notes" => $this->notes,
+            "createdBy" => $this->createdBy->name,
             "updatedAt" => $this->updatedAt,
             "createdAt" => $this->createdAt,
         ];

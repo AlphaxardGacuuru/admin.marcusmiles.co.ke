@@ -152,6 +152,10 @@ class OrderService extends Service
 			$query = $query->whereIn("status", $statuses);
 		}
 
+		if ($request->filled("createdBy")) {
+			$query = $query->where("created_by", $request->createdBy);
+		}
+
 		$startMonth = $request->input("startMonth");
 		$endMonth = $request->input("endMonth");
 		$startYear = $request->input("startYear");

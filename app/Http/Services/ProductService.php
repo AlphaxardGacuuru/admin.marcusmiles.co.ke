@@ -64,6 +64,10 @@ class ProductService extends Service
 			$query->where("name", "LIKE", "%" . $request->name . "%");
 		}
 
+		if ($request->filled("createdBy")) {
+			$query = $query->where("created_by", $request->createdBy);
+		}
+
 		return $query;
 	}
 }

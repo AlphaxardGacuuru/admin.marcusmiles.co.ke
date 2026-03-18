@@ -25,10 +25,10 @@ const index = (props) => {
 			clientId=${clientIdQuery}&
 			projectId=${projectIdQuery}&
 			status=${statusQuery}&
-			start_month=${startMonth}&
-			end_month=${endMonth}&
-			start_year=${startYear}&
-			end_year=${endYear}`,
+			startMonth=${startMonth}&
+			endMonth=${endMonth}&
+			startYear=${startYear}&
+			endYear=${endYear}`,
 			setInvoices,
 			"invoices"
 		)

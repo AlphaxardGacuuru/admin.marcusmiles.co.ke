@@ -7,17 +7,28 @@ const index = (props) => {
 	const [clients, setClients] = useState(props.getLocalStorage("clients"))
 
 	const [nameQuery, setNameQuery] = useState("")
+	const [emailQuery, setEmailQuery] = useState("")
+	const [phoneQuery, setPhoneQuery] = useState("")
+	const [genderQuery, setGenderQuery] = useState("")
+	const [locationQuery, setLocationQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
 		props.setPage({ name: "Clients", path: ["clients"] })
-		props.getPaginated("clients", setClients)
 	}, [])
 
 	useEffect(() => {
-	  props.getPaginated(`clients?name=${nameQuery}`, setClients, "clients")
-	}, [nameQuery])
-	
+		props.getPaginated(
+			`clients?
+		name=${nameQuery}
+		&email=${emailQuery}
+		&phone=${phoneQuery}
+		&gender=${genderQuery}
+		&location=${locationQuery}`,
+			setClients,
+			"clients"
+		)
+	}, [nameQuery, emailQuery, phoneQuery, genderQuery, locationQuery])
 
 	return (
 		<div className="row">
@@ -28,6 +39,10 @@ const index = (props) => {
 					clients={clients}
 					setClients={setClients}
 					setNameQuery={setNameQuery}
+					setEmailQuery={setEmailQuery}
+					setPhoneQuery={setPhoneQuery}
+					setGenderQuery={setGenderQuery}
+					setLocationQuery={setLocationQuery}
 				/>
 				{/* Clients Tab End */}
 			</div>

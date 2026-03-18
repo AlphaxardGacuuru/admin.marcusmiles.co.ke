@@ -23,6 +23,9 @@ const PaymentList = (props) => {
 	const [projects, setProjects] = useState(
 		props.getLocalStorage("projectsShortList")
 	)
+	const [staff, setStaff] = useState(
+		props.getLocalStorage("staffShortList")
+	)
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
@@ -30,6 +33,7 @@ const PaymentList = (props) => {
 	useEffect(() => {
 		props.get("clients?idAndName=true", setClients, "clientsShortList")
 		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	/*
@@ -146,6 +150,26 @@ const PaymentList = (props) => {
 						</select>
 					</div>
 					{/* Project ID End */}
+					{/* Created By ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Created By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => props.setCreatedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((project, key) => (
+								<option
+									key={key}
+									value={project.id}>
+									{project.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By ID End */}
 				</div>
 			</div>
 
@@ -158,12 +182,11 @@ const PaymentList = (props) => {
 							{/* Start Month */}
 							<select
 								className="form-control"
-								onChange={(e) => setStartMonth(e.target.value)}>
-								<option value="">Select Month</option>
+								onChange={(e) => props.setStartMonth(e.target.value)}>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
-										value={key}>
+										value={key > 0 ? key : ""}>
 										{month}
 									</option>
 								))}
@@ -179,7 +202,7 @@ const PaymentList = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => props.setStartYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -200,12 +223,11 @@ const PaymentList = (props) => {
 							<label htmlFor="">End At</label>
 							<select
 								className="form-control"
-								onChange={(e) => setEndMonth(e.target.value)}>
-								<option value="">Select Month</option>
+								onChange={(e) => props.setEndMonth(e.target.value)}>
 								{props.months.map((month, key) => (
 									<option
 										key={key}
-										value={key}>
+										value={key > 0 ? key : ""}>
 										{month}
 									</option>
 								))}
@@ -221,7 +243,7 @@ const PaymentList = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => setStartYear(e.target.value)}>
+								onChange={(e) => props.setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -246,7 +268,7 @@ const PaymentList = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="6"></th>
+							<th colSpan="8"></th>
 							<th className="text-end">
 								<div className="d-flex justify-content-end">
 									{deleteIds.length > 0 && (
@@ -269,22 +291,26 @@ const PaymentList = (props) => {
 						<tr>
 							<th>#</th>
 							<th>Payment Code</th>
+							<th>Client</th>
 							<th>Project</th>
 							<th>Invoice No</th>
 							<th>Amount</th>
 							<th>Payment Date</th>
+							<th>Created By</th>
 							<th className="text-center">Action</th>
 						</tr>
 						{props.payments.data?.map((payment, key) => (
 							<tr key={key}>
 								<td>{props.iterator(key, props.payments)}</td>
 								<td>{payment.code}</td>
+								<td>{payment.clientName}</td>
 								<td>{payment.projectName}</td>
 								<td>{payment.invoiceCode}</td>
 								<td className="text-success">
 									<small>KES</small> {payment.amount}
 								</td>
 								<td>{payment.paymentDate}</td>
+								<td>{payment.createdBy}</td>
 								<td>
 									<div className="d-flex justify-content-center">
 										<MyLink

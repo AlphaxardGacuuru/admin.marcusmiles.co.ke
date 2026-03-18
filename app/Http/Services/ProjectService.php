@@ -84,7 +84,7 @@ class ProjectService extends Service
                 $disk->makeDirectory($project->code);
 
                 $metadata = $disk->getAdapter()->getMetadata($project->code);
-                
+
                 $folderId = $metadata->extraMetadata()['id'] ?? null;
 
                 if ($folderId) {
@@ -158,20 +158,20 @@ class ProjectService extends Service
      */
     public function search($query, $request)
     {
+        if ($request->filled("code")) {
+            $query = $query->where("code", "LIKE", "%" . $request->code . "%");
+        }
+
         if ($request->filled("name")) {
-            $query
-                ->where("name", "LIKE", "%" . $request->name . "%")
-                ->orWhere("code", "LIKE", "%" . $request->name . "%");
+            $query->where("name", "LIKE", "%" . $request->name . "%");
         }
 
         if ($request->filled("type")) {
-            $query
-                ->where("type", $request->type);
+            $query->where("type", $request->type);
         }
 
         if ($request->filled("location")) {
-            $query
-                ->where("location", "LIKE", "%" . $request->location . "%");
+            $query->where("location", "LIKE", "%" . $request->location . "%");
         }
 
         $clientId = $request->clientId;
@@ -180,6 +180,10 @@ class ProjectService extends Service
             $query->whereHas("client", function ($query) use ($clientId) {
                 $query->where("id", $clientId);
             });
+        }
+
+        if ($request->filled("createdBy")) {
+            $query->where("created_by", $request->createdBy);
         }
 
         $startMonth = $request->filled("startMonth") ? $request->input("startMonth") : Carbon::now()->month;

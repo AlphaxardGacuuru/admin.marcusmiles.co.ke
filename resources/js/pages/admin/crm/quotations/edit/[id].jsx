@@ -36,8 +36,8 @@ const edit = (props) => {
 
 				setQuotation({
 					projectId: data.projectId || "",
-					issueDate: props.formatDateForEdit(data.issueDate),
-					expiryDate: props.formatDateForEdit(data.expiryDate),
+					issueDate: data.issueDateFormatted,
+					expiryDate: data.expiryDateFormatted,
 					notes: data.notes || "",
 					items:
 						data.items && data.items.length > 0
@@ -54,7 +54,7 @@ const edit = (props) => {
 			.catch((err) => {
 				props.getErrors(err)
 			})
-	}, [id])
+	}, [])
 
 	// Handle high-level field changes
 	const handleInputChange = (e) => {

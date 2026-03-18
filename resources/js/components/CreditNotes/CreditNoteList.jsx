@@ -23,6 +23,9 @@ const CreditNoteList = (props) => {
 	const [projects, setProjects] = useState(
 		props.getLocalStorage("projectsShortList")
 	)
+	const [staff, setStaff] = useState(
+		props.getLocalStorage("staffShortList")
+	)
 
 	const [deleteIds, setDeleteIds] = useState([])
 	const [loading, setLoading] = useState()
@@ -30,6 +33,7 @@ const CreditNoteList = (props) => {
 	useEffect(() => {
 		props.get("clients?idAndName=true", setClients, "clientsShortList")
 		props.get("projects?idAndName=true", setProjects, "projectsShortList")
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	/*
@@ -110,7 +114,7 @@ const CreditNoteList = (props) => {
 					{/* Code End */}
 					{/* Client ID */}
 					<div className="flex-grow-1 me-2 mb-2">
-							<label htmlFor="">Client</label>
+						<label htmlFor="">Client</label>
 						<select
 							type="text"
 							name="type"
@@ -148,6 +152,26 @@ const CreditNoteList = (props) => {
 						</select>
 					</div>
 					{/* Project ID End */}
+					{/* Created By ID */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="">Created By</label>
+						<select
+							type="text"
+							name="type"
+							className="form-control text-capitalize"
+							onChange={(e) => props.setCreatedByQuery(e.target.value)}
+							required={true}>
+							<option value="">All</option>
+							{staff.map((project, key) => (
+								<option
+									key={key}
+									value={project.id}>
+									{project.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By ID End */}
 				</div>
 			</div>
 
@@ -223,7 +247,7 @@ const CreditNoteList = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => props.setStartYear(e.target.value)}>
+								onChange={(e) => props.setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option
@@ -248,7 +272,7 @@ const CreditNoteList = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="6"></th>
+							<th colSpan="7"></th>
 							<th className="text-end">
 								<div className="d-flex justify-content-end">
 									{deleteIds.length > 0 && (
@@ -275,6 +299,7 @@ const CreditNoteList = (props) => {
 							<th>Invoice No</th>
 							<th>Amount</th>
 							<th>Issue Date</th>
+							<th>Created By</th>
 							<th className="text-center">Action</th>
 						</tr>
 						{props.creditNotes.data?.map((creditNote, key) => (
@@ -287,6 +312,7 @@ const CreditNoteList = (props) => {
 									<small>KES</small> {creditNote.amount}
 								</td>
 								<td>{creditNote.issueDate}</td>
+								<td>{creditNote.createdByName}</td>
 								<td>
 									<div className="d-flex justify-content-center">
 										<MyLink

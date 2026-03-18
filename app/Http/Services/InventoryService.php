@@ -108,13 +108,15 @@ class InventoryService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
-                ->where("name", "LIKE", "%" . $request->name . "%");
+            $query = $query->where("name", "LIKE", "%" . $request->name . "%");
         }
 
         if ($request->filled("projectId")) {
-            $query = $query
-                ->where("project_id", $request->projectId);
+            $query = $query->where("project_id", $request->projectId);
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         return $query;

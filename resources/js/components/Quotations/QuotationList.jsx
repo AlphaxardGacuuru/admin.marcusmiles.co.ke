@@ -161,7 +161,7 @@ const QuotationList = (props) => {
 								{props.months.map((month, key) => (
 									<option
 										key={key}
-										value={key}>
+										value={key > 0 ? key : ""}>
 										{month}
 									</option>
 								))}
@@ -202,7 +202,7 @@ const QuotationList = (props) => {
 								{props.months.map((month, key) => (
 									<option
 										key={key}
-										value={key}>
+										value={key > 0 ? key : ""}>
 										{month}
 									</option>
 								))}
@@ -218,7 +218,7 @@ const QuotationList = (props) => {
 							</label>
 							<select
 								className="form-control"
-								onChange={(e) => props.setStartYear(e.target.value)}>
+								onChange={(e) => props.setEndYear(e.target.value)}>
 								<option value="">Select Year</option>
 								{props.years.map((year, key) => (
 									<option

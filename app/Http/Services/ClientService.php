@@ -113,9 +113,27 @@ class ClientService extends Service
     public function search($query, $request)
     {
         if ($request->filled("name")) {
-            $query = $query
-                ->where("name", "LIKE", "%" . $request->input("name") . "%")
-                ->orWhere("email", "LIKE", "%" . $request->input("name") . "%");
+            $query = $query->where("name", "LIKE", "%" . $request->input("name") . "%");
+        }
+
+        if ($request->filled("email")) {
+            $query = $query->where("email", "LIKE", "%" . $request->input("email") . "%");
+        }
+
+        if ($request->filled("phone")) {
+            $query = $query->where("phone", "LIKE", "%" . $request->input("phone") . "%");
+        }
+
+        if ($request->filled("gender")) {
+            $query = $query->where("gender", $request->input("gender"));
+        }
+
+        if ($request->filled("location")) {
+            $query = $query->where("location", "LIKE", "%" . $request->input("location") . "%");
+        }
+
+        if ($request->filled("createdBy")) {
+            $query = $query->where("created_by", $request->createdBy);
         }
 
         return $query;
