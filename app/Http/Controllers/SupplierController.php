@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\SupplierResource;
 use App\Http\Services\SupplierService;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,7 +21,12 @@ class SupplierController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->service->index($request);
+        [$status, $message, $suppliers] = $this->service->index($request);
+
+        return SupplierResource::collection($suppliers)->additional([
+            "status" => $status,
+            "message" => $message,
+        ]);
     }
 
     /**
@@ -40,11 +46,10 @@ class SupplierController extends Controller
 
         [$saved, $message, $supplier] = $this->service->store($request);
 
-        return response([
+        return (new SupplierResource($supplier))->additional([
             "status" => $saved,
             "message" => $message,
-            "data" => $supplier,
-        ], 200);
+        ]);
     }
 
     /**
@@ -55,7 +60,12 @@ class SupplierController extends Controller
      */
     public function show($id)
     {
-        return $this->service->show($id);
+        [$status, $message, $supplier] = $this->service->show($id);
+
+        return (new SupplierResource($supplier))->additional([
+            "status" => $status,
+            "message" => $message,
+        ]);
     }
 
     /**
@@ -76,11 +86,10 @@ class SupplierController extends Controller
 
         [$saved, $message, $supplier] = $this->service->update($request, $id);
 
-        return response([
+        return (new SupplierResource($supplier))->additional([
             "status" => $saved,
             "message" => $message,
-            "data" => $supplier,
-        ], 200);
+        ]);
     }
 
     /**
@@ -93,10 +102,9 @@ class SupplierController extends Controller
     {
         [$deleted, $message, $supplier] = $this->service->destroy($id);
 
-        return response([
+        return (new SupplierResource($supplier))->additional([
             "status" => $deleted,
             "message" => $message,
-            "data" => $supplier,
-        ], 200);
+        ]);
     }
 }

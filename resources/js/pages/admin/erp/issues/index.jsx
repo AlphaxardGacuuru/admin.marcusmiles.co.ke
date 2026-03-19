@@ -43,7 +43,7 @@ const index = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Issues", path: ["issues"] })
+		props.setPage({ name: "Issues", path: ["erp/issues"] })
 		props.get("issues", setIssues, "issues")
 		props.get("issue-comments", setIssueComments)
 		props.get("staff?idAndName=true", setStaff, "staffShortList")

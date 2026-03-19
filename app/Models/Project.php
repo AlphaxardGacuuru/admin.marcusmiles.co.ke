@@ -79,6 +79,11 @@ class Project extends Model
         return $this->hasMany(ProjectStage::class);
     }
 
+    public function latestProjectStage()
+    {
+        return $this->hasOne(ProjectStage::class)->latestOfMany();
+    }
+
     /*
      * Custom Functions
      */

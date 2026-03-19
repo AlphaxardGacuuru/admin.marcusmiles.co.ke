@@ -5,24 +5,35 @@ import GoodList from "@/components/Goods/GoodList"
 const index = (props) => {
 	const [goods, setGoods] = useState(props.getLocalStorage("goods"))
 
-	const [name, setName] = useState("")
+	const [codeQuery, setCodeQuery] = useState("")
+	const [nameQuery, setNameQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Goods", path: ["goods"] })
+		props.setPage({ name: "Goods", path: ["erp/goods"] })
 	}, [])
 
 	useEffect(() => {
 		// Fetch Goods
-		props.getPaginated(`goods?name=${name}`, setGoods, "goods")
-	}, [name])
+		props.getPaginated(
+			`goods?
+			code=${codeQuery}&
+			name=${nameQuery}&
+			createdBy=${createdByQuery}`,
+			setGoods,
+			"goods"
+		)
+	}, [codeQuery, nameQuery, createdByQuery])
 
 	return (
 		<GoodList
 			{...props}
 			goods={goods}
 			setGoods={setGoods}
-			setName={setName}
+			setCodeQuery={setCodeQuery}
+			setNameQuery={setNameQuery}
+			setCreatedByQuery={setCreatedByQuery}
 		/>
 	)
 }

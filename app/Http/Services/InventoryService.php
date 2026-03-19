@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Resources\InventoryResource;
 use App\Models\Inventory;
 use App\Models\InventoryQuantity;
+use Carbon\Carbon;
 
 class InventoryService extends Service
 {
@@ -107,16 +108,41 @@ class InventoryService extends Service
      */
     public function search($query, $request)
     {
-        if ($request->filled("name")) {
-            $query = $query->where("name", "LIKE", "%" . $request->name . "%");
+        if ($request->filled("goodId")) {
+            $query = $query->where("good_id", $request->goodId);
         }
 
         if ($request->filled("projectId")) {
             $query = $query->where("project_id", $request->projectId);
         }
 
+        if ($request->filled("supplierId")) {
+            $query = $query->where("supplier_id", $request->supplierId);
+        }
+
         if ($request->filled("createdBy")) {
             $query = $query->where("created_by", $request->createdBy);
+        }
+
+        $startMonth = $request->input("startMonth");
+        $endMonth = $request->input("endMonth");
+        $startYear = $request->input("startYear");
+        $endYear = $request->input("endYear");
+
+        // Build start date filter
+        if ($request->filled("startMonth") || $request->filled("startYear")) {
+            $year = $startYear ?? date('Y');
+            $month = $startMonth ?? 1;
+            $startDate = Carbon::create($year, $month, 1)->startOfMonth();
+            $query = $query->where("created_at", ">=", $startDate);
+        }
+
+        // Build end date filter
+        if ($request->filled("endMonth") || $request->filled("endYear")) {
+            $year = $endYear ?? date('Y');
+            $month = $endMonth ?? 12;
+            $endDate = Carbon::create($year, $month, 1)->endOfMonth();
+            $query = $query->where("created_at", "<=", $endDate);
         }
 
         return $query;

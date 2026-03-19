@@ -14,8 +14,15 @@ class SupplierResource extends JsonResource
      */
     public function toArray($request)
     {
+        if ($request->filled("idAndName")) {
+            return [
+                "id" => $this->id,
+                "name" => $this->name,
+            ];
+        }
+
         return [
-			"id" => $this->id,
+            "id" => $this->id,
             "name" => $this->name,
             "email" => $this->email,
             "phone" => $this->phone,
@@ -25,6 +32,6 @@ class SupplierResource extends JsonResource
             "accountType" => $this->account_type,
             "goodIds" => $this->goods->map(fn($good) => $good->id),
             "createdAt" => $this->created_at,
-		];
+        ];
     }
 }

@@ -21,9 +21,7 @@ class SupplierService extends Service
                 ->orderBy("id", "DESC")
                 ->get();
 
-            return response([
-                "data" => $suppliers,
-            ], 200);
+            return [true, $suppliers->count() . " Suppliers Fetched Successfully", $suppliers];
         }
 
         $suppliersQuery = User::where("account_type", "supplier");
@@ -33,7 +31,7 @@ class SupplierService extends Service
         $suppliers = $suppliersQuery
             ->paginate(20);
 
-        return SupplierResource::collection($suppliers);
+        return [true, $suppliers->count() . " Suppliers Fetched Successfully", $suppliers];
     }
 
     /*
@@ -43,7 +41,7 @@ class SupplierService extends Service
     {
         $supplier = User::findOrFail($id);
 
-        return new SupplierResource($supplier);
+        return [true, $supplier->name . " Fetched Successfully", new SupplierResource($supplier)];
     }
 
     /*
@@ -161,8 +159,20 @@ class SupplierService extends Service
             $query = $query->where("name", "LIKE", "%" . $request->input("name") . "%");
         }
 
+        if ($request->filled("email")) {
+            $query = $query->where("email", "LIKE", "%" . $request->input("email") . "%");
+        }
+
+        if ($request->filled("phone")) {
+            $query = $query->where("phone", "LIKE", "%" . $request->input("phone") . "%");
+        }
+
+        if ($request->filled("gender")) {
+            $query = $query->where("gender", $request->input("gender"));
+        }
+
         if ($request->filled("createdBy")) {
-            $query = $query->where("created_by", $request->createdBy);
+            $query = $query->where("created_by", $request->input("createdBy"));
         }
 
         return $query;

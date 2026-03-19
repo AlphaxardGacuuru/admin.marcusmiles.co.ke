@@ -6,10 +6,12 @@ const index = (props) => {
 	const [projects, setProjects] = useState(props.getLocalStorage("projects"))
 	const [stages, setStages] = useState(props.getLocalStorage("stages"))
 
+	const [codeQuery, setCodeQuery] = useState("")
 	const [nameQuery, setNameQuery] = useState("")
 	const [typeQuery, setTypeQuery] = useState("")
 	const [locationQuery, setLocationQuery] = useState("")
 	const [clientIdQuery, setClientIdQuery] = useState("")
+	const [createdByQuery, setCreatedByQuery] = useState("")
 	const [startMonthQuery, setStartMonthQuery] = useState("")
 	const [endMonthQuery, setEndMonthQuery] = useState("")
 	const [startYearQuery, setStartYearQuery] = useState("")
@@ -17,7 +19,7 @@ const index = (props) => {
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Projects", path: ["projects"] })
+		props.setPage({ name: "Projects", path: ["erp/projects"] })
 		// Fetch Stages
 		props.get("stages?type=project", setStages, "stages")
 	}, [])
@@ -26,10 +28,12 @@ const index = (props) => {
 		// Fetch Projects
 		props.getPaginated(
 			`projects?
+			code=${codeQuery}&
 			name=${nameQuery}&
 			type=${typeQuery}&
 			location=${locationQuery}&
 			clientId=${clientIdQuery}&
+			createdBy=${createdByQuery}&
 			startMonth=${startMonthQuery}&
 			endMonth=${endMonthQuery}&
 			startYear=${startYearQuery}&
@@ -38,6 +42,7 @@ const index = (props) => {
 			"projects"
 		)
 	}, [
+		codeQuery,
 		nameQuery,
 		typeQuery,
 		locationQuery,
@@ -46,6 +51,7 @@ const index = (props) => {
 		endMonthQuery,
 		startYearQuery,
 		endYearQuery,
+		createdByQuery,
 	])
 
 	return (
@@ -55,6 +61,7 @@ const index = (props) => {
 			setProjects={setProjects}
 			stages={stages}
 			setStages={setStages}
+			codeQuery={codeQuery}
 			nameQuery={nameQuery}
 			typeQuery={typeQuery}
 			locationQuery={locationQuery}
@@ -63,6 +70,8 @@ const index = (props) => {
 			endMonthQuery={endMonthQuery}
 			startYearQuery={startYearQuery}
 			endYearQuery={endYearQuery}
+			createdByQuery={createdByQuery}
+			setCodeQuery={setCodeQuery}
 			setNameQuery={setNameQuery}
 			setTypeQuery={setTypeQuery}
 			setLocationQuery={setLocationQuery}
@@ -71,6 +80,7 @@ const index = (props) => {
 			setEndMonthQuery={setEndMonthQuery}
 			setStartYearQuery={setStartYearQuery}
 			setEndYearQuery={setEndYearQuery}
+			setCreatedByQuery={setCreatedByQuery}
 		/>
 	)
 }

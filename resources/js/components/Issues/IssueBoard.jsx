@@ -174,7 +174,7 @@ const IssueBoard = (props) => {
 								onChange={(e) => props.setPriorityQuery(e.target.value)}
 								required={true}>
 								{[
-									{ id: "", name: "Select Priority" },
+									{ id: "", name: "All" },
 									{ id: "low", name: "Low" },
 									{ id: "medium", name: "Medium" },
 									{ id: "high", name: "High" },
@@ -195,7 +195,7 @@ const IssueBoard = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => props.setProjectIdQuery(e.target.value)}>
-								{[{ id: "", name: "Select Project" }]
+								{[{ id: "", name: "All" }]
 									.concat(props.projects)
 									.map((project, key) => (
 										<option
@@ -214,7 +214,7 @@ const IssueBoard = (props) => {
 							<select
 								className="form-control"
 								onChange={(e) => props.setStaffIdQuery(e.target.value)}>
-								{[{ id: "", name: "Select Staff" }]
+								{[{ id: "", name: "All" }]
 									.concat(props.staff)
 									.map((staff, key) => (
 										<option

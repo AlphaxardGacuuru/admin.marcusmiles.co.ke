@@ -21,7 +21,7 @@ class GoodService extends Service
             ->orderBy("id", "asc")
             ->paginate(20);
 
-        return GoodResource::collection($goods);
+        return [true, $goods->count() . " Goods Retrieved Successfully", $goods];
     }
 
     /*
@@ -31,7 +31,7 @@ class GoodService extends Service
     {
         $good = Good::findOrFail($id);
 
-        return new GoodResource($good);
+        return [true, $good->name . " Retrieved Successfully", $good];
     }
 
     /*
@@ -102,6 +102,10 @@ class GoodService extends Service
      */
     public function search($query, $request)
     {
+        if ($request->filled("code")) {
+            $query = $query->where("code", "LIKE", "%" . $request->code . "%");
+        }
+
         if ($request->filled("name")) {
             $query = $query->where("name", "LIKE", "%" . $request->name . "%");
         }

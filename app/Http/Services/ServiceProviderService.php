@@ -19,9 +19,7 @@ class ServiceProviderService extends Service
                 ->orderBy("id", "DESC")
                 ->get();
 
-            return response([
-                "data" => $serviceProviders,
-            ], 200);
+            return [true, $serviceProviders->count() . " Service Providers Fetched Successfully", $serviceProviders];
         }
 
         $serviceProvidersQuery = User::where("account_type", "service provider");
@@ -31,7 +29,7 @@ class ServiceProviderService extends Service
         $serviceProviders = $serviceProvidersQuery
             ->paginate(20);
 
-        return ServiceProviderResource::collection($serviceProviders);
+        return [true, $serviceProviders->count() . " Service Providers Retrieved Successfully", $serviceProviders];
     }
 
     /*
@@ -41,7 +39,7 @@ class ServiceProviderService extends Service
     {
         $serviceProvider = User::findOrFail($id);
 
-        return new ServiceProviderResource($serviceProvider);
+        return [true, $serviceProvider->name . " Retrieved Successfully", $serviceProvider];
     }
 
     /*
@@ -116,12 +114,20 @@ class ServiceProviderService extends Service
             $query = $query->where("name", "LIKE", "%" . $request->input("name") . "%");
         }
 
-        $projectId = $request->projectId;
+        if ($request->filled("email")) {
+            $query = $query->where("email", "LIKE", "%" . $request->input("email") . "%");
+        }
 
-        if ($request->filled("projectId")) {
-            $query = $query->whereHas("projectServiceProviders", function ($query) use ($projectId) {
-                $query->where("project_id", $projectId);
-            });
+        if ($request->filled("phone")) {
+            $query = $query->where("phone", "LIKE", "%" . $request->input("phone") . "%");
+        }
+
+        if ($request->filled("gender")) {
+            $query = $query->where("gender", $request->input("gender"));
+        }
+
+        if ($request->filled("idNumber")) {
+            $query = $query->where("id_number", "LIKE", "%" . $request->input("idNumber") . "%");
         }
 
         if ($request->filled("createdBy")) {

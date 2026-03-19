@@ -60,8 +60,9 @@ const SupplierList = (props) => {
 				<div className="d-flex flex-wrap">
 					{/* Name */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="name">Name</label>
 						<input
-							id=""
+							id="name"
 							type="text"
 							name="name"
 							placeholder="Search by Name"
@@ -70,6 +71,46 @@ const SupplierList = (props) => {
 						/>
 					</div>
 					{/* Name End */}
+					{/* Email */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="phone">Email</label>
+						<input
+							id="phone"
+							type="text"
+							name="phone"
+							placeholder="Search by Email"
+							className="form-control"
+							onChange={(e) => props.setEmailQuery(e.target.value)}
+						/>
+					</div>
+					{/* Email End */}
+					{/* Phone */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="phone">Phone</label>
+						<input
+							id="phone"
+							type="text"
+							name="phone"
+							placeholder="Search by Phone"
+							className="form-control"
+							onChange={(e) => props.setPhoneQuery(e.target.value)}
+						/>
+					</div>
+					{/* Phone End */}
+					{/* Gender Start */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="gender">Gender</label>
+						<select
+							id="gender"
+							name="gender"
+							className="form-control"
+							onChange={(e) => props.setGenderQuery(e.target.value)}>
+							<option value="">All</option>
+							<option value="male">Male</option>
+							<option value="female">Female</option>
+						</select>
+					</div>
+					{/* Gender End */}
 				</div>
 			</div>
 			{/* Filters End */}
@@ -80,7 +121,7 @@ const SupplierList = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="5"></th>
+							<th colSpan="6"></th>
 							<th className="text-end">
 								<MyLink
 									linkTo={`/erp/suppliers/create`}
@@ -93,8 +134,9 @@ const SupplierList = (props) => {
 							<th>#</th>
 							<th></th>
 							<th>Name</th>
+							<th>Email</th>
 							<th>Phone</th>
-							<th>Location</th>
+							<th>Gender</th>
 							<th className="text-center">Action</th>
 						</tr>
 					</thead>
@@ -112,8 +154,9 @@ const SupplierList = (props) => {
 									/>
 								</td>
 								<td>{supplier.name}</td>
+								<td>{supplier.email}</td>
 								<td>{supplier.phone}</td>
-								<td>{supplier.location}</td>
+								<td className="text-capitalize">{supplier.gender}</td>
 								<td>
 									<div className="d-flex justify-content-center">
 										<MyLink

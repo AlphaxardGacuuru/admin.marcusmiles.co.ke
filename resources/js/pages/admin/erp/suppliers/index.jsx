@@ -7,20 +7,26 @@ const index = (props) => {
 	const [suppliers, setSuppliers] = useState(props.getLocalStorage("suppliers"))
 
 	const [nameQuery, setNameQuery] = useState("")
+	const [emailQuery, setEmailQuery] = useState("")
+	const [phoneQuery, setPhoneQuery] = useState("")
+	const [genderQuery, setGenderQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Suppliers", path: ["suppliers"] })
+		props.setPage({ name: "Suppliers", path: ["erp/suppliers"] })
 	}, [])
 
 	useEffect(() => {
 	  props.getPaginated(
 		`suppliers?
-		name=${nameQuery}`, 
+		name=${nameQuery}&
+		email=${emailQuery}&
+		phone=${phoneQuery}&
+		gender=${genderQuery}`, 
 		setSuppliers, 
 		"suppliers"
 	)
-	}, [nameQuery])
+	}, [nameQuery, emailQuery, phoneQuery, genderQuery])
 	
 
 	return (
@@ -32,6 +38,9 @@ const index = (props) => {
 					suppliers={suppliers}
 					setSuppliers={setSuppliers}
 					setNameQuery={setNameQuery}
+					setEmailQuery={setEmailQuery}
+					setPhoneQuery={setPhoneQuery}
+					setGenderQuery={setGenderQuery}
 				/>
 				{/* Suppliers Tab End */}
 			</div>

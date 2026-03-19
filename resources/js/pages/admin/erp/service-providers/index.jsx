@@ -9,20 +9,31 @@ const index = (props) => {
 	)
 
 	const [nameQuery, setNameQuery] = useState("")
+	const [emailQuery, setEmailQuery] = useState("")
+	const [phoneQuery, setPhoneQuery] = useState("")
+	const [genderQuery, setGenderQuery] = useState("")
+	const [idNumberQuery, setIdNumberQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Service Providers", path: ["service-providers"] })
+		props.setPage({
+			name: "Service Providers",
+			path: ["erp/service-providers"],
+		})
 	}, [])
 
 	useEffect(() => {
 		props.getPaginated(
 			`service-providers?
-		name=${nameQuery}`,
+			name=${nameQuery}&
+			email=${emailQuery}&
+			phone=${phoneQuery}&
+			gender=${genderQuery}&
+			idNumber=${idNumberQuery}`,
 			setServiceProviders,
 			"serviceProviders"
 		)
-	}, [nameQuery])
+	}, [nameQuery, emailQuery, phoneQuery, genderQuery, idNumberQuery])
 
 	return (
 		<div className="row">
@@ -33,6 +44,10 @@ const index = (props) => {
 					serviceProviders={serviceProviders}
 					setServiceProviders={setServiceProviders}
 					setNameQuery={setNameQuery}
+					setEmailQuery={setEmailQuery}
+					setPhoneQuery={setPhoneQuery}
+					setGenderQuery={setGenderQuery}
+					setIdNumberQuery={setIdNumberQuery}
 				/>
 				{/* ServiceProviders Tab End */}
 			</div>

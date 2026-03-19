@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react"
+import React, { useEffect, useRef, useState } from "react"
 import {
 	useHistory,
 	useLocation,
@@ -24,10 +24,24 @@ const InventoryList = (props) => {
 	const location = useLocation()
 	const history = useHistory()
 
+	const [goods, setGoods] = useState(props.getLocalStorage("goodsShortList"))
+	const [projects, setProjects] = useState(
+		props.getLocalStorage("projectsShortList")
+	)
+	const [suppliers, setSuppliers] = useState(
+		props.getLocalStorage("suppliersShortList")
+	)
+
 	const [inventoryIds, setInventoryIds] = useState([])
 	const [loading, setLoading] = useState()
 
 	const closeConsumeInventoryModalBtn = useRef()
+
+	useEffect(() => {
+		props.get(`goods?idAndName=true`, setGoods, "goodsShortList")
+		props.get(`projects?idAndName=true`, setProjects, "projectsShortList")
+		props.get(`suppliers?idAndName=true`, setSuppliers, "suppliersShortList")
+	}, [])
 
 	/*
 	 * Reduce Quantity
@@ -146,20 +160,165 @@ const InventoryList = (props) => {
 			<br />
 
 			{/* Filters */}
-			<div className="card shadow-sm p-4">
+			<div className="card shadow-sm p-4 mb-2">
 				<div className="d-flex flex-wrap">
-					{/* Name */}
+					{/* Good Start */}
 					<div className="flex-grow-1 me-2 mb-2">
-						<input
-							id=""
-							type="text"
-							name="name"
-							placeholder="Search by Name"
+						<label htmlFor="goodId">Good</label>
+						<select
+							id="goodId"
+							name="goodId"
 							className="form-control"
-							onChange={(e) => props.setNameQuery(e.target.value)}
-						/>
+							onChange={(e) => props.setGoodIdQuery(e.target.value)}>
+							{[{ id: "", name: "All" }].concat(goods).map((good, key) => (
+								<option
+									key={key}
+									value={good.id}>
+									{good.name}
+								</option>
+							))}
+						</select>
 					</div>
-					{/* Name End */}
+					{/* Good End */}
+					{/* Project Start */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="projectId">Project</label>
+						<select
+							id="projectId"
+							name="projectId"
+							className="form-control"
+							onChange={(e) => props.setProjectIdQuery(e.target.value)}>
+							{[{ id: "", name: "All" }]
+								.concat(projects)
+								.map((project, key) => (
+									<option
+										key={key}
+										value={project.id}>
+										{project.name}
+									</option>
+								))}
+						</select>
+					</div>
+					{/* Project End */}
+					{/* Supplier Start */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="supplierId">Supplier</label>
+						<select
+							id="supplierId"
+							name="supplierId"
+							className="form-control"
+							onChange={(e) => props.setSupplierIdQuery(e.target.value)}>
+							{[{ id: "", name: "All" }]
+								.concat(suppliers)
+								.map((supplier, key) => (
+									<option
+										key={key}
+										value={supplier.id}>
+										{supplier.name}
+									</option>
+								))}
+						</select>
+					</div>
+					{/* Supplier End */}
+				</div>
+			</div>
+
+			<div className="card shadow-sm py-2 px-4">
+				<div className="d-flex justify-content-end flex-wrap">
+					{/* Start Date */}
+					<div className="d-flex flex-grow-1">
+						{/* Start Month */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label htmlFor="">Start At</label>
+							<select
+								className="form-control"
+								onChange={(e) =>
+									props.setStartMonthQuery(
+										e.target.value == "0" ? "" : e.target.value
+									)
+								}>
+								{props.months.map((month, key) => (
+									<option
+										key={key}
+										value={key}
+										selected={key == props.startMonth}>
+										{month}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* Start Month End */}
+						{/* Start Year */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label
+								htmlFor=""
+								className="invisible">
+								Start At
+							</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setStartYearQuery(e.target.value)}>
+								<option value="">Select Year</option>
+								{props.years.map((year, key) => (
+									<option
+										key={key}
+										value={year}
+										selected={year == props.startYear}>
+										{year}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* Start Year End */}
+					</div>
+					{/* Start Date End */}
+					{/* End Date */}
+					<div className="d-flex flex-grow-1">
+						{/* End Month */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label htmlFor="">End At</label>
+							<select
+								className="form-control"
+								onChange={(e) =>
+									props.setEndMonthQuery(
+										e.target.value == "0" ? "" : e.target.value
+									)
+								}>
+								{props.months.map((month, key) => (
+									<option
+										key={key}
+										value={key}
+										selected={key == props.endMonth}>
+										{month}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* End Month End */}
+						{/* End Year */}
+						<div className="flex-grow-1 me-2 mb-2">
+							<label
+								htmlFor=""
+								className="invisible">
+								End At
+							</label>
+							<select
+								className="form-control"
+								onChange={(e) => props.setEndYearQuery(e.target.value)}>
+								<option value="">Select Year</option>
+								{props.years.map((year, key) => (
+									<option
+										key={key}
+										value={year}
+										selected={year == props.endYear}>
+										{year}
+									</option>
+								))}
+							</select>
+						</div>
+						{/* End Year End */}
+					</div>
+					{/* End Date End */}
 				</div>
 			</div>
 			{/* Filters End */}
@@ -175,12 +334,14 @@ const InventoryList = (props) => {
 								<th
 									colSpan="3"
 									className="text-end">
-									{inventoryIds.length > 0 && (<Btn
-										icon={<PlusSVG />}
-										text="generate delivery note"
-										onClick={createDeliveryNotes}
-										loading={loading}
-									/>)}
+									{inventoryIds.length > 0 && (
+										<Btn
+											icon={<PlusSVG />}
+											text="generate delivery note"
+											onClick={createDeliveryNotes}
+											loading={loading}
+										/>
+									)}
 								</th>
 								<th className="text-end">
 									<MyLink
@@ -205,13 +366,13 @@ const InventoryList = (props) => {
 												? []
 												: props.inventories.data.map(
 														(inventory) => inventory.id
-												  )
+													)
 										)
 									}
 								/>
 							</th>
 							<th>#</th>
-							<th>Name</th>
+							<th>Good</th>
 							<th>Unit</th>
 							<th>Quantity</th>
 							<th>Project</th>
@@ -236,7 +397,9 @@ const InventoryList = (props) => {
 								</td>
 								<td>{props.iterator(key, props.inventories)}</td>
 								<td>{inventory.goodName}</td>
-								<td>{inventory.unit.value} {inventory.unit.unit}</td>
+								<td>
+									{inventory.unit.value} {inventory.unit.unit}
+								</td>
 								<td>{inventory.quantity}</td>
 								<td>{inventory.projectName}</td>
 								<td>{inventory.supplierName}</td>
@@ -245,14 +408,15 @@ const InventoryList = (props) => {
 									{location.pathname.match("/view") && (
 										<div className="d-flex justify-content-center">
 											<React.Fragment>
+												{/* Edit Link Start */}
 												<MyLink
 													linkTo={`/erp/inventory/${inventory.id}/edit`}
 													icon={<EditSVG />}
 													className="btn-sm me-1"
 												/>
+												{/* Edit Link End */}
 
 												{/* Consume Inventory Modal Start */}
-												{/* Consume Inventory Modal End */}
 												<div
 													className="modal fade"
 													id={`consumeModalStage`}

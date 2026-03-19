@@ -17,7 +17,7 @@ import PlusSVG from "@/svgs/PlusSVG"
 import DeleteSVG from "@/svgs/DeleteSVG"
 
 const ServiceProviderList = (props) => {
-	const location = useLocation()
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
 
 	/*
 	 * Delete ServiceProvider
@@ -65,8 +65,9 @@ const ServiceProviderList = (props) => {
 				<div className="d-flex flex-wrap">
 					{/* Name */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="name">Name</label>
 						<input
-							id=""
+							id="name"
 							type="text"
 							name="name"
 							placeholder="Search by Name"
@@ -75,6 +76,59 @@ const ServiceProviderList = (props) => {
 						/>
 					</div>
 					{/* Name End */}
+					{/* Email */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="phone">Email</label>
+						<input
+							id="phone"
+							type="text"
+							name="phone"
+							placeholder="Search by Email"
+							className="form-control"
+							onChange={(e) => props.setEmailQuery(e.target.value)}
+						/>
+					</div>
+					{/* Email End */}
+					{/* Phone */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="phone">Phone</label>
+						<input
+							id="phone"
+							type="text"
+							name="phone"
+							placeholder="Search by Phone"
+							className="form-control"
+							onChange={(e) => props.setPhoneQuery(e.target.value)}
+						/>
+					</div>
+					{/* Phone End */}
+					{/* Gender Start */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="gender">Gender</label>
+						<select
+							id="gender"
+							name="gender"
+							className="form-control"
+							onChange={(e) => props.setGenderQuery(e.target.value)}>
+							<option value="">All</option>
+							<option value="male">Male</option>
+							<option value="female">Female</option>
+						</select>
+					</div>
+					{/* Gender End */}
+					{/* ID Number */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="idNumber">ID Number</label>
+						<input
+							id="idNumber"
+							type="text"
+							name="idNumber"
+							placeholder="Search by ID Number"
+							className="form-control"
+							onChange={(e) => props.setIdNumberQuery(e.target.value)}
+						/>
+					</div>
+					{/* ID Number End */}
 				</div>
 			</div>
 			{/* Filters End */}
@@ -85,7 +139,7 @@ const ServiceProviderList = (props) => {
 				<table className="table table-hover">
 					<thead>
 						<tr>
-							<th colSpan="5"></th>
+							<th colSpan="7"></th>
 							<th className="text-end">
 								<MyLink
 									linkTo={`/erp/service-providers/create`}
@@ -98,7 +152,9 @@ const ServiceProviderList = (props) => {
 							<th>#</th>
 							<th></th>
 							<th>Name</th>
+							<th>Email</th>
 							<th>Phone</th>
+							<th>Gender</th>
 							<th>ID Number</th>
 							<th className="text-center">Action</th>
 						</tr>
@@ -117,7 +173,9 @@ const ServiceProviderList = (props) => {
 									/>
 								</td>
 								<td>{serviceProvider.name}</td>
+								<td>{serviceProvider.email}</td>
 								<td>{serviceProvider.phone}</td>
+								<td className="text-capitalize">{serviceProvider.gender}</td>
 								<td>{serviceProvider.idNumber}</td>
 								<td>
 									<div className="d-flex justify-content-center">

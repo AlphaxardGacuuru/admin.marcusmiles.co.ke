@@ -3,52 +3,59 @@ import React, { useEffect, useState } from "react"
 import InventoryList from "@/components/Inventories/InventoryList"
 
 const index = (props) => {
-	const [inventories, setInventories] = useState(props.getLocalStorage("inventories"))
+	const [inventories, setInventories] = useState(
+		props.getLocalStorage("inventories")
+	)
 
-	const [name, setName] = useState("")
-	const [type, setType] = useState("")
-	const [location, setLocation] = useState("")
-	const [clientId, setClientId] = useState("")
-	const [startMonth, setStartMonth] = useState("")
-	const [endMonth, setEndMonth] = useState("")
-	const [startYear, setStartYear] = useState("")
-	const [endYear, setEndYear] = useState("")
+	const [goodIdQuery, setGoodIdQuery] = useState("")
+	const [projectIdQuery, setProjectIdQuery] = useState("")
+	const [supplierIdQuery, setSupplierIdQuery] = useState("")
+	const [startMonthQuery, setStartMonthQuery] = useState("")
+	const [endMonthQuery, setEndMonthQuery] = useState("")
+	const [startYearQuery, setStartYearQuery] = useState("")
+	const [endYearQuery, setEndYearQuery] = useState("")
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Inventories", path: ["inventories"] })
+		props.setPage({ name: "Inventories", path: ["erp/inventories"] })
 	}, [])
 
 	useEffect(() => {
 		// Fetch Inventories
 		props.getPaginated(
 			`inventories?
-			name=${name}&
-			type=${type}&
-			location=${location}&
-			clientId=${clientId}&
-			startMonth=${startMonth}&
-			endMonth=${endMonth}&
-			startYear=${startYear}&
-			endYear=${endYear}`,
+			goodId=${goodIdQuery}&
+			projectId=${projectIdQuery}&
+			supplierId=${supplierIdQuery}&
+			startMonth=${startMonthQuery}&
+			endMonth=${endMonthQuery}&
+			startYear=${startYearQuery}&
+			endYear=${endYearQuery}`,
 			setInventories,
 			"inventories"
 		)
-	}, [name, type, location, clientId, startMonth, endMonth, startYear, endYear])
+	}, [
+		goodIdQuery,
+		projectIdQuery,
+		supplierIdQuery,
+		startMonthQuery,
+		endMonthQuery,
+		startYearQuery,
+		endYearQuery,
+	])
 
 	return (
 		<InventoryList
 			{...props}
 			inventories={inventories}
 			setInventories={setInventories}
-			setName={setName}
-			setType={setType}
-			setLocation={setLocation}
-			setClientId={setClientId}
-			setStartMonth={setStartMonth}
-			setEndMonth={setEndMonth}
-			setStartYear={setStartYear}
-			setEndYear={setEndYear}
+			setGoodIdQuery={setGoodIdQuery}
+			setProjectIdQuery={setProjectIdQuery}
+			setSupplierIdQuery={setSupplierIdQuery}
+			setStartMonthQuery={setStartMonthQuery}
+			setEndMonthQuery={setEndMonthQuery}
+			setStartYearQuery={setStartYearQuery}
+			setEndYearQuery={setEndYearQuery}
 		/>
 	)
 }

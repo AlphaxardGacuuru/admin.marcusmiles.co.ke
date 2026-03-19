@@ -20,14 +20,20 @@ import DeleteSVG from "@/svgs/DeleteSVG"
 const ProjectList = (props) => {
 	const location = useLocation()
 
-	const [clients, setClients] = useState([])
+	const [clients, setClients] = useState(
+		props.getLocalStorage("clientsShortList")
+	)
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+
 	const [tab, setTab] = useState("overview")
 
 	const [loading, setLoading] = useState()
 
 	useEffect(() => {
 		// Fetch Clients
-		props.get("clients?idAndName=true", setClients)
+		props.get("clients?idAndName=true", setClients, "clientsShortList")
+		// Fetch Staff
+		props.get("staff?idAndName=true", setStaff, "staffShortList")
 	}, [])
 
 	/*
@@ -94,6 +100,7 @@ const ProjectList = (props) => {
 		props.typeQuery,
 		props.locationQuery,
 		props.clientIdQuery,
+		props.createdByQuery,
 		props.startMonthQuery,
 		props.endMonthQuery,
 		props.startYearQuery,
@@ -298,164 +305,219 @@ const ProjectList = (props) => {
 
 			{/* Filters */}
 			{location.pathname.match("/projects") && (
-				<div className="card shadow-sm py-2 px-4">
-					<div className="d-flex justify-content-end flex-wrap">
-						{/* Name */}
-						<div className="flex-grow-1 me-2 mb-2">
-							<label htmlFor="">Name / Code</label>
-							<input
-								type="text"
-								placeholder="Search by Name or Code"
-								className="form-control"
-								onChange={(e) => props.setNameQuery(e.target.value)}
-							/>
-						</div>
-						{/* Name End */}
-						{/* Type */}
-						<div className="flex-grow-1 me-2 mb-2">
-							<label htmlFor="">Type</label>
-							<select
-								className="form-control"
-								onChange={(e) => props.setTypeQuery(e.target.value)}>
-								{[{ id: "", name: "Select Type" }]
-									.concat(props.configuration.projectTypes ?? [])
-									?.map((type, key) => (
-										<option
-											key={key}
-											value={type.id}
-											selected={key == props.type}>
-											{type.name}
-										</option>
-									))}
-							</select>
-						</div>
-						{/* Type End */}
-						{/* Location */}
-						<div className="flex-grow-1 me-2 mb-2">
-							<label htmlFor="">Location</label>
-							<input
-								type="text"
-								placeholder="Search by Location"
-								className="form-control"
-								onChange={(e) => props.setLocationQuery(e.target.value)}
-							/>
-						</div>
-						{/* Location End */}
-						{/* Client */}
-						<div className="flex-grow-1 me-2 mb-2">
-							<label htmlFor="">Client</label>
-							<select
-								className="form-control"
-								onChange={(e) => props.setClientIdQuery(e.target.value)}>
-								{[{ id: "", name: "Select Client" }]
-									.concat(clients)
-									.map((client, key) => (
-										<option
-											key={key}
-											value={client.id}
-											selected={key == props.client}>
-											{client.name}
-										</option>
-									))}
-							</select>
-						</div>
-						{/* Client End */}
-						{/* Start Date */}
-						<div className="d-flex flex-grow-1">
-							{/* Start Month */}
+				<React.Fragment>
+					<div className="card shadow-sm py-2 px-4 mb-2">
+						<div className="d-flex justify-content-end flex-wrap">
+							{/* Code */}
 							<div className="flex-grow-1 me-2 mb-2">
-								<label htmlFor="">Start At</label>
-								<select
+								<label htmlFor="">Code</label>
+								<input
+									type="text"
+									placeholder="Search by Code"
 									className="form-control"
-									onChange={(e) =>
-										props.setStartMonthQuery(
-											e.target.value == "0" ? "" : e.target.value
-										)
-									}>
-									{props.months.map((month, key) => (
-										<option
-											key={key}
-											value={key}
-											selected={key == props.startMonth}>
-											{month}
-										</option>
-									))}
-								</select>
+									onChange={(e) => props.setCodeQuery(e.target.value)}
+								/>
 							</div>
-							{/* Start Month End */}
-							{/* Start Year */}
-							<div className="me-2 mb-2">
-								<label
-									htmlFor=""
-									className="invisible">
-									Start At
-								</label>
-								<select
-									className="form-control"
-									onChange={(e) => props.setStartYearQuery(e.target.value)}>
-									<option value="">Select Year</option>
-									{props.years.map((year, key) => (
-										<option
-											key={key}
-											value={year}
-											selected={year == props.startYear}>
-											{year}
-										</option>
-									))}
-								</select>
-							</div>
-							{/* Start Year End */}
-						</div>
-						{/* Start Date End */}
-						{/* End Date */}
-						<div className="d-flex flex-grow-1">
-							{/* End Month */}
+							{/* Code End */}
+							{/* Name */}
 							<div className="flex-grow-1 me-2 mb-2">
-								<label htmlFor="">End At</label>
+								<label htmlFor="">Name</label>
+								<input
+									type="text"
+									placeholder="Search by Name"
+									className="form-control"
+									onChange={(e) => props.setNameQuery(e.target.value)}
+								/>
+							</div>
+							{/* Name End */}
+							{/* Type */}
+							<div className="flex-grow-1 me-2 mb-2">
+								<label htmlFor="">Type</label>
 								<select
 									className="form-control"
-									onChange={(e) =>
-										props.setEndMonthQuery(
-											e.target.value == "0" ? "" : e.target.value
-										)
-									}>
-									{props.months.map((month, key) => (
+									onChange={(e) => props.setTypeQuery(e.target.value)}>
+									{[{ id: "", name: "Select Type" }]
+										.concat(props.configuration.projectTypes ?? [])
+										?.map((type, key) => (
+											<option
+												key={key}
+												value={type.id}
+												selected={key == props.type}>
+												{type.name}
+											</option>
+										))}
+								</select>
+							</div>
+							{/* Type End */}
+							{/* Location */}
+							<div className="flex-grow-1 me-2 mb-2">
+								<label htmlFor="">Location</label>
+								<input
+									type="text"
+									placeholder="Search by Location"
+									className="form-control"
+									onChange={(e) => props.setLocationQuery(e.target.value)}
+								/>
+							</div>
+							{/* Location End */}
+							{/* Client */}
+							<div className="flex-grow-1 me-2 mb-2">
+								<label htmlFor="">Client</label>
+								<select
+									className="form-control"
+									onChange={(e) => props.setClientIdQuery(e.target.value)}>
+									{[{ id: "", name: "All" }]
+										.concat(clients)
+										.map((client, key) => (
+											<option
+												key={key}
+												value={client.id}
+												selected={key == props.client}>
+												{client.name}
+											</option>
+										))}
+								</select>
+							</div>
+							{/* Client End */}
+							{/* Created By Start */}
+							<div className="flex-grow-1 me-2 mb-2">
+								<label htmlFor="">Created By</label>
+								<select
+									className="form-control"
+									onChange={(e) => props.setCreatedByQuery(e.target.value)}>
+									<option value="">All</option>
+									{staff.map((member, key) => (
 										<option
 											key={key}
-											value={key}
-											selected={key == props.endMonth}>
-											{month}
+											value={member.id}
+											selected={key == props.createdBy}>
+											{member.name}
 										</option>
 									))}
 								</select>
 							</div>
-							{/* End Month End */}
-							{/* End Year */}
-							<div className="me-2 mb-2">
-								<label
-									htmlFor=""
-									className="invisible">
-									End At
-								</label>
-								<select
-									className="form-control"
-									onChange={(e) => props.setEndYearQuery(e.target.value)}>
-									<option value="">Select Year</option>
-									{props.years.map((year, key) => (
-										<option
-											key={key}
-											value={year}
-											selected={year == props.endYear}>
-											{year}
-										</option>
-									))}
-								</select>
-							</div>
-							{/* End Year End */}
+							{/* Created By End */}
 						</div>
-						{/* End Date End */}
 					</div>
-				</div>
+
+					<div className="card shadow-sm py-2 px-4">
+						<div className="d-flex justify-content-end flex-wrap">
+							{/* Stage Start */}
+							<div className="flex-grow-1 me-2 mb-2">
+								<label htmlFor="">Stage</label>
+								<select
+									className="form-control"
+									onChange={(e) => props.setStageQuery(e.target.value)}>
+									{[{ id: "", name: "All" }]
+										.concat(props.stages)
+										?.map((stage, key) => (
+											<option
+												key={key}
+												value={stage.id}
+												selected={key == props.stage}>
+												{stage.name}
+											</option>
+										))}
+								</select>
+							</div>
+							{/* Stage End */}
+							{/* Start Date */}
+							<div className="d-flex flex-grow-1">
+								{/* Start Month */}
+								<div className="flex-grow-1 me-2 mb-2">
+									<label htmlFor="">Start At</label>
+									<select
+										className="form-control"
+										onChange={(e) =>
+											props.setStartMonthQuery(
+												e.target.value == "0" ? "" : e.target.value
+											)
+										}>
+										{props.months.map((month, key) => (
+											<option
+												key={key}
+												value={key}
+												selected={key == props.startMonth}>
+												{month}
+											</option>
+										))}
+									</select>
+								</div>
+								{/* Start Month End */}
+								{/* Start Year */}
+								<div className="flex-grow-1 me-2 mb-2">
+									<label
+										htmlFor=""
+										className="invisible">
+										Start At
+									</label>
+									<select
+										className="form-control"
+										onChange={(e) => props.setStartYearQuery(e.target.value)}>
+										<option value="">Select Year</option>
+										{props.years.map((year, key) => (
+											<option
+												key={key}
+												value={year}
+												selected={year == props.startYear}>
+												{year}
+											</option>
+										))}
+									</select>
+								</div>
+								{/* Start Year End */}
+							</div>
+							{/* Start Date End */}
+							{/* End Date */}
+							<div className="d-flex flex-grow-1">
+								{/* End Month */}
+								<div className="flex-grow-1 me-2 mb-2">
+									<label htmlFor="">End At</label>
+									<select
+										className="form-control"
+										onChange={(e) =>
+											props.setEndMonthQuery(
+												e.target.value == "0" ? "" : e.target.value
+											)
+										}>
+										{props.months.map((month, key) => (
+											<option
+												key={key}
+												value={key}
+												selected={key == props.endMonth}>
+												{month}
+											</option>
+										))}
+									</select>
+								</div>
+								{/* End Month End */}
+								{/* End Year */}
+								<div className="flex-grow-1 me-2 mb-2">
+									<label
+										htmlFor=""
+										className="invisible">
+										End At
+									</label>
+									<select
+										className="form-control"
+										onChange={(e) => props.setEndYearQuery(e.target.value)}>
+										<option value="">Select Year</option>
+										{props.years.map((year, key) => (
+											<option
+												key={key}
+												value={year}
+												selected={year == props.endYear}>
+												{year}
+											</option>
+										))}
+									</select>
+								</div>
+								{/* End Year End */}
+							</div>
+							{/* End Date End */}
+						</div>
+					</div>
+				</React.Fragment>
 			)}
 			{/* Filters End */}
 
@@ -493,7 +555,7 @@ const ProjectList = (props) => {
 					<thead>
 						{location.pathname.match("/projects") && (
 							<tr>
-								<th colSpan="8"></th>
+								<th colSpan="9"></th>
 								<th className="text-end">
 									<div className="d-flex justify-content-center">
 										<MyLink
@@ -507,6 +569,7 @@ const ProjectList = (props) => {
 						)}
 						<tr>
 							<th>#</th>
+							<th>Code</th>
 							<th>Location</th>
 							<th>Type</th>
 							<th>Client</th>
@@ -519,6 +582,7 @@ const ProjectList = (props) => {
 						</tr>
 						{props.projects.data?.map((project, key) => (
 							<tr key={key}>
+								<td>{props.iterator(key, props.projects)}</td>
 								<td>{project.code}</td>
 								<td>{project.location}</td>
 								<td className="text-capitalize">{project.type}</td>

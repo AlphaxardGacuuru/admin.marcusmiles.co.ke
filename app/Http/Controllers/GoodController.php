@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\GoodResource;
 use App\Http\Services\GoodService;
 use App\Models\Good;
 use Illuminate\Http\Request;
@@ -20,7 +21,12 @@ class GoodController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->service->index($request);
+        [$saved, $message, $goods] = $this->service->index($request);
+
+        return GoodResource::collection($goods)->additional([
+            "status" => $saved,
+            "message" => $message,
+        ]);
     }
 
     /**
@@ -38,11 +44,10 @@ class GoodController extends Controller
 
         [$saved, $message, $good] = $this->service->store($request);
 
-        return response([
+        return (new GoodResource($good))->additional([
             "status" => $saved,
             "message" => $message,
-            "data" => $good,
-        ], 200);
+        ]);
     }
 
     /**
@@ -53,7 +58,12 @@ class GoodController extends Controller
      */
     public function show($id)
     {
-        return $this->service->show($id);
+        [$saved, $message, $good] = $this->service->show($id);
+
+        return (new GoodResource($good))->additional([
+            "status" => $saved,
+            "message" => $message,
+        ]);
     }
 
     /**
@@ -72,11 +82,10 @@ class GoodController extends Controller
 
         [$saved, $message, $good] = $this->service->update($request, $id);
 
-        return response([
+        return (new GoodResource($good))->additional([
             "status" => $saved,
             "message" => $message,
-            "data" => $good,
-        ], 200);
+        ]);
     }
 
     /**
@@ -89,10 +98,9 @@ class GoodController extends Controller
     {
         [$deleted, $message, $good] = $this->service->destroy($id);
 
-        return response([
+        return (new GoodResource($good))->additional([
             "status" => $deleted,
             "message" => $message,
-            "data" => $good,
-        ], 200);
+        ]);
     }
 }

@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ServiceProviderResource;
+use App\Http\Services\Service;
 use App\Http\Services\ServiceProviderService;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -20,7 +22,12 @@ class ServiceProviderController extends Controller
      */
     public function index(Request $request)
     {
-        return $this->service->index($request);
+        [$status, $message, $serviceProviders] = $this->service->index($request);
+
+        return ServiceProviderResource::collection($serviceProviders)->additional([
+            "status" => $status,
+            "message" => $message,
+        ]);
     }
 
     /**
@@ -40,11 +47,10 @@ class ServiceProviderController extends Controller
 
         [$saved, $message, $serviceProvider] = $this->service->store($request);
 
-        return response([
+        return (new ServiceProviderResource($serviceProvider))->additional([
             "status" => $saved,
             "message" => $message,
-            "data" => $serviceProvider,
-        ], 200);
+        ]);
     }
 
     /**
@@ -55,7 +61,12 @@ class ServiceProviderController extends Controller
      */
     public function show($id)
     {
-        return $this->service->show($id);
+        [$status, $message, $serviceProvider] = $this->service->show($id);
+
+        return (new ServiceProviderResource($serviceProvider))->additional([
+            "status" => $status,
+            "message" => $message,
+        ]);
     }
 
     /**
@@ -76,11 +87,10 @@ class ServiceProviderController extends Controller
 
         [$saved, $message, $serviceProvider] = $this->service->update($request, $id);
 
-        return response([
+        return (new ServiceProviderResource($serviceProvider))->additional([
             "status" => $saved,
             "message" => $message,
-            "data" => $serviceProvider,
-        ], 200);
+        ]);
     }
 
     /**
@@ -93,10 +103,9 @@ class ServiceProviderController extends Controller
     {
         [$deleted, $message, $serviceProvider] = $this->service->destroy($id);
 
-        return response([
+        return (new ServiceProviderResource($serviceProvider))->additional([
             "status" => $deleted,
             "message" => $message,
-            "data" => $serviceProvider,
-        ], 200);
+        ]);
     }
 }

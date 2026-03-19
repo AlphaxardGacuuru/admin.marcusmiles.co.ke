@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { useLocation } from "react-router-dom/cjs/react-router-dom.min"
 
 import MyLink from "@/components/Core/MyLink"
@@ -17,6 +17,14 @@ import EditSVG from "@/svgs/EditSVG"
 import PlusSVG from "@/svgs/PlusSVG"
 
 const GoodList = (props) => {
+	const [staff, setStaff] = useState(props.getLocalStorage("staffShortList"))
+	console.info("Staff", staff)
+
+	useEffect(() => {
+		// Fetch Staff
+		props.get(`staff?idAndName=true`, setStaff, "staffShortList")
+	}, [])
+
 	/*
 	 * Delete Good
 	 */
@@ -61,18 +69,51 @@ const GoodList = (props) => {
 			{/* Filters */}
 			<div className="card shadow-sm p-4">
 				<div className="d-flex flex-wrap">
+					{/* Code */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="code">Code</label>
+						<input
+							id="code"
+							type="text"
+							name="code"
+							placeholder="Search by Code"
+							className="form-control"
+							onChange={(e) => props.setCodeQuery(e.target.value)}
+						/>
+					</div>
+					{/* Code End */}
 					{/* Name */}
 					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="name">Name</label>
 						<input
-							id=""
+							id="name"
 							type="text"
 							name="name"
-							placeholder="Search by Name or Item No"
+							placeholder="Search by Name"
 							className="form-control"
 							onChange={(e) => props.setNameQuery(e.target.value)}
 						/>
 					</div>
 					{/* Name End */}
+					{/* Created By Start */}
+					<div className="flex-grow-1 me-2 mb-2">
+						<label htmlFor="createdBy">Created By</label>
+						<select
+							id="createdBy"
+							name="createdBy"
+							className="form-control"
+							onChange={(e) => props.setCreatedByQuery(e.target.value)}>
+							<option value="">All</option>
+							{staff.map((staffMember, key) => (
+								<option
+									key={key}
+									value={staffMember.id}>
+									{staffMember.name}
+								</option>
+							))}
+						</select>
+					</div>
+					{/* Created By End */}
 				</div>
 			</div>
 			{/* Filters End */}
