@@ -43,6 +43,7 @@ class ProjectController extends Controller
             "description" => "nullable|string|max:255",
             "location" => "required|string",
             "clientId" => "required|string",
+            "createFolder" => "nullable|boolean",
         ]);
 
         [$saved, $message, $project] = $this->service->store($request);
@@ -80,6 +81,7 @@ class ProjectController extends Controller
             "description" => "nullable|string|max:255",
             "location" => "nullable|string",
             "clientId" => "nullable|string",
+            "createFolder" => "nullable|boolean",
         ]);
 
         [$saved, $message, $project] = $this->service->update($request, $id);

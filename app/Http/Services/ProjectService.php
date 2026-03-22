@@ -62,7 +62,9 @@ class ProjectService extends Service
         $project->client_id = $request->clientId;
         $project->created_by = $this->id;
 
-        $saved = DB::transaction(function () use ($project) {
+        $message = $project->name . " Created Successfully";
+
+        [$saved, $message] = DB::transaction(function () use ($project, $request, $message) {
             $project->save();
 
             // Create initial project stage
@@ -76,27 +78,17 @@ class ProjectService extends Service
             $projectStage->created_by = $this->id;
             $saved = $projectStage->save();
 
-            // Create Google Drive folder for the project
-            try {
-                // This creates a folder inside your master folder on google drive
-                $disk = Storage::disk('google');
+            if ($request->createFolder) {
+                $folderId = $this->createGoogleDriveFolder($project);
 
-                $disk->makeDirectory($project->code);
+                $project->drive_folder_id = $folderId;
+                $project->save();
 
-                $metadata = $disk->getAdapter()->getMetadata($project->code);
-
-                $folderId = $metadata->extraMetadata()['id'] ?? null;
-
-                if ($folderId) {
-                    $project->drive_folder_id = $folderId;
-                    $project->save();
-                }
-            } catch (Exception $e) {
-                Log::error('Failed to create Google Drive folder for project ' . $project->name . ': ' . $e->getMessage());
+                $message .= " and Google Drive Folder Created Successfully";
             }
-        });
 
-        $message = $project->name . " Created Successfully";
+            return [$saved, $message];
+        });
 
         return [$saved, $message, $project];
     }
@@ -107,6 +99,8 @@ class ProjectService extends Service
     public function update($request, $id)
     {
         $project = Project::find($id);
+
+        $message = $project->name . " Updated Successfully";
 
         if ($request->filled("name")) {
             $project->name = $request->name;
@@ -132,9 +126,15 @@ class ProjectService extends Service
             $projectStage->save();
         }
 
-        $saved = $project->save();
+        if ($request->createFolder) {
+            $folderId = $this->createGoogleDriveFolder($project);
 
-        $message = $project->name . " Updated Successfully";
+            $project->drive_folder_id = $folderId;
+
+            $message .= " and Google Drive Folder Created Successfully";
+        }
+
+        $saved = $project->save();
 
         return [$saved, $message, $project];
     }
@@ -222,5 +222,27 @@ class ProjectService extends Service
         }
 
         return $query;
+    }
+
+    /**
+     * Create Google Drive folder for the given project
+     */
+    protected function createGoogleDriveFolder(Project $project)
+    {
+        try {
+            // This creates a folder inside your master folder on google drive
+            $disk = Storage::disk('google');
+
+            $disk->makeDirectory($project->code);
+
+            $metadata = $disk->getAdapter()->getMetadata($project->code);
+
+            $folderId = $metadata->extraMetadata()['id'] ?? null;
+
+            return $folderId;
+        } catch (Exception $e) {
+            Log::error('Failed to create Google Drive folder for project ' . $project->name . ': ' . $e->getMessage());
+            throw $e;
+        }
     }
 }

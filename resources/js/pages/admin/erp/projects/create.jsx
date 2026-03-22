@@ -16,6 +16,7 @@ const create = (props) => {
 	const [description, setDescription] = useState()
 	const [location, setLocation] = useState()
 	const [clientId, setClientId] = useState()
+	const [createFolder, setCreateFolder] = useState(true)
 	const [loading, setLoading] = useState()
 
 	const [clients, setClients] = useState([])
@@ -44,6 +45,7 @@ const create = (props) => {
 			description: description,
 			location: location,
 			clientId: clientId,
+			createFolder: createFolder,
 		})
 			.then((res) => {
 				setLoading(false)
@@ -148,7 +150,7 @@ const create = (props) => {
 						{/* Create Client End */}
 					</div>
 					<select
-						className="form-control mb-2"
+						className="form-control mb-4"
 						onChange={(e) => setClientId(e.target.value)}
 						required={true}>
 						{[{ id: "", name: "Select Client" }]
@@ -162,6 +164,23 @@ const create = (props) => {
 							))}
 					</select>
 					{/* Client ID End */}
+
+					{/* Create Folder Start */}
+					<div className="form-check form-switch ms-3 mb-2">
+						<input
+							type="checkbox"
+							className="form-check-input"
+							id="createFolder"
+							checked={createFolder}
+							onChange={(e) => setCreateFolder(e.target.checked)}
+						/>
+						<label
+							className="form-check-label"
+							htmlFor="createFolder">
+							Create Folder
+						</label>
+					</div>
+					{/* Create Folder End */}
 
 					<div className="d-flex justify-content-end mb-2">
 						<Btn

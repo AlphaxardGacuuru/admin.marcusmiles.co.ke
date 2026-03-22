@@ -150,11 +150,6 @@ const AdminNavLinks = (props) => {
 					name: "Clients",
 				},
 				{
-					link: "/admin/crm/client-tracking",
-					icon: <ClientTrackingSVG />,
-					name: "Client Tracking",
-				},
-				{
 					link: "/admin/crm/quotations",
 					icon: <QuotationSVG />,
 					name: "Quotations",

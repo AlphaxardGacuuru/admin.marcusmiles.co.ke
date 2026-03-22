@@ -28,7 +28,7 @@ const Btn = ({
 	return (
 		<button
 			style={btnStyle}
-			className={`mysonar-btn btn-2 ${className}`}
+			className={`mysonar-btn btn-2 d-flex align-items-center ${className}`}
 			onClick={onClick}
 			disabled={loading}
 			data-bs-toggle={dataBsToggle}

@@ -15,9 +15,10 @@ const edit = (props) => {
 
 	const [project, setProject] = useState({})
 	const [name, setName] = useState()
-	const [type, setType] = useState({})
+	const [type, setType] = useState()
 	const [description, setDescription] = useState()
 	const [location, setLocation] = useState()
+	const [createFolder, setCreateFolder] = useState(false)
 
 	const [loading, setLoading] = useState()
 
@@ -45,6 +46,7 @@ const edit = (props) => {
 			type: type,
 			description: description,
 			location: location,
+			createFolder: createFolder,
 		})
 			.then((res) => {
 				setLoading(false)
@@ -111,11 +113,26 @@ const edit = (props) => {
 					<input
 						type="text"
 						defaultValue={project.location}
-						className="form-control me-2 mb-2"
+						className="form-control me-2 mb-4"
 						onChange={(e) => setLocation(e.target.value)}
 						required={true}
 					/>
 					{/* Location End */}
+
+					{/* Create Folder Start */}
+					<div className="form-check form-switch ms-3 mb-2">
+						<input
+							type="checkbox"
+							className="form-check-input"
+							id="createFolder"
+							checked={createFolder}
+							onChange={(e) => setCreateFolder(e.target.checked)}
+						/>
+						<label className="form-check-label" htmlFor="createFolder">
+							Create Google Drive Folder
+						</label>
+					</div>
+					{/* Create Folder End */}
 
 					<div className="d-flex justify-content-end mb-2">
 						<Btn
