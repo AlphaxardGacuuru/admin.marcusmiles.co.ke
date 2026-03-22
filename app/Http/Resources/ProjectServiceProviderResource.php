@@ -31,7 +31,7 @@ class ProjectServiceProviderResource extends JsonResource
 			"projectCreatedAt" => $this->project->createdAt,
 			"labourRate" => $this->labour_rate,
 			"quantityOfWork" => $this->quantity_of_work,
-			"totalAmount" => $this->total_amount,
+			"totalAmount" => number_format($this->total_amount),
 			"service" => $this->service,
 			"status" => $this->status,
 			"startDate" => $this->start_date,
