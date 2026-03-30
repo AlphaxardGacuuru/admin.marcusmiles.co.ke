@@ -231,7 +231,7 @@ const create = (props) => {
 										onChange={handleInputChange}></textarea>
 								</div>
 
-								<div className="mt-4 text-end">
+								<div className="d-flex justify-content-end mt-4">
 									<Btn
 										text="Create Order"
 										onClick={handleSubmit}

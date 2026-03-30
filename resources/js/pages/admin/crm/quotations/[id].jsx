@@ -1,5 +1,8 @@
 import React, { useEffect, useState } from "react"
-import { useParams } from "react-router-dom/cjs/react-router-dom.min"
+import {
+	useHistory,
+	useParams,
+} from "react-router-dom/cjs/react-router-dom.min"
 
 import MyLink from "@/components/Core/MyLink"
 import Btn from "@/components/Core/Btn"
@@ -9,8 +12,10 @@ import PrintSVG from "@/svgs/PrintSVG"
 
 const show = (props) => {
 	var { id } = useParams()
+	const history = useHistory()
 
 	const [quotation, setQuotation] = useState({})
+	const [generatingInvoice, setGeneratingInvoice] = useState(false)
 
 	useEffect(() => {
 		// Set page
@@ -34,10 +39,39 @@ const show = (props) => {
 		window.location.reload()
 	}
 
+	/*
+	 * Generate Invoice
+	 */
+	const generateInvoice = (e) => {
+		e.preventDefault()
+		setGeneratingInvoice(true)
+
+		Axios.post(`/api/quotations/${id}/generate-invoice`)
+			.then((res) => {
+				setGeneratingInvoice(false)
+				props.setMessages([res.data.message])
+
+				const invoiceId = res.data?.data?.id
+				if (invoiceId) {
+					history.push(`/admin/crm/invoices/${invoiceId}/view`)
+				}
+			})
+			.catch((err) => {
+				setGeneratingInvoice(false)
+				props.getErrors(err)
+			})
+	}
+
 	return (
 		<React.Fragment>
 			{/*Create Link*/}
 			<div className="d-flex justify-content-end mb-4">
+				<Btn
+					className="me-2"
+					text="Generate Invoice"
+					onClick={generateInvoice}
+					loading={generatingInvoice}
+				/>
 				<Btn
 					className="me-5"
 					icon={<PrintSVG />}

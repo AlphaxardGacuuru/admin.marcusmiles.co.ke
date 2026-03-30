@@ -14,6 +14,7 @@ const edit = (props) => {
 		issueDate: new Date().toISOString().split("T")[0],
 		expiryDate: new Date().toISOString().split("T")[0],
 		notes: "",
+		tax: 16,
 		items: [{ description: "", quantity: 1, rate: 0, total: 0 }],
 		total: 0,
 	})
@@ -39,6 +40,7 @@ const edit = (props) => {
 					issueDate: data.issueDateFormatted,
 					expiryDate: data.expiryDateFormatted,
 					notes: data.notes || "",
+					tax: data.tax || 16,
 					items:
 						data.items && data.items.length > 0
 							? data.items.map((item) => ({
@@ -92,8 +94,10 @@ const edit = (props) => {
 		(sum, item) => sum + Number(item.total),
 		0
 	)
-	const grandTotal = subtotal
 
+	const taxRate = Number(quotation.tax || 0) / 100
+	const taxAmount = subtotal * taxRate
+	const grandTotal = subtotal + taxAmount
 	const handleSubmit = (e) => {
 		e.preventDefault()
 
@@ -240,9 +244,25 @@ const edit = (props) => {
 								{/* Summary & Totals */}
 								<div className="row justify-content-end">
 									<div className="col-md-4">
+										<div className="mb-2">
+											<label className="form-label mb-1">Tax (%)</label>
+											<input
+												type="number"
+												name="tax"
+												className="form-control"
+												min="0"
+												step="0.01"
+												value={quotation.tax}
+												onChange={handleInputChange}
+											/>
+										</div>
 										<div className="d-flex justify-content-between mb-2">
 											<span>Subtotal:</span>
 											<span>KES {subtotal.toLocaleString()}</span>
+										</div>
+										<div className="d-flex justify-content-between mb-2">
+											<span>Tax ({Number(quotation.tax || 0)}%):</span>
+											<span>KES {taxAmount.toLocaleString()}</span>
 										</div>
 										<hr />
 										<div className="d-flex justify-content-between h5">
@@ -263,7 +283,7 @@ const edit = (props) => {
 										onChange={handleInputChange}></textarea>
 								</div>
 
-								<div className="mt-4 text-end">
+								<div className="d-flex justify-content-end mt-4">
 									<Btn
 										text="Update Quotation"
 										onClick={handleSubmit}

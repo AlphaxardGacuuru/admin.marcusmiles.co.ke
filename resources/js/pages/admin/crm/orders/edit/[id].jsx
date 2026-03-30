@@ -237,16 +237,12 @@ const edit = (props) => {
 									<div className="col-md-4">
 										<div className="d-flex justify-content-between mb-2">
 											<span>Subtotal:</span>
-											<span>
-												KES {subtotal.toLocaleString()}
-											</span>
+											<span>KES {subtotal.toLocaleString()}</span>
 										</div>
 										<hr />
 										<div className="d-flex justify-content-between h5">
 											<strong>Total:</strong>
-											<strong>
-												KES {grandTotal.toLocaleString()}
-											</strong>
+											<strong>KES {grandTotal.toLocaleString()}</strong>
 										</div>
 									</div>
 								</div>
@@ -262,7 +258,7 @@ const edit = (props) => {
 										onChange={handleInputChange}></textarea>
 								</div>
 
-								<div className="mt-4 text-end">
+								<div className="d-flex justify-content-end mt-4">
 									<Btn
 										text="Update Order"
 										onClick={handleSubmit}

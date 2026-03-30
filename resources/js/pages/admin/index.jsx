@@ -9,35 +9,74 @@ import Pie from "@/components/Charts/Pie"
 import ChartBox from "@/components/Core/ChartBox"
 
 import ProjectSVG from "@/svgs/ProjectSVG"
+import IssueSVG from "@/svgs/IssueSVG"
 import MoneySVG from "@/svgs/MoneySVG"
 import ProductSVG from "@/svgs/ProductSVG"
+import PersonSVG from "@/svgs/PersonSVG"
+import InvoiceSVG from "@/svgs/InvoiceSVG"
 import PeopleSVG from "@/svgs/PeopleSVG"
-import { Link } from "react-router-dom/cjs/react-router-dom.min"
+import PaymentSVG from "@/svgs/PaymentSVG"
+import CreditNoteSVG from "@/svgs/CreditNoteSVG"
 
 const index = (props) => {
-	const [propertyId, setPropertyId] = useState(
-		props.auth.propertyIds?.length ? props.auth.propertyIds : [0]
+	const [projectsDashboard, setProjectsDashboard] = useState(
+		props.getLocalStorage("projectsDashboard", {})
 	)
-
-	const [dashboard, setDashboard] = useState(props.getLocalStorage("dashboard"))
-	const [dashboardProperties, setDashboardProperties] = useState(
-		props.getLocalStorage("dashboardProperties")
+	const [inventoriesDashboard, setInventoriesDashboard] = useState(
+		props.getLocalStorage("inventoriesDashboard", {})
 	)
-	const [staff, setStaff] = useState([])
-	const [payments, setPayments] = useState([])
+	const [issuesDashboard, setIssuesDashboard] = useState(
+		props.getLocalStorage("issuesDashboard", {})
+	)
+	const [clientsDashboard, setClientsDashboard] = useState(
+		props.getLocalStorage("clientsDashboard", {})
+	)
+	const [quotationsDashboard, setQuotationsDashboard] = useState(
+		props.getLocalStorage("quotationsDashboard", {})
+	)
+	const [invoicesDashboard, setInvoicesDashboard] = useState(
+		props.getLocalStorage("invoicesDashboard", {})
+	)
+	const [paymentsDashboard, setPaymentsDashboard] = useState(
+		props.getLocalStorage("paymentsDashboard", {})
+	)
+	const [creditNotesDashboard, setCreditNotesDashboard] = useState(
+		props.getLocalStorage("creditNotesDashboard", {})
+	)
 
 	useEffect(() => {
 		// Set page
-		props.setPage({ name: "Dashboard", path: ["/dashboard"] })
+		props.setPage({ name: "Dashboard", path: ["erp/dashboard"] })
 
 		// Fetch Dashboard
-		Axios.get(`api/dashboard/1,2,3,4,5`)
+		Axios.get(`api/dashboard/erp`)
 			.then((res) => {
 				// Reset Data
-				setDashboard([])
+				setProjectsDashboard([])
+				setInventoriesDashboard([])
+				setIssuesDashboard([])
 
-				setDashboard(res.data.data)
-				props.setLocalStorage("dashboard", res.data.data)
+				setProjectsDashboard(res.data.data.projects)
+				setInventoriesDashboard(res.data.data.inventories)
+				setIssuesDashboard(res.data.data.issues)
+			})
+			.catch(() => props.setErrors(["Failed to fetch Dashboard"]))
+
+		// Fetch Dashboard
+		Axios.get(`api/dashboard/crm`)
+			.then((res) => {
+				// Reset Data
+				setClientsDashboard([])
+				setQuotationsDashboard([])
+				setInvoicesDashboard([])
+				setPaymentsDashboard([])
+				setCreditNotesDashboard([])
+
+				setClientsDashboard(res.data.data.clients)
+				setQuotationsDashboard(res.data.data.quotations)
+				setInvoicesDashboard(res.data.data.invoices)
+				setPaymentsDashboard(res.data.data.payments)
+				setCreditNotesDashboard(res.data.data.creditNotes)
 			})
 			.catch(() => props.setErrors(["Failed to fetch Dashboard"]))
 	}, [])
@@ -46,152 +85,187 @@ const index = (props) => {
 	 * Graph Data
 	 */
 
-	var lineGraphLeads = [
-		{
-			label: "Last Week",
-			data: [10, 30, 40, 50, 10, 40, 30],
-			backgroundColor: "rgba(54, 162, 235, 1)",
-			borderColor: "rgba(54, 162, 235, 1)",
-			// borderWidth: 1,
-		},
-	]
-
-	var lineGraphRevenue = [
-		{
-			label: "Last Week",
-			data: [30, 20, 40, 40, 40, 20, 30],
-			backgroundColor: "rgba(40, 167, 69, 1)",
-			borderColor: "rgba(40, 167, 69, 1)",
-			// borderWidth: 1,
-		},
-	]
-
 	var lineGraphProjects = [
 		{
-			label: "Last Week",
-			data: [10, 20, 30, 40, 10, 20, 30],
+			label: "Last 7 Days",
+			data: projectsDashboard.chartBox?.data,
 			backgroundColor: "rgba(153, 102, 255, 1)",
 			borderColor: "rgba(153, 102, 255, 1)",
 			// borderWidth: 1,
 		},
 	]
 
-	var lineGraphTasks = [
+	var lineGraphInventories = [
 		{
-			label: "Last Week",
-			data: [40, 40, 30, 40, 40, 20, 40],
+			label: "Last 7 days",
+			data: inventoriesDashboard.chartBox?.data,
+			backgroundColor: "rgba(54, 162, 235, 1)",
+			borderColor: "rgba(54, 162, 235, 1)",
+			// borderWidth: 1,
+		},
+	]
+
+	var lineGraphIssues = [
+		{
+			label: "Last 7 Days",
+			data: issuesDashboard.chartBox?.data,
 			backgroundColor: "rgba(220, 53, 69, 1)",
 			borderColor: "rgba(220, 53, 69, 1)",
 			// borderWidth: 1,
 		},
 	]
 
-	var barGraphLeads = [
+	var lineGraphClients = [
 		{
-			label: " Revenue",
-			data: dashboard.rent?.paidThisYear?.data,
+			label: "Last 7 Days",
+			data: clientsDashboard.chartBox?.data,
+			backgroundColor: "rgba(153, 102, 255, 1)",
+			borderColor: "rgba(153, 102, 255, 1)",
+			// borderWidth: 1,
+		},
+	]
+
+	var lineGraphQuotations = [
+		{
+			label: "Last 7 days",
+			data: quotationsDashboard.chartBox?.data,
+			backgroundColor: "rgba(54, 162, 235, 1)",
+			borderColor: "rgba(54, 162, 235, 1)",
+			// borderWidth: 1,
+		},
+	]
+
+	var lineGraphInvoices = [
+		{
+			label: "Last 7 Days",
+			data: invoicesDashboard.chartBox?.data,
+			backgroundColor: "rgba(220, 53, 69, 1)",
+			borderColor: "rgba(220, 53, 69, 1)",
+			// borderWidth: 1,
+		},
+	]
+
+	var lineGraphPayments = [
+		{
+			label: "Last 7 Days",
+			data: paymentsDashboard.chartBox?.data,
 			backgroundColor: "rgba(40, 167, 69, 1)",
-			borderColor: "rgba(255, 255, 255, 1)",
-			borderWidth: 2,
-			borderRadius: "0",
-			barThickness: "25",
-			stack: "Stack 1",
+			borderColor: "rgba(40, 167, 69, 1)",
+			// borderWidth: 1,
 		},
+	]
+
+	var lineGraphCreditNotes = [
 		{
-			label: " Revenue Due",
-			data: dashboard.rent?.unpaidThisYear?.data,
-			backgroundColor: "rgba(40, 167, 69, 0.5)",
-			borderColor: "rgba(255, 255, 255, 1)",
-			borderWidth: 2,
-			borderRadius: "0",
-			barThickness: "25",
-			stack: "Stack 1",
+			label: "Last 7 Days",
+			data: creditNotesDashboard.chartBox?.data,
+			backgroundColor: "rgba(253, 126, 20, 1)",
+			borderColor: "rgba(253, 126, 20, 1)",
+			// borderWidth: 1,
 		},
+	]
+
+	var barGraphProjects = [
 		{
-			label: " Leads",
-			data: dashboard.water?.paidThisYear?.data,
+			label: "Projects this month",
+			data: projectsDashboard.projectsThisYear?.data,
 			backgroundColor: "rgba(54, 162, 235, 1)",
 			borderColor: "rgba(255, 255, 255, 1)",
 			borderWidth: 2,
 			borderRadius: "0",
-			barThickness: "25",
-			stack: "Stack 2",
+			barThickness: "50",
+			stack: "Stack 0",
 		},
+	]
+
+	var barGraphInventories = [
 		{
-			label: " Leads Lost",
-			data: dashboard.water?.unpaidThisYear?.data,
-			backgroundColor: "rgba(54, 162, 235, 0.5)",
+			label: "Inventory this month",
+			data: inventoriesDashboard.inventoriesThisYear?.data,
+			backgroundColor: "rgba(40, 167, 69, 1)",
 			borderColor: "rgba(255, 255, 255, 1)",
 			borderWidth: 2,
 			borderRadius: "0",
-			barThickness: "25",
-			stack: "Stack 2",
+			barThickness: "50",
+			stack: "Stack 1",
 		},
+	]
+
+	var barGraphIssues = [
 		{
-			label: " Completed Tasks",
-			data: dashboard.serviceCharge?.paidThisYear?.data,
+			label: "Issues this month",
+			data: issuesDashboard.issuesThisYear?.data,
 			backgroundColor: "rgba(220, 53, 69, 1)",
 			borderColor: "rgba(255, 255, 255, 1)",
 			borderWidth: 2,
 			borderRadius: "0",
-			barThickness: "25",
-			stack: "Stack 3",
+			barThickness: "50",
+			stack: "Stack 2",
 		},
+	]
+
+	var barGraphClients = [
 		{
-			label: " Uncompleted Tasks",
-			data: dashboard.serviceCharge?.unpaidThisYear?.data,
-			backgroundColor: "rgba(220, 53, 69, 0.5)",
+			label: "Clients this month",
+			data: clientsDashboard.clientsThisYear?.data,
+			backgroundColor: "rgba(54, 162, 235, 1)",
 			borderColor: "rgba(255, 255, 255, 1)",
 			borderWidth: 2,
 			borderRadius: "0",
-			barThickness: "25",
+			barThickness: "50",
+			stack: "Stack 0",
+		},
+	]
+
+	var barGraphQuotations = [
+		{
+			label: "Quotations this month",
+			data: quotationsDashboard.quotationsThisYear?.data,
+			backgroundColor: "rgba(40, 167, 69, 1)",
+			borderColor: "rgba(255, 255, 255, 1)",
+			borderWidth: 2,
+			borderRadius: "0",
+			barThickness: "50",
+			stack: "Stack 1",
+		},
+	]
+
+	var barGraphInvoices = [
+		{
+			label: "Invoices this month",
+			data: invoicesDashboard.invoicesThisYear?.data,
+			backgroundColor: "rgba(220, 53, 69, 1)",
+			borderColor: "rgba(255, 255, 255, 1)",
+			borderWidth: 2,
+			borderRadius: "0",
+			barThickness: "50",
+			stack: "Stack 2",
+		},
+	]
+
+	var barGraphPayments = [
+		{
+			label: "Payments this month",
+			data: paymentsDashboard.paymentsThisYear?.data,
+			backgroundColor: "rgba(40, 167, 69, 1)",
+			borderColor: "rgba(255, 255, 255, 1)",
+			borderWidth: 2,
+			borderRadius: "0",
+			barThickness: "50",
 			stack: "Stack 3",
 		},
 	]
 
-	var doughnutRent = [
+	var barGraphCreditNotes = [
 		{
-			label: " KES",
-			data: [
-				dashboard.rent?.paid,
-				dashboard.rent?.percentage > 100 ? 0 : dashboard.rent?.due,
-			],
-			backgroundColor: ["rgba(40, 167, 69, 1)", "rgba(40, 167, 69, 0.5)"],
-		},
-	]
-
-	var doughnutLeads = [
-		{
-			label: " KES",
-			data: [
-				dashboard.water?.paid,
-				dashboard.water?.percentage > 100 ? 0 : dashboard.water?.due,
-			],
-			backgroundColor: ["rgba(54, 162, 235, 1)", "rgba(54, 162, 235, 0.5)"],
-		},
-	]
-
-	var doughnutTasks = [
-		{
-			label: " KES",
-			data: [
-				dashboard.serviceCharge?.paid,
-				dashboard.serviceCharge?.percentage > 100
-					? 0
-					: dashboard.serviceCharge?.due,
-			],
-			backgroundColor: ["rgba(220, 53, 69, 1)", "rgba(220, 53, 69, 0.5)"],
-		},
-	]
-
-	var pieWaterUsage = [
-		{
-			label: " KES",
-			data: [
-				dashboard.water?.usageTwoMonthsAgo,
-				dashboard.water?.usageLastMonth,
-			],
-			backgroundColor: ["rgba(255, 99, 132, 1)", "rgba(75, 192, 192, 1)"],
+			label: "Credit Notes this month",
+			data: creditNotesDashboard.creditNotesThisYear?.data,
+			backgroundColor: "rgba(253, 126, 20, 1)",
+			borderColor: "rgba(255, 255, 255, 1)",
+			borderWidth: 2,
+			borderRadius: "0",
+			barThickness: "50",
+			stack: "Stack 4",
 		},
 	]
 
@@ -200,143 +274,134 @@ const index = (props) => {
 			<div className="row">
 				<div className="col-sm-12">
 					<div className="d-flex flex-wrap justify-content-start">
-						<ChartBox
-							title={"Leads"}
-							total={10}
-							icon={<PeopleSVG />}
-							growth={-1}
-							data={lineGraphLeads}
-							datasets={lineGraphLeads}
-						/>
-						<ChartBox
-							title={"Revenue"}
-							total={10}
-							icon={<MoneySVG />}
-							growth={5}
-							data={lineGraphRevenue}
-							datasets={lineGraphRevenue}
-						/>
-						<ChartBox
-							title={"Projects"}
-							total={10}
-							icon={<PeopleSVG />}
-							growth={4}
-							data={lineGraphProjects}
-							datasets={lineGraphProjects}
-						/>
-						<ChartBox
-							title={"Tasks"}
-							total={10}
-							icon={<MoneySVG />}
-							growth={0}
-							data={lineGraphTasks}
-							datasets={lineGraphTasks}
-						/>
-					</div>
-				</div>
-			</div>
-
-			{/* Leads Start */}
-			<div className="row">
-				<div className="col-sm-8">
-					<h4 className="my-3">This month</h4>
-					<div className="card shadow-sm hidden-scroll">
-						{dashboard.rent && (
-							<Bar
-								labels={dashboard.rent?.paidThisYear.labels}
-								datasets={barGraphLeads}
+						{lineGraphProjects[0].data && (
+							<ChartBox
+								link="/admin/erp/projects"
+								title={"Projects"}
+								total={projectsDashboard.chartBox?.total || 0}
+								icon={<ProjectSVG />}
+								growth={projectsDashboard.chartBox?.growth || 0}
+								data={lineGraphProjects}
+								datasets={lineGraphProjects}
+							/>
+						)}
+						{lineGraphInventories[0].data && (
+							<ChartBox
+								link="/admin/erp/inventories"
+								title={"Inventory"}
+								total={inventoriesDashboard.chartBox?.total || 0}
+								icon={<PeopleSVG />}
+								growth={inventoriesDashboard.chartBox?.growth || 0}
+								data={lineGraphInventories}
+								datasets={lineGraphInventories}
+							/>
+						)}
+						{lineGraphIssues[0].data && (
+							<ChartBox
+								link="/admin/erp/issues"
+								title={"Tasks"}
+								total={issuesDashboard.chartBox?.total || 0}
+								icon={<IssueSVG />}
+								growth={issuesDashboard.chartBox?.growth || 0}
+								data={lineGraphIssues}
+								datasets={lineGraphIssues}
+							/>
+						)}
+						{lineGraphClients[0].data && (
+							<ChartBox
+								link="/admin/crm/clients"
+								title={"Clients"}
+								total={clientsDashboard.chartBox?.total || 0}
+								icon={<PersonSVG />}
+								growth={clientsDashboard.chartBox?.growth || 0}
+								data={lineGraphClients}
+								datasets={lineGraphClients}
+							/>
+						)}
+						{lineGraphQuotations[0].data && (
+							<ChartBox
+								link="/admin/crm/quotations"
+								title={"Quotations"}
+								total={quotationsDashboard.chartBox?.total || 0}
+								icon={<PeopleSVG />}
+								growth={quotationsDashboard.chartBox?.growth || 0}
+								data={lineGraphQuotations}
+								datasets={lineGraphQuotations}
+							/>
+						)}
+						{lineGraphInvoices[0].data && (
+							<ChartBox
+								link="/admin/crm/invoices"
+								title={"Invoices"}
+								total={invoicesDashboard.chartBox?.total || 0}
+								icon={<InvoiceSVG />}
+								growth={invoicesDashboard.chartBox?.growth || 0}
+								data={lineGraphInvoices}
+								datasets={lineGraphInvoices}
+							/>
+						)}
+						{lineGraphPayments[0].data && (
+							<ChartBox
+								link="/admin/crm/payments"
+								title={"Payments"}
+								total={paymentsDashboard.chartBox?.total || 0}
+								icon={<PaymentSVG />}
+								growth={paymentsDashboard.chartBox?.growth || 0}
+								data={lineGraphPayments}
+								datasets={lineGraphPayments}
+							/>
+						)}
+						{lineGraphCreditNotes[0].data && (
+							<ChartBox
+								link="/admin/crm/credit-notes"
+								title={"Credit Notes"}
+								total={creditNotesDashboard.chartBox?.total || 0}
+								icon={<CreditNoteSVG />}
+								growth={creditNotesDashboard.chartBox?.growth || 0}
+								data={lineGraphCreditNotes}
+								datasets={lineGraphCreditNotes}
 							/>
 						)}
 					</div>
 				</div>
-				<div className="col-sm-4">
+			</div>
+
+			{/* Bar Start */}
+			<div className="row">
+				<div className="col-sm-6">
 					<h4 className="my-3">This month</h4>
-					<div className="d-flex justify-content-between flex-wrap">
-						{/* Revenue Doughnut */}
-						<div className="card shadow-sm text-center me-2 mb-2">
-							<div className="middle3">
-								<h3>
-									{dashboard.rent?.percentage}
-									<small className="fs-6">%</small>
-								</h3>
-							</div>
-							{dashboard.rent && (
-								<Doughnut
-									labels={["Revenue", "Revenue Due"]}
-									datasets={doughnutRent}
-									cutout="60%"
-									size="12.5em"
-								/>
-							)}
-							<div className="d-flex justify-content-center pb-3">
-								<h6>
-									Total:
-									<small className="mx-1">KES</small>
-									{dashboard.rent?.total}
-								</h6>
-							</div>
-						</div>
-						{/* Revenue Doughnut End */}
-						{/* Leads Doughnut */}
-						<div className="card shadow-sm text-center me-2 mb-2">
-							<div className="middle3">
-								<h3>
-									{dashboard.water?.percentage}
-									<small className="fs-6">%</small>
-								</h3>
-							</div>
-							{dashboard.water && (
-								<Doughnut
-									labels={["Leads", "Leads Lost"]}
-									datasets={doughnutLeads}
-									cutout="60%"
-									size="12.5em"
-								/>
-							)}
-							<div className="d-flex justify-content-center pb-3">
-								<h6>Total: 200</h6>
-							</div>
-						</div>
-						{/* Leads Doughnut End */}
-						{/* Tasks Doughnut */}
-						<div className="card shadow-sm text-center me-2 mb-2">
-							<div className="middle3">
-								<h3>
-									{dashboard.serviceCharge?.percentage}
-									<small className="fs-6">%</small>
-								</h3>
-							</div>
-							{dashboard.serviceCharge && (
-								<Doughnut
-									labels={["Tasks", "Tasks Lost"]}
-									datasets={doughnutTasks}
-									cutout="60%"
-									size="12.5em"
-								/>
-							)}
-							<div className="d-flex justify-content-center pb-3">
-								<h6>Total: 500</h6>
-							</div>
-						</div>
-						{/* Tasks Doughnut End */}
-						{/* Water Usage Pie */}
-						<div className="card shadow-sm text-center me-2 mb-2">
-							{dashboard.water && (
-								<Pie
-									labels={["", ""]}
-									datasets={pieWaterUsage}
-									size="12.5em"
-								/>
-							)}
-							<div className="d-flex justify-content-center pb-3">
-								<h6>Total:</h6>
-							</div>
-						</div>
-						{/* Water Usage Pie End */}
+					<div className="card shadow-sm hidden-scroll">
+						{projectsDashboard.projectsThisYear && (
+							<Bar
+								labels={projectsDashboard.projectsThisYear?.labels}
+								datasets={[
+									barGraphProjects[0],
+									barGraphInventories[0],
+									barGraphIssues[0],
+								]}
+							/>
+						)}
+					</div>
+				</div>
+				<div className="col-sm-6">
+					<h4 className="my-3">This month</h4>
+					<div className="card shadow-sm hidden-scroll">
+						{clientsDashboard.clientsThisYear && (
+							<Bar
+								labels={clientsDashboard.clientsThisYear?.labels}
+								datasets={[
+									barGraphClients[0],
+									barGraphQuotations[0],
+									barGraphInvoices[0],
+									barGraphPayments[0],
+									barGraphCreditNotes[0],
+								]}
+							/>
+						)}
 					</div>
 				</div>
 			</div>
-			{/* Leads Start */}
+			{/* Bar Start */}
 		</React.Fragment>
 	)
 }

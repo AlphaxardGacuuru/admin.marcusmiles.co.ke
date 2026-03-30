@@ -15,6 +15,7 @@ import MenuSVG from "@/svgs/MenuSVG"
 import ChevronRightSVG from "@/svgs/ChevronRightSVG"
 import BellSVG from "@/svgs/BellSVG"
 import LogoSVG from "@/svgs/LogoSVG"
+import PersonSVG from "@/svgs/PersonSVG"
 
 const AdminMenu = (props) => {
 	const location = useLocation()
@@ -306,43 +307,81 @@ const AdminMenu = (props) => {
 															right: 0,
 															left: "auto",
 														}}>
-														<Link
-															to={`/admin/staff/edit/${props.auth.id}`}
-															className="p-1 px-2 pt-3 dropdown-item"
-															onClick={() => setAvatarDropdown(false)}>
-															<div className="d-flex border-bottom pb-2">
-																<div className="p-2">
-																	<Img
-																		src={props.auth?.avatar}
-																		className={`avatar`}
-																		style={{
-																			minWidth: "1em",
-																			minHeight: "1em",
-																		}}
-																		alt="Avatar"
-																	/>
-																</div>
-																<div className="p-2">
+														{/* Name Start */}
+														<div className="d-flex border-bottom pb-2">
+															<div className="p-2">
+																<Img
+																	src={props.auth?.avatar}
+																	className={`avatar ${
+																		props.auth?.activeSubscription &&
+																		"premium-user"
+																	}`}
+																	style={{
+																		minWidth: "3em",
+																		minHeight: "3em",
+																	}}
+																	alt="Avatar"
+																/>
+															</div>
+															<div>
+																<div className="p-1 px-2 pt-3 dropdown-item">
 																	<h6 className="text-nowrap fs-6">
 																		{props.auth?.name}
 																	</h6>
+																	<small className="text-nowrap">
+																		{props.auth?.email}
+																	</small>
+																	{/* Role Names Start */}
+																	{props.auth.roleNames?.map((role, key) => (
+																		<div key={key}>
+																			{role.roleNames?.map(
+																				(roleName, index) => (
+																					<h6
+																						key={index}
+																						className="fs-6 d-inline text-wrap me-1">
+																						{roleName}
+																						{index <
+																							role.roleNames.length - 1 && ","}
+																					</h6>
+																				)
+																			)}
+																		</div>
+																	))}
+																	{/* Role Names End */}
 																</div>
 															</div>
+														</div>
+														{/* Name End */}
+														{/* Profile Start */}
+														<Link
+															to={`/admin/crm/staff/${props.auth.id}/edit`}
+															className="p-2 px-3 dropdown-item"
+															onClick={() => setAvatarDropdown(false)}>
+															<h6 className="fs-6">
+																<span className="me-2">
+																	<PersonSVG />
+																</span>
+																Profile
+															</h6>
 														</Link>
+														{/* Profile End */}
+														{/* Download Start */}
 														<Link
 															to="/download"
-															className="p-1 px-2 dropdown-item"
+															className="p-2 px-3 dropdown-item"
 															style={{
 																display: props.downloadLink ? "block" : "none",
 															}}
 															onClick={() => setAvatarDropdown(false)}>
-															<h6>
+															<h6 className="fs-6">
 																<span className="me-2">
 																	<DownloadSVG />
 																</span>
 																Get App
 															</h6>
 														</Link>
+														{/* Download End */}
+														{/* Logout Start */}
 														<Link
 															to="#"
 															className="p-2 px-3 dropdown-item"
@@ -357,6 +396,7 @@ const AdminMenu = (props) => {
 																Logout
 															</h6>
 														</Link>
+														{/* Logout End */}
 													</div>
 												</div>
 												{/* Avatar Dropdown End */}
@@ -435,12 +475,11 @@ const AdminMenu = (props) => {
 
 			{/* Sliding Bottom Nav */}
 			<div className={bottomMenu}>
-				<div className="bottomMenu">
-					<div className="d-flex align-items-center justify-content-between">
-						<div></div>
+				<div className="bottomMenu bg-secondary">
+					<div className="d-flex align-items-center justify-content-end">
 						{/* <!-- Close Icon --> */}
 						<div
-							className="closeIcon mt-2 me-2"
+							className="closeIcon mt-2 me-2 text-white"
 							style={{ fontSize: "0.8em" }}
 							onClick={() => setBottomMenu("")}>
 							<CloseSVG />
@@ -471,6 +510,20 @@ const AdminMenu = (props) => {
 								</div>
 							</div>
 						</Link>
+						{/* Profile Start */}
+						<Link
+							to={`/admin/crm/staff/${props.auth.id}/edit`}
+							className="p-2 text-start text-white"
+							onClick={() => setBottomMenu("")}>
+							<h6 className="fs-6">
+								<span className="ms-3 me-4">
+									<PersonSVG />
+								</span>
+								Profile
+							</h6>
+						</Link>
+						{/* Profile End */}
+						{/* Download Start */}
 						<Link
 							to="/download"
 							className="p-2 text-start text-white"
@@ -486,6 +539,8 @@ const AdminMenu = (props) => {
 								Get App
 							</h6>
 						</Link>
+						{/* Download End */}
+						{/* Logout Start */}
 						<Link
 							to="#"
 							className="p-2 text-start text-white"
@@ -501,6 +556,7 @@ const AdminMenu = (props) => {
 								Logout
 							</h6>
 						</Link>
+						{/* Logout End */}
 					</div>
 					{/* Avatar Bottom End */}
 				</div>

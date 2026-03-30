@@ -95,6 +95,8 @@ Route::apiResources([
     'notifications' => NotificationController::class,
 ]);
 
+Route::post('quotations/{id}/generate-invoice', [QuotationController::class, 'generateInvoice']);
+
 /*
  * Dashboard
  */

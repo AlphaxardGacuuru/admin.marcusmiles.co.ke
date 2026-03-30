@@ -86,10 +86,10 @@ class OrderService extends Service
 	public function update($request, $id)
 	{
 		$order = Order::findOrFail($id);
-		$order->client_id = $request->clientId;
-		$order->total = $request->total;
-		$order->notes = $request->notes;
-		$order->status = $request->status;
+		$order->client_id = $request->input("clientId", $order->client_id);
+		$order->total = $request->input("total", $order->total);
+		$order->notes = $request->input("notes", $order->notes);
+		$order->status = $request->input("status", $order->status);
 
 		return DB::transaction(function () use ($order, $request) {
 			$saved = $order->save();

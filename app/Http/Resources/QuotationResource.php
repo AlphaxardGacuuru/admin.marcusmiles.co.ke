@@ -25,6 +25,7 @@ class QuotationResource extends JsonResource
             'expiryDate' => $this->expiry_date,
             "expiryDateFormatted" => Carbon::parse($this->expiry_date)->format("Y-m-d"),
             'notes' => $this->notes,
+            'tax' => $this->tax,
             'total' => $this->total,
             'status' => $this->status,
             'items' => $this->quotationItems,

@@ -23,6 +23,7 @@ return new class extends Migration
             $table->date('issue_date');
             $table->date('expiry_date')->nullable();
             $table->text('notes')->nullable();
+            $table->decimal('tax', 8, 2)->default(16);
             $table->unsignedBigInteger('total')->default(0);
             $table->string('status')->nullable();
             $table->foreignId('created_by')

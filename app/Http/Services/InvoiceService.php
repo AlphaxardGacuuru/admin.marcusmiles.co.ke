@@ -96,12 +96,12 @@ class InvoiceService extends Service
     public function update($request, $id)
     {
         $invoice = Invoice::findOrFail($id);
-        $invoice->project_id = $request->projectId;
-        $invoice->issue_date = $request->issueDate;
-        $invoice->due_date = $request->dueDate;
-        $invoice->notes = $request->notes;
-        $invoice->balance = $request->total;
-        $invoice->total = $request->total;
+        $invoice->project_id = $request->input("projectId", $invoice->project_id);
+        $invoice->issue_date = $request->input("issueDate", $invoice->issue_date);
+        $invoice->due_date = $request->input("dueDate", $invoice->due_date);
+        $invoice->notes = $request->input("notes", $invoice->notes);
+        $invoice->balance = $request->input("total", $invoice->balance);
+        $invoice->total = $request->input("total", $invoice->total);
 
         $saved = DB::transaction(function () use ($invoice, $request) {
             $saved = $invoice->save();

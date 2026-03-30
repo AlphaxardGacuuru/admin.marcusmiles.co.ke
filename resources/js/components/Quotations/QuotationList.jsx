@@ -247,7 +247,7 @@ const QuotationList = (props) => {
 								<MyLink
 									linkTo={`/crm/quotations/create`}
 									icon={<PlusSVG />}
-									text="add quotation"
+									text="create quotation"
 								/>
 							</th>
 						</tr>

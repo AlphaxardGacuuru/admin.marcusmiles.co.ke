@@ -3,6 +3,8 @@
 namespace App\Http\Services;
 
 use App\Http\Resources\QuotationResource;
+use App\Models\Invoice;
+use App\Models\InvoiceItem;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
 use Carbon\Carbon;
@@ -43,6 +45,7 @@ class QuotationService extends Service
 		$quotation->code = $this->generateUniqueCode(Quotation::class);
 		$quotation->project_id = $request->projectId;
 		$quotation->total = $request->total;
+		$quotation->tax = $request->tax;
 		$quotation->issue_date = $request->issueDate;
 		$quotation->expiry_date = $request->expiryDate;
 		$quotation->notes = $request->notes;
@@ -89,12 +92,13 @@ class QuotationService extends Service
 	public function update($request, $id)
 	{
 		$quotation = Quotation::findOrFail($id);
-		$quotation->project_id = $request->projectId;
-		$quotation->total = $request->total;
-		$quotation->issue_date = $request->issueDate;
-		$quotation->expiry_date = $request->expiryDate;
-		$quotation->notes = $request->notes;
-		$quotation->status = $request->status;
+		$quotation->project_id = $request->input("projectId", $quotation->project_id);
+		$quotation->total = $request->input("total", $quotation->total);
+		$quotation->tax = $request->input("tax", $quotation->tax);
+		$quotation->issue_date = $request->input("issueDate", $quotation->issue_date);
+		$quotation->expiry_date = $request->input("expiryDate", $quotation->expiry_date);
+		$quotation->notes = $request->input("notes", $quotation->notes);
+		$quotation->status = $request->input("status", $quotation->status);
 
 		return DB::transaction(function () use ($quotation, $request) {
 			$saved = $quotation->save();
@@ -131,25 +135,69 @@ class QuotationService extends Service
 		return [$deleted, 'Quotation Deleted Successfully', $quotation];
 	}
 
+	/**
+	 * Generate invoice from quotation.
+	 *
+	 * @param int $id
+	 * @return array
+	 */
+	public function generateInvoice($id)
+	{
+		$quotation = Quotation::with('quotationItems')->findOrFail($id);
+
+		return DB::transaction(function () use ($quotation) {
+			$invoice = new Invoice;
+			$invoice->code = $this->generateUniqueCode(Invoice::class);
+			$invoice->project_id = $quotation->project_id;
+			$invoice->issue_date = Carbon::now()->toDateString();
+			$invoice->due_date = $quotation->expiry_date;
+			$invoice->total = $quotation->total;
+			$invoice->balance = $quotation->total;
+			$invoice->status = 'not_paid';
+			$invoice->created_by = $this->id;
+
+			$sourceNote = 'Generated from quotation ' . $quotation->code;
+			$invoice->notes = $quotation->notes
+				? trim($quotation->notes . PHP_EOL . PHP_EOL . $sourceNote)
+				: $sourceNote;
+
+			$saved = $invoice->save();
+
+			foreach ($quotation->quotationItems as $item) {
+				$invoiceItem = new InvoiceItem;
+				$invoiceItem->invoice_id = $invoice->id;
+				$invoiceItem->description = $item->description;
+				$invoiceItem->quantity = $item->quantity;
+				$invoiceItem->rate = $item->rate;
+				$invoiceItem->total = $item->total;
+				$saved = $invoiceItem->save();
+			}
+
+			$this->updateInvoiceStatus($invoice->id);
+
+			return [$saved, 'Invoice Generated Successfully', $invoice];
+		});
+	}
+
 	public function search($request, $query)
 	{
-        if ($request->filled("code")) {
-            $query = $query->where("code", "LIKE", "%" . $request->code . "%");
-        }
+		if ($request->filled("code")) {
+			$query = $query->where("code", "LIKE", "%" . $request->code . "%");
+		}
 
-        if ($request->filled("invoiceId")) {
-            $query = $query->where("invoice_id", $request->invoiceId);
-        }
+		if ($request->filled("invoiceId")) {
+			$query = $query->where("invoice_id", $request->invoiceId);
+		}
 
-        if ($request->filled("projectId")) {
-            $query = $query->where("project_id", $request->projectId);
-        }
+		if ($request->filled("projectId")) {
+			$query = $query->where("project_id", $request->projectId);
+		}
 
-        if ($request->filled("clientId")) {
-            $query = $query->whereHas("project.client", function($query) use($request) {
-                $query->where("id", $request->clientId);
-            });
-        }
+		if ($request->filled("clientId")) {
+			$query = $query->whereHas("project.client", function ($query) use ($request) {
+				$query->where("id", $request->clientId);
+			});
+		}
 
 		$status = $request->input("status");
 

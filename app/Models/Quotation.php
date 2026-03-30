@@ -14,6 +14,7 @@ class Quotation extends Model
     protected $casts = [
         'issue_date' => 'date',
         'expiry_date' => 'date',
+        'tax' => 'float',
     ];
 
     /**

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\InvoiceResource;
 use App\Http\Resources\QuotationResource;
 use App\Http\Services\QuotationService;
 use App\Models\Quotation;
@@ -42,6 +43,7 @@ class QuotationController extends Controller
         $this->validate($request, [
             'projectId' => 'required|exists:projects,id',
             'total' => 'required|numeric',
+            'tax' => 'required|numeric|min:0',
             'issueDate' => 'required|date',
             'expiryDate' => 'required|date',
             'notes' => 'required|string',
@@ -88,6 +90,7 @@ class QuotationController extends Controller
         $this->validate($request, [
             'projectId' => 'sometimes|exists:projects,id',
             'total' => 'sometimes|numeric',
+            'tax' => 'sometimes|numeric|min:0',
             'issueDate' => 'sometimes|date',
             'expiryDate' => 'sometimes|date',
             'notes' => 'sometimes|string',
@@ -118,6 +121,22 @@ class QuotationController extends Controller
 
         return (new QuotationResource($quotation))->additional([
             'status' => $deleted,
+            'message' => $message,
+        ]);
+    }
+
+    /**
+     * Generate an invoice from a quotation.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\Response
+     */
+    public function generateInvoice($id)
+    {
+        [$saved, $message, $invoice] = $this->service->generateInvoice($id);
+
+        return (new InvoiceResource($invoice))->additional([
+            'status' => $saved,
             'message' => $message,
         ]);
     }
