@@ -9,6 +9,7 @@ const Btn = ({
 	text,
 	onClick,
 	loading = false,
+	disabled = false,
 	dataBsToggle,
 	dataBsTarget,
 	tooltipText, // Add tooltipText prop
@@ -30,7 +31,7 @@ const Btn = ({
 			style={btnStyle}
 			className={`mysonar-btn btn-2 d-flex align-items-center ${className}`}
 			onClick={onClick}
-			disabled={loading}
+			disabled={loading || disabled}
 			data-bs-toggle={dataBsToggle}
 			data-bs-target={dataBsTarget}
 			title={tooltipText}

@@ -56,6 +56,7 @@ class DeliveryNoteService extends Service
         $deliveryNote = new DeliveryNote;
         $deliveryNote->code = $code;
         $deliveryNote->project_id = $inventory->project_id;
+        $deliveryNote->received_by = $request->receivedBy;
         $deliveryNote->created_by = $this->id;
 
         $saved = DB::transaction(function () use ($deliveryNote, $inventoryIds) {
@@ -135,7 +136,7 @@ class DeliveryNoteService extends Service
         $clientId = $request->clientId;
 
         if ($request->filled("clientId")) {
-            $query = $query->whereHas("client", function ($query) use ($clientId) {
+            $query = $query->whereHas("project.client", function ($query) use ($clientId) {
                 $query->where("id", $clientId);
             });
         }
@@ -144,6 +145,10 @@ class DeliveryNoteService extends Service
 
         if ($request->filled("projectId")) {
             $query = $query->where("project_id", $projectId);
+        }
+
+        if ($request->filled("receivedBy")) {
+            $query = $query->where("received_by", $request->receivedBy);
         }
 
         if ($request->filled("createdBy")) {

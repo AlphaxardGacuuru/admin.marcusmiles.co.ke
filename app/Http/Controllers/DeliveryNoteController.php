@@ -32,7 +32,9 @@ class DeliveryNoteController extends Controller
     public function store(Request $request)
     {
         $this->validate($request, [
-            "inventoryIds" => "required|array",
+            "inventoryIds" => "required|array|min:1",
+            "inventoryIds.*" => "required|exists:inventories,id",
+            "receivedBy" => "required|exists:users,id",
         ]);
 
         [$saved, $message, $deliveryNote] = $this->service->store($request);

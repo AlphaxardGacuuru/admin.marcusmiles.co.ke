@@ -26,9 +26,9 @@ const edit = (props) => {
 		})
 
 		// Fetch Delivery Note
-		props.get(`/delivery-notes/${id}`, setDeliveryNote)
+		props.get(`delivery-notes/${id}`, setDeliveryNote)
 		// Fetch Staff Note
-		props.get(`/staff`, setStaff)
+		props.get(`staff`, setStaff)
 	}, [])
 
 	/*

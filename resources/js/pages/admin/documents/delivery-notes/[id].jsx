@@ -138,7 +138,9 @@ const form = (props) => {
 													<td>{key + 1}</td>
 													<td></td>
 													<td>{inventory.goodName}</td>
-													<td></td>
+													<td>
+														{inventory.unit?.value} {inventory.unit?.unit}
+													</td>
 													<td>{inventory.quantity}</td>
 													<td>{inventory.createdByName}</td>
 												</tr>

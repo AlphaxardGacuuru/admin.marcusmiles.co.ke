@@ -17,6 +17,8 @@ class DeliveryNoteResource extends JsonResource
         return [
 			"id" => $this->id,
 			"code" => $this->code,
+			"clientId" => $this->project->client_id,
+			"clientName" => $this->project->client->name,
 			"projectId" => $this->project->id,
 			"projectCode" => $this->project->code,
 			"projectName" => $this->project->name,

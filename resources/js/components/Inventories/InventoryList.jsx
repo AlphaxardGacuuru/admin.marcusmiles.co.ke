@@ -31,16 +31,22 @@ const InventoryList = (props) => {
 	const [suppliers, setSuppliers] = useState(
 		props.getLocalStorage("suppliersShortList")
 	)
+	const [staff, setStaff] = useState(
+		props.getLocalStorage("staffShortList") || []
+	)
 
 	const [inventoryIds, setInventoryIds] = useState([])
+	const [receivedBy, setReceivedBy] = useState("")
 	const [loading, setLoading] = useState()
 
 	const closeConsumeInventoryModalBtn = useRef()
+	const closeCreateDeliveryNoteModalBtn = useRef()
 
 	useEffect(() => {
 		props.get(`goods?idAndName=true`, setGoods, "goodsShortList")
 		props.get(`projects?idAndName=true`, setProjects, "projectsShortList")
 		props.get(`suppliers?idAndName=true`, setSuppliers, "suppliersShortList")
+		props.get(`staff?idAndName=true`, setStaff, "staffShortList")
 	}, [])
 
 	/*
@@ -91,21 +97,34 @@ const InventoryList = (props) => {
 	 * Handle Create Delivery Notes
 	 */
 	const createDeliveryNotes = () => {
+		if (inventoryIds.length == 0) {
+			props.setErrors(["Select at least one inventory item"])
+			return
+		}
+
+		if (!receivedBy) {
+			props.setErrors(["Please select who received the delivery note"])
+			return
+		}
+
 		setLoading(true)
 
-		Axios.post("api/delivery-notes", {
+		Axios.post("/api/delivery-notes", {
 			inventoryIds: inventoryIds,
+			receivedBy: receivedBy,
 		})
 			.then((res) => {
 				setLoading(false)
 				props.setMessages([res.data.message])
 				// Clear Checkboxes
 				setInventoryIds([])
+				setReceivedBy("")
+				closeCreateDeliveryNoteModalBtn.current?.click()
 				// Redirect to Delivery Notes
 				setTimeout(
 					() =>
 						history.push(
-							`/admin/documents/delivery-notes/${res.data.data.id}/edit`
+							`/admin/documents/delivery-notes/${res.data.data.id}/view`
 						),
 					500
 				)
@@ -330,18 +349,27 @@ const InventoryList = (props) => {
 					<thead>
 						{location.pathname.match("/view") && (
 							<tr>
-								<th colSpan="5"></th>
+								<th colSpan="7"></th>
 								<th
-									colSpan="3"
+									colSpan="1"
 									className="text-end">
-									{inventoryIds.length > 0 && (
-										<Btn
-											icon={<PlusSVG />}
-											text="generate delivery note"
-											onClick={createDeliveryNotes}
-											loading={loading}
-										/>
-									)}
+									<Btn
+										icon={<PlusSVG />}
+										text="generate delivery note"
+										dataBsToggle={inventoryIds.length > 0 ? "modal" : undefined}
+										dataBsTarget={
+											inventoryIds.length > 0
+												? "#createDeliveryNoteModal"
+												: undefined
+										}
+										onClick={() => {
+											if (inventoryIds.length == 0) {
+												props.setErrors(["Select at least one inventory item"])
+											}
+										}}
+										loading={loading}
+										disabled={inventoryIds.length == 0}
+									/>
 								</th>
 								<th className="text-end">
 									<MyLink
@@ -498,6 +526,64 @@ const InventoryList = (props) => {
 				/>
 				{/* Pagination Links End */}
 			</div>
+
+			{/* Create Delivery Note Modal Start */}
+			<div
+				className="modal fade"
+				id="createDeliveryNoteModal"
+				tabIndex="-1"
+				aria-labelledby="createDeliveryNoteModalLabel"
+				aria-hidden="true">
+				<div className="modal-dialog bg-white">
+					<div className="modal-content rounded-4 glass">
+						<div className="modal-header">
+							<h1
+								id="createDeliveryNoteModalLabel"
+								className="modal-title fs-5">
+								Create Delivery Note
+							</h1>
+							<button
+								type="button"
+								className="btn-close"
+								data-bs-dismiss="modal"
+								aria-label="Close"></button>
+						</div>
+						<div className="modal-body text-start">
+							<label className="form-label">Received By</label>
+							<select
+								className="form-control border"
+								value={receivedBy}
+								onChange={(e) => setReceivedBy(e.target.value)}>
+								<option value="">Select Staff</option>
+								{staff.map((staffMember) => (
+									<option
+										key={staffMember.id}
+										value={staffMember.id}>
+										{staffMember.name}
+									</option>
+								))}
+							</select>
+						</div>
+						<div className="modal-footer justify-content-between">
+							<button
+								ref={closeCreateDeliveryNoteModalBtn}
+								type="button"
+								className="mysonar-btn btn-2"
+								data-bs-dismiss="modal">
+								Close
+							</button>
+
+							<Btn
+								icon={<PlusSVG />}
+								text="Create"
+								onClick={createDeliveryNotes}
+								loading={loading}
+							/>
+						</div>
+					</div>
+				</div>
+			</div>
+			{/* Create Delivery Note Modal End */}
 		</div>
 	)
 }

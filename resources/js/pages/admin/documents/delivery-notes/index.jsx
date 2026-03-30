@@ -311,7 +311,7 @@ const index = (props) => {
 								<td>{deliveryNote.clientName}</td>
 								<td>{deliveryNote.projectName}</td>
 								<td>{deliveryNote.inventories?.at(0)?.supplierName}</td>
-								<td>{deliveryNote.recievedBy}</td>
+								<td>{deliveryNote.receivedByName}</td>
 								<td>{deliveryNote.createdByName}</td>
 								<td>{deliveryNote.createdAt}</td>
 								<td>
