@@ -99,4 +99,11 @@ class DeliveryNoteController extends Controller
             "data" => $deliveryNote,
         ], 200);
     }
+
+    public function previewPdf($id)
+    {
+        $pdf = $this->service->generatePdf($id);
+
+        return $pdf->stream("delivery-note-{$id}-preview.pdf");
+    }
 }

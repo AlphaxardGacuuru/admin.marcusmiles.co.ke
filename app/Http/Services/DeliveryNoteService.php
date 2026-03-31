@@ -10,6 +10,7 @@ use App\Models\Inventory;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class DeliveryNoteService extends Service
 {
@@ -185,5 +186,18 @@ class DeliveryNoteService extends Service
         }
 
         return $query;
+    }
+
+    /*
+	 * Generate DeliveryNote PDF
+	 */
+    public function generatePdf($id)
+    {
+        $deliveryNote = DeliveryNote::findOrFail($id);
+
+        // This looks for resources/views/delivery-notes/pdf.blade.php
+        $pdf = Pdf::loadView('delivery-notes.pdf', compact('deliveryNote'));
+
+        return $pdf;
     }
 }

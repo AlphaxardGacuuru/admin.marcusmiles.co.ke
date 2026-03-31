@@ -109,6 +109,8 @@ Route::get("dashboard/crm", [DashboardController::class, "crmDashboard"]);
 */
 Route::get("work-plans/chart/{id}", [WorkPlanController::class, "chart"]);
 
+Route::get('/delivery-notes/{id}/preview', [DeliveryNoteController::class, 'previewPdf']);
+
 /*
 * Issues
 */
@@ -135,6 +137,3 @@ Route::prefix('filepond')->group(function () {
         Route::post("submissions/{sessionId}/{unitId}/{week}/{userId}/{type}", "storeSubmission");
     });
 });
-
-// Broadcast Routes
-Broadcast::routes(['middleware' => ['auth:sanctum']]);
