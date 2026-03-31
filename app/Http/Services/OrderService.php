@@ -41,6 +41,7 @@ class OrderService extends Service
 		$order = new Order();
 		$order->code = $this->generateUniqueCode(Order::class);
 		$order->client_id = $request->clientId;
+		$order->tax = $request->tax;
 		$order->total = $request->total;
 		$order->notes = $request->notes;
 		$order->status = "pending";
@@ -87,6 +88,7 @@ class OrderService extends Service
 	{
 		$order = Order::findOrFail($id);
 		$order->client_id = $request->input("clientId", $order->client_id);
+		$order->tax = $request->input("tax", $order->tax);
 		$order->total = $request->input("total", $order->total);
 		$order->notes = $request->input("notes", $order->notes);
 		$order->status = $request->input("status", $order->status);

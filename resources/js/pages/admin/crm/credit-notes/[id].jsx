@@ -10,21 +10,21 @@ import PrintSVG from "@/svgs/PrintSVG"
 const show = (props) => {
 	var { id } = useParams()
 
-	const [payment, setPayment] = useState({})
+	const [creditNote, setCreditNote] = useState({})
 
 	useEffect(() => {
 		// Set page
 		props.setPage({
-			name: "View Payment",
-			path: ["crm/payments", "view"],
+			name: "View Credit Note",
+			path: ["crm/credit-notes", "view"],
 		})
-		props.get(`payments/${id}`, setPayment)
+		props.get(`credit-notes/${id}`, setCreditNote)
 	}, [])
 
 	/*
-	 * Print Payment
+	 * Print Credit Note
 	 */
-	const printPayment = () => {
+	const printCreditNote = () => {
 		var contentToPrint = document.getElementById("contentToPrint").innerHTML
 
 		document.body.innerHTML = contentToPrint
@@ -42,7 +42,7 @@ const show = (props) => {
 					className="me-5"
 					icon={<PrintSVG />}
 					text="print"
-					onClick={printPayment}
+					onClick={printCreditNote}
 				/>
 			</div>
 			{/*Create Link End*/}
@@ -53,43 +53,53 @@ const show = (props) => {
 				<div className="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
 					<div className="card bg-white p-5">
 						<div className="border-0 d-flex justify-content-between">
-							<div style={{ width: "7em" }}>
-								<div
-									className="mx-auto"
-									style={{ width: "5em" }}>
-									<Img
-										src="/img/favicon.png"
-										style={{ width: "100%", height: "auto" }}
-									/>
+							<div className="d-flex">
+								<div style={{ width: "7em" }}>
+									<div
+										className="mx-auto"
+										style={{ width: "5em" }}>
+										<Img
+											src="/img/favicon.png"
+											style={{ width: "100%", height: "auto" }}
+										/>
+									</div>
+									<h6
+										className="text-center"
+										style={{ fontSize: "10px" }}>
+										RESEARCH. DESIGN & ENG. AUDIT PROJECT MANAGEMENT
+									</h6>
 								</div>
-								<h6
-									className="text-center"
-									style={{ fontSize: "10px" }}>
-									RESEARCH. DESIGN & ENG. AUDIT PROJECT MANAGEMENT
-								</h6>
+								<div>
+									<h4>MARCUS MILES CONSULT LTD - DESIGN & BUILD</h4>
+									<h6>Kilifi House, Lavington</h6>
+									<h6>PO BOX 7763-00300</h6>
+									<h6>KRA PIN P051650553D Nairobi</h6>
+									<h6>Kenya</h6>
+									<h6>www.marcusmiles.co.ke</h6>
+								</div>
 							</div>
 
 							<div>
-								<h2 className="mb-0 text-end">QUOTATION</h2>
+								<h2 className="mb-0 text-end">CREDIT NOTE</h2>
 							</div>
 						</div>
 						<div className="card-body">
 							<div className="d-flex justify-content-between mb-4">
 								<div className="">
 									<h5 className="mb-1">Client / Project:</h5>
-									<h5 className="fw-normal text-dark">{payment.projectName}</h5>
+									<h5 className="fw-normal text-dark">{creditNote.projectName}</h5>
 								</div>
 
 								{/* First Header Start */}
 								<div className="text-end">
 									<h5>
-										Payment No:{" "}
-										<span className="text-dark fw-normal">{payment.code}</span>
+										Credit Note No:{" "}
+										<span className="text-dark fw-normal">{creditNote.code}</span>
 									</h5>
 									<h5>
-										Payment Date:{" "}
+										Credit Note Date:{" "}
 										<span className="text-dark fw-normal">
-											{payment.paymentDate}
+											{creditNote.issueDate}
 										</span>
 									</h5>
 								</div>
@@ -110,8 +120,8 @@ const show = (props) => {
 										</thead>
 										<tbody>
 											<tr>
-												<td>Payment for Invoice {payment.invoiceCode}</td>
-												<td className="text-end fw-bold">{payment.amount}</td>
+												<td>Credit Note for Invoice {creditNote.invoiceCode}</td>
+												<td className="text-end fw-bold">{creditNote.amount}</td>
 											</tr>
 										</tbody>
 									</table>
@@ -119,28 +129,6 @@ const show = (props) => {
 							</div>
 							{/* Table End */}
 						</div>
-
-						{/* First Footer Start */}
-						<div className="card-footer d-flex justify-content-start bg-white border-0 px-4">
-							<div className="text-start w-100">
-								<h5 className="text-dark mb-2">Payment Terms & Notes</h5>
-								<p
-									className="text-dark fw-normal"
-									style={{ whiteSpace: "pre-wrap" }}>
-									{payment.notes || "No notes available."}
-								</p>
-							</div>
-						</div>
-						{/* First Footer End */}
-
-						<hr className="mt-5" />
-
-						<center>
-							<small className="text-muted">
-								This is a computer generated document and does not require a
-								physical signature.
-							</small>
-						</center>
 					</div>
 				</div>
 			</div>

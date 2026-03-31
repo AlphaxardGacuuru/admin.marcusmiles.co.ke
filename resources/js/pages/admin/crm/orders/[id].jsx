@@ -53,26 +53,36 @@ const show = (props) => {
 				<div className="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
 					<div className="card bg-white p-5">
 						<div className="border-0 d-flex justify-content-between">
-							<div style={{ width: "7em" }}>
-								<div
-									className="mx-auto"
-									style={{ width: "5em" }}>
-									<Img
-										src="/img/favicon.png"
-										style={{ width: "100%", height: "auto" }}
-									/>
+							<div className="d-flex">
+								<div style={{ width: "7em" }}>
+									<div
+										className="mx-auto"
+										style={{ width: "5em" }}>
+										<Img
+											src="/img/favicon.png"
+											style={{ width: "100%", height: "auto" }}
+										/>
+									</div>
+									<h6
+										className="text-center"
+										style={{ fontSize: "10px" }}>
+										RESEARCH. DESIGN & ENG. AUDIT PROJECT MANAGEMENT
+									</h6>
 								</div>
-								<h6
-									className="text-center"
-									style={{ fontSize: "10px" }}>
-									RESEARCH. DESIGN & ENG. AUDIT PROJECT MANAGEMENT
-								</h6>
+								<div>
+									<h4>MARCUS MILES CONSULT LTD - DESIGN & BUILD</h4>
+									<h6>Kilifi House, Lavington</h6>
+									<h6>PO BOX 7763-00300</h6>
+									<h6>KRA PIN P051650553D Nairobi</h6>
+									<h6>Kenya</h6>
+									<h6>www.marcusmiles.co.ke</h6>
+								</div>
 							</div>
 
 							<div>
 								<h2 className="mb-0 text-end">ORDER</h2>
 								<div className="text-end fw-bold text-uppercase mt-2">
-									Status: {order.status}
+									Status: {order.status?.split("_").join(" ")}
 								</div>
 							</div>
 						</div>
@@ -161,12 +171,15 @@ const show = (props) => {
 						{/* First Footer Start */}
 						<div className="card-footer d-flex justify-content-start bg-white border-0 px-4">
 							<div className="text-start w-100">
-								<h5 className="text-dark mb-2">Payment Terms & Notes</h5>
+								<h5 className="text-dark mb-2">Terms & Notes</h5>
 								<p
 									className="text-dark fw-normal"
 									style={{ whiteSpace: "pre-wrap" }}>
 									{order.notes || "No notes available."}
 								</p>
+								<h6>NCBA TO LAVINGTON BRANCH</h6>
+								<h6>MARCUS MILES CONSULT LTD</h6>
+								<h6>9666020013</h6>
 
 								<div className="mt-5">
 									<h6 className="text-dark mb-1">
@@ -179,15 +192,6 @@ const show = (props) => {
 							</div>
 						</div>
 						{/* First Footer End */}
-
-						<hr className="mt-5" />
-
-						<center>
-							<small className="text-muted">
-								This is a computer generated document and does not require a
-								physical signature.
-							</small>
-						</center>
 					</div>
 				</div>
 			</div>

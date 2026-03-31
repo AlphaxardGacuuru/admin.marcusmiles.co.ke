@@ -55,20 +55,30 @@ const form = (props) => {
 				<div className="offset-xl-2 col-xl-8 col-lg-12 col-md-12 col-sm-12 col-12">
 					<div className="card bg-white p-5">
 						<div className="border-0 d-flex justify-content-between">
-							<div style={{ width: "7em" }}>
-								<div
-									className="mx-auto"
-									style={{ width: "5em" }}>
-									<Img
-										src="/img/favicon.png"
-										style={{ width: "100%", height: "auto" }}
-									/>
+							<div className="d-flex">
+								<div style={{ width: "7em" }}>
+									<div
+										className="mx-auto"
+										style={{ width: "5em" }}>
+										<Img
+											src="/img/favicon.png"
+											style={{ width: "100%", height: "auto" }}
+										/>
+									</div>
+									<h6
+										className="text-center"
+										style={{ fontSize: "10px" }}>
+										RESEARCH. DESIGN & ENG. AUDIT PROJECT MANAGEMENT
+									</h6>
 								</div>
-								<h6
-									className="text-center"
-									style={{ fontSize: "10px" }}>
-									RESEARCH. DESIGN & ENG. AUDIT PROJECT MANAGEMENT
-								</h6>
+								<div>
+									<h4>MARCUS MILES CONSULT LTD - DESIGN & BUILD</h4>
+									<h6>Kilifi House, Lavington</h6>
+									<h6>PO BOX 7763-00300</h6>
+									<h6>KRA PIN P051650553D Nairobi</h6>
+									<h6>Kenya</h6>
+									<h6>www.marcusmiles.co.ke</h6>
+								</div>
 							</div>
 
 							<div>

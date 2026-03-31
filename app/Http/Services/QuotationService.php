@@ -44,8 +44,8 @@ class QuotationService extends Service
 		$quotation = new Quotation;
 		$quotation->code = $this->generateUniqueCode(Quotation::class);
 		$quotation->project_id = $request->projectId;
-		$quotation->total = $request->total;
 		$quotation->tax = $request->tax;
+		$quotation->total = $request->total;
 		$quotation->issue_date = $request->issueDate;
 		$quotation->expiry_date = $request->expiryDate;
 		$quotation->notes = $request->notes;
@@ -93,8 +93,8 @@ class QuotationService extends Service
 	{
 		$quotation = Quotation::findOrFail($id);
 		$quotation->project_id = $request->input("projectId", $quotation->project_id);
-		$quotation->total = $request->input("total", $quotation->total);
 		$quotation->tax = $request->input("tax", $quotation->tax);
+		$quotation->total = $request->input("total", $quotation->total);
 		$quotation->issue_date = $request->input("issueDate", $quotation->issue_date);
 		$quotation->expiry_date = $request->input("expiryDate", $quotation->expiry_date);
 		$quotation->notes = $request->input("notes", $quotation->notes);

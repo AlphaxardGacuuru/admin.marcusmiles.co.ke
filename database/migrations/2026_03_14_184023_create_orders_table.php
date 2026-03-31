@@ -20,6 +20,7 @@ return new class extends Migration
                 ->constrained('users')
                 ->onUpdate('cascade')
                 ->onDelete('cascade');
+            $table->decimal('tax', 8, 2)->default(16);
             $table->unsignedBigInteger('total')->default(0);
             $table->text('notes')->nullable();
             $table->string('status')->default('pending');

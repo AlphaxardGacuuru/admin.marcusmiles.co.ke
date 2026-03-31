@@ -19,6 +19,7 @@ class OrderResource extends JsonResource
             "code" => $this->code,
             "clientId" => $this->client->id,
             "clientName" => $this->client->name,
+            "tax" => $this->tax,
             "total" => number_format($this->total),
             "status" => $this->status,
             "createdByName" => $this->createdBy->name,

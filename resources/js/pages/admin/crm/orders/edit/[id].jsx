@@ -15,6 +15,7 @@ const edit = (props) => {
 
 	const [order, setOrder] = useState({
 		clientId: "",
+		tax: 0,
 		total: "",
 		notes: "",
 		items: [{ productId: "", quantity: 1, rate: 0, total: 0 }],
@@ -45,11 +46,12 @@ const edit = (props) => {
 						data.items && data.items.length > 0
 							? data.items.map((item) => ({
 									...item,
-									productId: item.product_id || "",
+									productId: item.productId || "",
 									total: item.total || 0,
 								}))
 							: [{ productId: "", quantity: 1, rate: 0, total: 0 }],
 					total: data.total || 0,
+					tax: data.tax || 0,
 					notes: data.notes || "",
 					status: data.status || "",
 				})
@@ -101,14 +103,15 @@ const edit = (props) => {
 		(sum, item) => sum + Number(item.total),
 		0
 	)
-	const grandTotal = subtotal
+	const tax = Number(order.tax) || 0
+	const grandTotal = subtotal + tax
 
 	const handleSubmit = (e) => {
 		e.preventDefault()
 
 		setLoading(true)
 
-		Axios.put(`/api/orders/${id}`, { ...order, total: grandTotal })
+		Axios.put(`/api/orders/${id}`, { ...order, tax, total: grandTotal })
 			.then((res) => {
 				setLoading(false)
 				props.setMessages([res.data.message])
@@ -176,13 +179,13 @@ const edit = (props) => {
 															<select
 																name="productId"
 																className="form-control me-2"
+																value={item.productId}
 																onChange={(e) => handleItemChange(index, e)}>
 																<option value="">Select Product</option>
 																{products.map((product, key) => (
 																	<option
 																		key={key}
-																		value={product.id}
-																		selected={item.productId == product.id}>
+																		value={product.id}>
 																		{product.name}
 																	</option>
 																))}
@@ -238,6 +241,18 @@ const edit = (props) => {
 										<div className="d-flex justify-content-between mb-2">
 											<span>Subtotal:</span>
 											<span>KES {subtotal.toLocaleString()}</span>
+										</div>
+										<div className="d-flex justify-content-between align-items-center mb-2">
+											<span>Tax:</span>
+											<input
+												type="number"
+												name="tax"
+												className="form-control form-control-sm text-end"
+												style={{ maxWidth: "170px" }}
+												value={order.tax}
+												onChange={handleInputChange}
+												min="0"
+											/>
 										</div>
 										<hr />
 										<div className="d-flex justify-content-between h5">

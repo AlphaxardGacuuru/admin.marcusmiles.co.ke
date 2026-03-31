@@ -40,7 +40,8 @@ class OrderController extends Controller
     {
         $this->validate($request, [
             "clientId" => "required|integer|exists:users,id",
-            "total" => "required|numeric",
+            "tax" => "required|numeric|min:0",
+            "total" => "required|numeric|min:0",
             "notes" => "nullable|string",
             "items" => "required|array|min:1",
             "items.*.productId" => "required|integer|exists:products,id",
@@ -84,7 +85,8 @@ class OrderController extends Controller
     {
         $this->validate($request, [
             "clientId" => "sometimes|integer|exists:users,id",
-            "total" => "sometimes|numeric",
+            "tax" => "sometimes|numeric|min:0",
+            "total" => "sometimes|numeric|min:0",
             "notes" => "nullable|string",
             "status" => "sometimes|string|in:pending,completed,cancelled",
             "items" => "sometimes|array|min:1",
