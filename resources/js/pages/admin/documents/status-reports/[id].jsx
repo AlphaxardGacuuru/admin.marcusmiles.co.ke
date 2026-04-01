@@ -5,9 +5,8 @@ import MyLink from "@/components/Core/MyLink"
 import Btn from "@/components/Core/Btn"
 import Img from "@/components/Core/Img"
 
-import PlusSVG from "@/svgs/PlusSVG"
 import PrintSVG from "@/svgs/PrintSVG"
-import CheckSVG from "@/svgs/CheckSVG"
+import DownloadSVG from "@/svgs/DownloadSVG"
 
 const form = (props) => {
 	var { id } = useParams()
@@ -36,18 +35,45 @@ const form = (props) => {
 		window.location.reload()
 	}
 
+	const downloadPDF = async () => {
+		try {
+			// 1. Add { responseType: 'blob' } so Axios doesn't corrupt the binary data
+			const response = await Axios.get(`/api/status-reports/${id}/preview`, {
+				responseType: "blob",
+			})
+
+			// 2. Use response.data (the actual file) instead of the whole response object
+			const blob = new Blob([response.data], { type: "application/pdf" })
+			const url = window.URL.createObjectURL(blob)
+
+			const link = document.createElement("a")
+			link.href = url
+
+			// Ensure the filename is set
+			link.setAttribute("download", `StatusReport-${statusReport.code}.pdf`)
+
+			document.body.appendChild(link)
+			link.click()
+
+			// Cleanup
+			link.parentNode.removeChild(link)
+			window.URL.revokeObjectURL(url)
+		} catch (error) {
+			console.error("PDF Download failed", error)
+		}
+	}
+
 	return (
 		<React.Fragment>
-			{/*Create Link*/}
+			{/*Download PDF Button*/}
 			<div className="d-flex justify-content-end mb-4">
 				<Btn
 					className="me-5"
-					icon={<PrintSVG />}
-					text="print"
-					onClick={printStatusReport}
+					icon={<DownloadSVG />}
+					text="Download PDF"
+					onClick={downloadPDF}
 				/>
 			</div>
-			{/*Create Link End*/}
 
 			<div
 				id="contentToPrint"

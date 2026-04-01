@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Resources\WageSheetResource;
 use App\Models\WageSheet;
 use App\Models\WageSheetServiceProvider;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\ValidationException;
@@ -233,5 +234,17 @@ class WageSheetService extends Service
         }
 
         return $query;
+    }
+
+    /*
+     * Generate WageSheet PDF
+     */
+    public function generatePdf($id)
+    {
+        $wageSheet = WageSheet::findOrFail($id);
+
+        $pdf = Pdf::loadView('wage-sheets.pdf', compact('wageSheet'));
+
+        return [$pdf, $wageSheet];
     }
 }

@@ -90,4 +90,11 @@ class CreditNoteController extends Controller
             "data" => $creditNote,
         ]);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $creditNote] = $this->service->generatePdf($id);
+
+        return $pdf->stream("CreditNote-{$creditNote->code}.pdf");
+    }
 }

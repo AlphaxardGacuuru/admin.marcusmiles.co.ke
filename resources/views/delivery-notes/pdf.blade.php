@@ -3,238 +3,226 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style>
-        /* General Styles */
         body {
             font-family: 'Helvetica', 'Arial', sans-serif;
-            font-size: 13px;
-            color: #333;
+            font-size: 12px;
+            color: #111827;
             line-height: 1.5;
             margin: 0;
             padding: 0;
-        }
-        .invoice-container {
-            padding: 40px;
             background: #fff;
         }
 
-        /* Layout Tables */
+        .page {
+            padding: 28px 32px;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
         }
+
         td {
             vertical-align: top;
         }
 
-        /* Header */
-        .header-table td {
-            padding-bottom: 20px;
-            border-bottom: 1px solid #e5e7eb;
+        .header {
+            border-bottom: 0;
+            padding-bottom: 14px;
         }
-        .invoice-title {
-            font-size: 28px;
-            text-align: right;
-            margin: 0;
-            color: #111827;
-        }
-        .status-badge {
-            display: inline-block;
-            padding: 6px 12px;
-            border-radius: 4px;
-            font-size: 11px;
+
+        .company-title {
+            font-size: 10px;
+            font-weight: 700;
+            margin: 0 0 2px 0;
             text-transform: uppercase;
-            font-weight: bold;
-            margin-top: 8px;
         }
-        /* Status Colors */
-        .bg-red { background-color: #ef4444; color: #fff; }
-        .bg-yellow { background-color: #f59e0b; color: #fff; }
-        .bg-green { background-color: #16a34a; color: #fff; }
-        .bg-gray { background-color: #4b5563; color: #fff; }
 
-        /* Billed To / Info */
-        .info-table {
-            margin-top: 30px;
+        .company-line {
+            margin: 0;
+            color: #374151;
+            font-size: 11px;
         }
-        .info-label {
-            font-size: 14px;
-            font-weight: bold;
+
+        .doc-title {
+            font-size: 18px;
+            text-align: right;
+            margin: 0 0 2px 0;
             color: #111827;
-            margin-bottom: 5px;
-        }
-        .info-text {
-            color: #4b5563;
+            font-weight: 700;
         }
 
-        /* Line Items Table */
-        .items-table {
-            margin-top: 20px;
+        .meta-section {
+            margin-top: 10px;
+            padding-bottom: 8px;
         }
+
+        .label {
+            font-size: 13px;
+            font-weight: 700;
+            color: #111827;
+            margin: 2px 0;
+        }
+
+        .value {
+            font-weight: 400;
+            color: #111827;
+        }
+
+        .items-table {
+            margin-top: 16px;
+            border: 0;
+        }
+
         .items-table th {
             text-align: left;
-            padding: 12px 8px;
-            border-bottom: 2px solid #374151;
-            color: #374151;
+            padding: 10px 8px;
+            border-bottom: 2px solid #111827;
+            color: #111827;
             font-size: 12px;
+            font-weight: 700;
         }
+
         .items-table td {
-            padding: 12px 8px;
+            padding: 10px 8px;
             border-bottom: 1px solid #e5e7eb;
+            color: #1f2937;
         }
+
+        .text-start { text-align: left; }
         .text-right { text-align: right; }
         .text-center { text-align: center; }
 
-        /* Totals */
-        .totals-table {
-            width: 40%;
-            margin-left: 60%;
-            margin-top: 20px;
-        }
-        .totals-table td {
-            padding: 8px;
-        }
-        .balance-row {
-            border-top: 2px solid #111827;
-            font-weight: bold;
-            font-size: 16px;
+        .footer {
+            margin-top: 40px;
         }
 
-        /* Footer */
-        .footer {
-            margin-top: 50px;
-            text-align: center;
+        .footer-label {
+            color: #111827;
+            font-weight: 700;
+            font-size: 12px;
+            margin-bottom: 2px;
         }
-        .thanks {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
+
+        .footer-value {
+            color: #111827;
+            font-size: 12px;
+            margin: 0;
         }
-        .business-info {
-            text-align: right;
-            margin-top: 30px;
+
+        .role-note {
+            color: #6b7280;
+            font-size: 10px;
+            font-weight: 400;
+        }
+
+        .small-note {
+            /* margin-top: 30px; */
+            color: #111827;
+            font-size: 9px;
+            font-weight: 700;
+            text-align: left;
         }
     </style>
 </head>
 <body>
-    <div class="invoice-container">
-        <table class="header-table">
+    <div class="page">
+        <table class="header">
             <tr>
-                <td>
-                    <div>
-						<img src="{{ public_path('images/default-monochrome-black.svg') }}" alt="Logo" style="height: 40px;">
-                    </div>
+                <td style="width: 5%;">
+                    <img src="{{ public_path('img/favicon.png') }}" alt="Logo" style="width: 75%; height: auto;">
+                    <p class="small-note">RESEARCH. DESIGN & ENG. AUDIT PROJECT MANAGEMENT</p>
                 </td>
-                <td class="text-right">
-                    <h2 class="invoice-title">INVOICE</h2>
-                    @php
-                        $statusClass = match($deliveryNote->status) {
-                            'not_paid' => 'bg-red',
-                            'partially_paid' => 'bg-yellow',
-                            'paid' => 'bg-green',
-                            default => 'bg-gray'
-                        };
-                    @endphp
-                    <span class="status-badge {{ $statusClass }}">
-                        {{ str_replace('_', ' ', $deliveryNote->status) }}
-                    </span>
+                <td style="width: 40%;">
+                    <p class="company-title">MARCUS MILES CONSULT LTD - DESIGN & BUILD</p>
+                    <p class="company-line">Kilifi House, Lavington</p>
+                    <p class="company-line">PO BOX 7763-00300</p>
+                    <p class="company-line">KRA PIN P051650553D Nairobi</p>
+                    <p class="company-line">Kenya</p>
+                    <p class="company-line">www.marcusmiles.co.ke</p>
+                </td>
+                <td></td>
+                <td style="width: 30%;" class="text-right">
+                    <h2 class="doc-title">DELIVERY NOTE</h2>
                 </td>
             </tr>
         </table>
 
-        <table class="info-table">
+        <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0;">
+
+        <table class="meta-section">
             <tr>
-                <td width="50%">
-                    <div class="info-label">Billed To</div>
-                    <div class="info-text">
-                        Client: {{ $deliveryNote->user->name }}<br>
-                        Email: {{ $deliveryNote->user->email }}<br>
-                        @if($deliveryNote->user->phone)
-                            Phone: {{ $deliveryNote->user->phone }}
-                        @endif
-                    </div>
-                </td>
-                <td width="50%" class="text-right">
-                    <div class="info-label">Invoice No: {{ $deliveryNote->number }}</div>
-                    <div class="info-text">
-                        Issue Date: {{ $deliveryNote->issue_date->format("d M Y") }}<br>
-                        Due Date: {{ $deliveryNote->due_date->format("d M Y") }}<br>
-                    </div>
+                <td width="100%" class="text-right">
+                    <p class="label">Form No: <span class="value">{{ $deliveryNote->code ?? '-' }}</span></p>
+                    <p class="label">Project No: <span class="value">{{ $deliveryNote->project->code ?? '-' }}</span></p>
+                    <p class="label">Issue Date: <span class="value">{{ $deliveryNote->createdAt ?? '-' }}</span></p>
                 </td>
             </tr>
         </table>
+
+        <hr style="border: 0; border-top: 1px solid #eee;">
+
+        <table class="project-row" style="margin: 10px 0;">
+            <tr>
+                <td>
+                    <p class="label">Project: <span class="value">{{ $deliveryNote->project->name ?? '-' }}</span></p>
+                </td>
+            </tr>
+        </table>
+
+        <hr style="border: 0; border-top: 1px solid #eee;">
 
         <table class="items-table">
             <thead>
                 <tr>
-                    <th>Description</th>
-                    <th class="text-center">Quantity</th>
-                    <th class="text-right">Rate</th>
-                    <th class="text-right">Amount</th>
+                    <th style="width: 5%;">No</th>
+                    <th style="width: 15%;">BOQ REF</th>
+                    <th style="width: 35%;">Item Description</th>
+                    <th style="width: 15%;">Unit</th>
+                    <th style="width: 10%;">Quantity</th>
+                    <th style="width: 20%;">Approval</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach($deliveryNote->invoiceItems as $item)
+                @forelse($deliveryNote->inventories as $index => $inventory)
                 <tr>
-                    <td>{{ $item['description'] }}</td>
-                    <td class="text-center">{{ $item['quantity'] }}</td>
-                    <td class="text-right">
-                        <small>KES</small> {{ number_format($item['rate'], 2) }}
+                    <td>{{ $index + 1 }}</td>
+                    <td></td>
+                    <td>{{ $inventory->good->name ?? '-' }}</td>
+                    <td>
+                        @php
+                            $unit = $inventory->unit ?? null;
+                            $unitValue = is_array($unit) ? ($unit['value'] ?? '') : ($unit->value ?? '');
+                            $unitName = is_array($unit) ? ($unit['unit'] ?? '') : ($unit->unit ?? '');
+                        @endphp
+                        {{ trim($unitValue . ' ' . $unitName) ?: '-' }}
                     </td>
-                    <td class="text-right">
-                        <small>KES</small> {{ number_format($item['amount'], 2) }}
-                    </td>
+                    <td>{{ $inventory->quantity ?? '-' }}</td>
+                    <td>{{ $inventory->createdBy->name ?? '-' }}</td>
                 </tr>
-                @endforeach
+                @empty
+                <tr>
+                    <td colspan="6" class="text-center">No inventory items found</td>
+                </tr>
+                @endforelse
             </tbody>
         </table>
 
-        <table class="totals-table">
+        <table class="footer">
             <tr>
-                <td class="text-right">Subtotal:</td>
-                <td class="text-right">KES {{ number_format($deliveryNote->total, 2) }}</td>
-            </tr>
-            <tr>
-                <td class="text-right" style="color: #16a34a;">Paid:</td>
-                <td class="text-right" style="color: #16a34a;">KES {{ number_format($deliveryNote->paid, 2) }}</td>
-            </tr>
-            <tr class="balance-row">
-                <td class="text-right">Balance Due:</td>
-                <td class="text-right">KES {{ number_format($deliveryNote->balance, 2) }}</td>
+                <td style="width: 100%;">
+                    <p class="footer-label">Received By: 
+                        <span class="footer-value">{{ $deliveryNote->receivedBy->name ?? '-' }}</span>
+                        <span class="role-note">(Clerk of Works)</span>
+                    </p>
+                    
+                    <p class="footer-label">Approved By: 
+                        <span class="footer-value">{{ $deliveryNote->createdBy->name ?? '-' }}</span>
+                        <span class="role-note">(Construction Manager)</span>
+                    </p>
+                </td>
             </tr>
         </table>
-
-        @if($deliveryNote->notes || $deliveryNote->terms)
-        <table style="margin-top: 40px; border-top: 1px solid #e5e7eb; padding-top: 20px;">
-            <tr>
-                @if($deliveryNote->notes)
-                <td width="50%" style="padding-right: 20px;">
-                    <div class="info-label">Notes</div>
-                    <div class="info-text" style="font-size: 11px;">{{ $deliveryNote->notes }}</div>
-                </td>
-                @endif
-                @if($deliveryNote->terms)
-                <td width="50%">
-                    <div class="info-label">Terms & Conditions</div>
-                    <div class="info-text" style="font-size: 11px;">{{ $deliveryNote->terms }}</div>
-                </td>
-                @endif
-            </tr>
-        </table>
-        @endif
-
-        <div class="footer">
-            <div class="thanks">Pay to 0700364446 via M-Pesa.</div>
-            <div class="thanks">Thank you for your business!</div>
-        </div>
-
-        <div class="business-info">
-            <div class="info-label">Black Developers</div>
-            <div class="info-text">
-                Email: al@developers.black.co.ke<br>
-                Phone: +254 700 364446
-            </div>
-        </div>
     </div>
 </body>
 </html>

@@ -189,15 +189,15 @@ class DeliveryNoteService extends Service
     }
 
     /*
-	 * Generate DeliveryNote PDF
-	 */
+    * Generate and Download DeliveryNote PDF
+    */
     public function generatePdf($id)
     {
-        $deliveryNote = DeliveryNote::findOrFail($id);
+        $deliveryNote = DeliveryNote::with(['inventories.good', 'inventories', 'project'])
+            ->findOrFail($id);
 
-        // This looks for resources/views/delivery-notes/pdf.blade.php
         $pdf = Pdf::loadView('delivery-notes.pdf', compact('deliveryNote'));
 
-        return $pdf;
+        return [$pdf, $deliveryNote];
     }
 }

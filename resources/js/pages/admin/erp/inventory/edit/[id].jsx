@@ -35,6 +35,10 @@ const edit = (props) => {
 
 			setInventory(res.data.data)
 			setSupplierId(res.data.data.supplierId.toString())
+			setUnit({
+				value: res.data.data.unit?.value,
+				unit: res.data.data.unit?.unit,
+			})
 		})
 
 		// Fetch Suppliers

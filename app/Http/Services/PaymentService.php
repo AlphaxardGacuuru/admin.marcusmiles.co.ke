@@ -159,7 +159,7 @@ class PaymentService extends Service
 
         // Build start date filter
         if ($request->filled("startMonth") || $request->filled("startYear")) {
-            $year = $startYear ?? date('Y'); 
+            $year = $startYear ?? date('Y');
             $month = $startMonth ?? 1;
             $startDate = Carbon::create($year, $month, 1)->startOfMonth();
             $query = $query->where("payment_date", ">=", $startDate);
@@ -186,14 +186,12 @@ class PaymentService extends Service
         // This looks for resources/views/payments/pdf.blade.php
         $pdf = Pdf::loadView('payments.pdf', compact('payment'));
 
-        return $pdf;
+        return [$pdf, $payment];
     }
 
     public function sendReceiptEmail($id)
     {
-        $payment = Payment::findOrFail($id);
-
-        $generatedPdf = $this->generatePdf($id);
+        [$generatedPdf, $payment] = $this->generatePdf($id);
 
         $pdf = $generatedPdf->output();
 

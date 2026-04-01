@@ -113,4 +113,11 @@ class InvoiceController extends Controller
             "data" => $invoice,
         ]);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $invoice] = $this->service->generatePdf($id);
+
+        return $pdf->stream("Invoice-{$invoice->code}.pdf");
+    }
 }

@@ -102,8 +102,8 @@ class DeliveryNoteController extends Controller
 
     public function previewPdf($id)
     {
-        $pdf = $this->service->generatePdf($id);
+        [$pdf, $deliveryNote] = $this->service->generatePdf($id);
 
-        return $pdf->stream("delivery-note-{$id}-preview.pdf");
+        return $pdf->stream("DeliveryNote-{$deliveryNote->code}.pdf");
     }
 }

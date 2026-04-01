@@ -119,4 +119,11 @@ class OrderController extends Controller
             "message" => $message,
         ]);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $order] = $this->service->generatePdf($id);
+
+        return $pdf->stream("Order-{$order->code}.pdf");
+    }
 }

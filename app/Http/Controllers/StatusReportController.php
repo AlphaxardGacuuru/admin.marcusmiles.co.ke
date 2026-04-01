@@ -69,7 +69,7 @@ class StatusReportController extends Controller
         $this->validate($request, [
             "approvedBy" => "nullable|integer",
             "actionItems" => "nullable|array",
-		]);
+        ]);
 
         [$saved, $message, $statusReport] = $this->service->update($request, $id);
 
@@ -95,5 +95,12 @@ class StatusReportController extends Controller
             "message" => $message,
             "data" => $statusReport,
         ], 200);
+    }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $statusReport] = $this->service->generatePdf($id);
+
+        return $pdf->stream("StatusReport-{$statusReport->code}.pdf");
     }
 }

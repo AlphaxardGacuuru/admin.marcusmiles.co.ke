@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Resources\PracticalCompletionCertificateResource;
 use App\Models\PracticalCompletionCertificate;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class PracticalCompletionCertificateService extends Service
@@ -165,5 +166,17 @@ class PracticalCompletionCertificateService extends Service
         }
 
         return $query;
+    }
+
+    /*
+     * Generate PracticalCompletionCertificate PDF
+     */
+    public function generatePdf($id)
+    {
+        $practicalCompletionCertificate = PracticalCompletionCertificate::findOrFail($id);
+
+        $pdf = Pdf::loadView('practical-completion-certificates.pdf', compact('practicalCompletionCertificate'));
+
+        return [$pdf, $practicalCompletionCertificate];
     }
 }

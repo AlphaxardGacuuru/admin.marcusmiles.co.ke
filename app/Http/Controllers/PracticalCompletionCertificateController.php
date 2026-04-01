@@ -102,4 +102,11 @@ class PracticalCompletionCertificateController extends Controller
             "data" => $practicalCompletionCertificate,
         ], 200);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $practicalCompletionCertificate] = $this->service->generatePdf($id);
+
+        return $pdf->stream("PracticalCompletionCertificate-{$practicalCompletionCertificate->code}.pdf");
+    }
 }

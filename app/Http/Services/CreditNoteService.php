@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Models\CreditNote;
 use App\Models\Invoice;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -159,5 +160,17 @@ class CreditNoteService extends Service
         }
 
         return $query;
+    }
+
+    /*
+     * Generate CreditNote PDF
+     */
+    public function generatePdf($id)
+    {
+        $creditNote = CreditNote::findOrFail($id);
+
+        $pdf = Pdf::loadView('credit-notes.pdf', compact('creditNote'));
+
+        return [$pdf, $creditNote];
     }
 }

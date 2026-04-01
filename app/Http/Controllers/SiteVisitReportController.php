@@ -94,4 +94,11 @@ class SiteVisitReportController extends Controller
             "data" => $siteVisitReport,
         ], 200);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $siteVisitReport] = $this->service->generatePdf($id);
+
+        return $pdf->stream("SiteVisitReport-{$siteVisitReport->code}.pdf");
+    }
 }

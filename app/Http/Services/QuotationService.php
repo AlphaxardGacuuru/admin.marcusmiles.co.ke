@@ -7,6 +7,7 @@ use App\Models\Invoice;
 use App\Models\InvoiceItem;
 use App\Models\Quotation;
 use App\Models\QuotationItem;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -233,5 +234,20 @@ class QuotationService extends Service
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Generate Quotation PDF
+	 *
+	 * @param int $id
+	 * @return \Barryvdh\DomPDF\PDF
+	 */
+	public function generatePdf($id)
+	{
+		$quotation = Quotation::findOrFail($id);
+
+		$pdf = Pdf::loadView('quotations.pdf', compact('quotation'));
+
+		return [$pdf, $quotation];
 	}
 }

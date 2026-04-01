@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Resources\StatusReportResource;
 use App\Models\StatusReport;
 use App\Models\StatusReportServiceProvider;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
@@ -155,5 +156,17 @@ class StatusReportService extends Service
         }
 
         return $query;
+    }
+
+    /*
+     * Generate StatusReport PDF
+     */
+    public function generatePdf($id)
+    {
+        $statusReport = StatusReport::findOrFail($id);
+
+        $pdf = Pdf::loadView('status-reports.pdf', compact('statusReport'));
+
+        return [$pdf, $statusReport];
     }
 }

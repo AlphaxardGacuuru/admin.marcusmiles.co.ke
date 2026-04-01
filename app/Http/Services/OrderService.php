@@ -5,6 +5,7 @@ namespace App\Http\Services;
 use App\Http\Resources\OrderResource;
 use App\Models\Order;
 use App\Models\OrderItem;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Support\Facades\DB;
 
 class OrderService extends Service
@@ -180,5 +181,20 @@ class OrderService extends Service
 		}
 
 		return $query;
+	}
+
+	/**
+	 * Generate Order PDF
+	 *
+	 * @param int $id
+	 * @return \Barryvdh\DomPDF\PDF
+	 */
+	public function generatePdf($id)
+	{
+		$order = Order::findOrFail($id);
+
+		$pdf = Pdf::loadView('orders.pdf', compact('order'));
+
+		return [$pdf, $order];
 	}
 }

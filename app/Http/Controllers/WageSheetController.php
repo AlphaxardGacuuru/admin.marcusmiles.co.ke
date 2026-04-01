@@ -102,4 +102,11 @@ class WageSheetController extends Controller
             "data" => $wageSheet,
         ], 200);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $wageSheet] = $this->service->generatePdf($id);
+
+        return $pdf->stream("WageSheet-{$wageSheet->code}.pdf");
+    }
 }

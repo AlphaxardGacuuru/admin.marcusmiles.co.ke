@@ -206,4 +206,16 @@ class InvoiceService extends Service
 
         return $query;
     }
+
+    /*
+     * Generate Invoice PDF
+     */
+    public function generatePdf($id)
+    {
+        $invoice = Invoice::findOrFail($id);
+
+        $pdf = Pdf::loadView('invoices.pdf', compact('invoice'));
+
+        return [$pdf, $invoice];
+    }
 }

@@ -96,4 +96,11 @@ class RequisitionController extends Controller
             "data" => $requisition,
         ], 200);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $requisition] = $this->service->generatePdf($id);
+
+        return $pdf->stream("Requisition-{$requisition->code}.pdf");
+    }
 }

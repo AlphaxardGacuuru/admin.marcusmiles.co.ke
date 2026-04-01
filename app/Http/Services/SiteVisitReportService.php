@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Resources\SiteVisitReportResource;
 use App\Models\SiteVisitReport;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class SiteVisitReportService extends Service
@@ -148,5 +149,17 @@ class SiteVisitReportService extends Service
         }
 
         return $query;
+    }
+
+    /*
+     * Generate SiteVisitReport PDF
+     */
+    public function generatePdf($id)
+    {
+        $siteVisitReport = SiteVisitReport::findOrFail($id);
+
+        $pdf = Pdf::loadView('site-visit-reports.pdf', compact('siteVisitReport'));
+
+        return [$pdf, $siteVisitReport];
     }
 }

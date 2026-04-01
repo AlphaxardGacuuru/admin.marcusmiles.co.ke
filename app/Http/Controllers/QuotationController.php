@@ -140,4 +140,11 @@ class QuotationController extends Controller
             'message' => $message,
         ]);
     }
+
+    public function previewPdf($id)
+    {
+        [$pdf, $quotation] = $this->service->generatePdf($id);
+
+        return $pdf->stream("Quotation-{$quotation->code}.pdf");
+    }
 }

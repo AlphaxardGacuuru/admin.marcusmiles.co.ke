@@ -4,6 +4,7 @@ namespace App\Http\Services;
 
 use App\Http\Resources\RequisitionResource;
 use App\Models\Requisition;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 
 class RequisitionService extends Service
@@ -166,5 +167,17 @@ class RequisitionService extends Service
         }
 
         return $query;
+    }
+
+    /*
+     * Generate Requisition PDF
+     */
+    public function generatePdf($id)
+    {
+        $requisition = Requisition::findOrFail($id);
+
+        $pdf = Pdf::loadView('requisitions.pdf', compact('requisition'));
+
+        return [$pdf, $requisition];
     }
 }

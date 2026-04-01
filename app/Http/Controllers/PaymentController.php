@@ -95,9 +95,9 @@ class PaymentController extends Controller
 
     public function previewPdf($id)
     {
-        $pdf = $this->service->generatePdf($id);
+        [$pdf, $payment] = $this->service->generatePdf($id);
 
-        return $pdf->stream("payment-{$id}-preview.pdf");
+        return $pdf->stream("Payment-{$payment->code}.pdf");
     }
 
     /**
