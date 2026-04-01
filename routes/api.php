@@ -38,6 +38,7 @@ use App\Http\Controllers\WaterReadingController;
 use App\Http\Controllers\WorkPlanController;
 use App\Http\Controllers\WorkPlanStepController;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,7 +82,7 @@ Route::apiResources([
     "practical-completion-certificates" => PracticalCompletionCertificateController::class,
     "site-visit-reports" => SiteVisitReportController::class,
     "requisitions" => RequisitionController::class,
-    
+
     // CRM
     "clients" => ClientController::class,
     "quotations" => QuotationController::class,
@@ -191,4 +192,10 @@ Route::prefix('filepond')->group(function () {
         // Submission
         Route::post("submissions/{sessionId}/{unitId}/{week}/{userId}/{type}", "storeSubmission");
     });
+});
+
+Route::get('/clear-cache', function () {
+    Artisan::call('optimize:clear');
+
+    return "Cache cleared!";
 });
