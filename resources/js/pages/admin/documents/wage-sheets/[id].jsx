@@ -13,6 +13,7 @@ const form = (props) => {
 	var { id } = useParams()
 
 	const [wageSheet, setWageSheet] = useState({})
+	const [downloadLoading, setDownloadLoading] = useState(false)
 
 	useEffect(() => {
 		// Set page
@@ -39,6 +40,8 @@ const form = (props) => {
 	)
 
 	const downloadPDF = async () => {
+		setDownloadLoading(true)
+
 		try {
 			// 1. Add { responseType: 'blob' } so Axios doesn't corrupt the binary data
 			const response = await Axios.get(`/api/wage-sheets/${id}/preview`, {
@@ -64,6 +67,7 @@ const form = (props) => {
 		} catch (error) {
 			console.error("PDF Download failed", error)
 		}
+		setDownloadLoading(false)
 	}
 
 	return (
@@ -75,6 +79,7 @@ const form = (props) => {
 					icon={<DownloadSVG />}
 					text="Download PDF"
 					onClick={downloadPDF}
+					loading={downloadLoading}
 				/>
 			</div>
 

@@ -13,6 +13,7 @@ const form = (props) => {
 
 	const [practicalCompletionCertificate, setPracticalCompletionCertificate] =
 		useState({})
+	const [downloadLoading, setDownloadLoading] = useState(false)
 
 	useEffect(() => {
 		// Set page
@@ -40,11 +41,16 @@ const form = (props) => {
 	}
 
 	const downloadPDF = async () => {
+		setDownloadLoading(true)
+
 		try {
 			// 1. Add { responseType: 'blob' } so Axios doesn't corrupt the binary data
-			const response = await Axios.get(`/api/practical-completion-certificates/${id}/preview`, {
-				responseType: "blob",
-			})
+			const response = await Axios.get(
+				`/api/practical-completion-certificates/${id}/preview`,
+				{
+					responseType: "blob",
+				}
+			)
 
 			// 2. Use response.data (the actual file) instead of the whole response object
 			const blob = new Blob([response.data], { type: "application/pdf" })
@@ -54,7 +60,10 @@ const form = (props) => {
 			link.href = url
 
 			// Ensure the filename is set
-			link.setAttribute("download", `PracticalCompletionCertificate-${practicalCompletionCertificate.code}.pdf`)
+			link.setAttribute(
+				"download",
+				`PracticalCompletionCertificate-${practicalCompletionCertificate.code}.pdf`
+			)
 
 			document.body.appendChild(link)
 			link.click()
@@ -65,6 +74,7 @@ const form = (props) => {
 		} catch (error) {
 			console.error("PDF Download failed", error)
 		}
+		setDownloadLoading(false)
 	}
 
 	return (
@@ -76,6 +86,7 @@ const form = (props) => {
 					icon={<DownloadSVG />}
 					text="Download PDF"
 					onClick={downloadPDF}
+					loading={downloadLoading}
 				/>
 			</div>
 

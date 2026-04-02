@@ -17,6 +17,7 @@ const show = (props) => {
 
 	const [quotation, setQuotation] = useState({})
 	const [generatingInvoice, setGeneratingInvoice] = useState(false)
+	const [downloadLoading, setDownloadLoading] = useState(false)
 
 	useEffect(() => {
 		// Set page
@@ -64,6 +65,8 @@ const show = (props) => {
 	}
 
 	const downloadPDF = async () => {
+		setDownloadLoading(true)
+
 		try {
 			// 1. Add { responseType: 'blob' } so Axios doesn't corrupt the binary data
 			const response = await Axios.get(`/api/quotations/${id}/preview`, {
@@ -89,6 +92,7 @@ const show = (props) => {
 		} catch (error) {
 			console.error("PDF Download failed", error)
 		}
+		setDownloadLoading(false)
 	}
 
 	return (
@@ -107,6 +111,7 @@ const show = (props) => {
 					icon={<DownloadSVG />}
 					text="Download PDF"
 					onClick={downloadPDF}
+					loading={downloadLoading}
 				/>
 			</div>
 			{/*Create Link End*/}
